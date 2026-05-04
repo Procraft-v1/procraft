@@ -1,0 +1,17 @@
+{
+  "name": "@procraft/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "dependencies": {
+    "i18next": "^26.0.8",
+    "react-i18next": "^17.0.6"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "sideEffects": ["./src/locales/**"]
+}

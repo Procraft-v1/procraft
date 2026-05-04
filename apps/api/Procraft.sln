@@ -1,0 +1,49 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Procraft.Api", "src\Procraft.Api\Procraft.Api.csproj", "{A2C4B7C2-2C3B-4D8B-9C2B-1B2C3D4E5F60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Procraft.Application", "src\Procraft.Application\Procraft.Application.csproj", "{B3D5C8D3-3D4C-5E9C-0D3C-2C3D4E5F6071}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Procraft.Domain", "src\Procraft.Domain\Procraft.Domain.csproj", "{C4E6D9E4-4E5D-6F0D-1E4D-3D4E5F607182}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Procraft.Infrastructure", "src\Procraft.Infrastructure\Procraft.Infrastructure.csproj", "{D5F7E0F5-5F6E-701E-2F5E-4E5F60718293}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Procraft.Application.Tests", "tests\Procraft.Application.Tests\Procraft.Application.Tests.csproj", "{E6A8F1A6-607F-812F-306F-5F60718293A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Procraft.Api.Tests", "tests\Procraft.Api.Tests\Procraft.Api.Tests.csproj", "{F7B9A2B7-7180-9230-4170-60718293A4B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2C4B7C2-2C3B-4D8B-9C2B-1B2C3D4E5F60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2C4B7C2-2C3B-4D8B-9C2B-1B2C3D4E5F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2C4B7C2-2C3B-4D8B-9C2B-1B2C3D4E5F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2C4B7C2-2C3B-4D8B-9C2B-1B2C3D4E5F60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D5C8D3-3D4C-5E9C-0D3C-2C3D4E5F6071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D5C8D3-3D4C-5E9C-0D3C-2C3D4E5F6071}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D5C8D3-3D4C-5E9C-0D3C-2C3D4E5F6071}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D5C8D3-3D4C-5E9C-0D3C-2C3D4E5F6071}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4E6D9E4-4E5D-6F0D-1E4D-3D4E5F607182}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4E6D9E4-4E5D-6F0D-1E4D-3D4E5F607182}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4E6D9E4-4E5D-6F0D-1E4D-3D4E5F607182}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4E6D9E4-4E5D-6F0D-1E4D-3D4E5F607182}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5F7E0F5-5F6E-701E-2F5E-4E5F60718293}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F7E0F5-5F6E-701E-2F5E-4E5F60718293}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F7E0F5-5F6E-701E-2F5E-4E5F60718293}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F7E0F5-5F6E-701E-2F5E-4E5F60718293}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6A8F1A6-607F-812F-306F-5F60718293A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6A8F1A6-607F-812F-306F-5F60718293A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6A8F1A6-607F-812F-306F-5F60718293A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6A8F1A6-607F-812F-306F-5F60718293A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7B9A2B7-7180-9230-4170-60718293A4B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7B9A2B7-7180-9230-4170-60718293A4B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7B9A2B7-7180-9230-4170-60718293A4B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7B9A2B7-7180-9230-4170-60718293A4B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

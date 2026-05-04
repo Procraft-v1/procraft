@@ -1,0 +1,22 @@
+:root {
+  --pc-navy: #0D1B2A;
+  --pc-blue: #2563EB;
+  --pc-cyan: #06B6D4;
+  --pc-bg: #F6F7F9;
+  --pc-border: #E5E7EB;
+  --pc-muted: #64748B;
+  --pc-white: #FFFFFF;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 32px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--ant-color-bg-layout, #f6f7f9);
+}

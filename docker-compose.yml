@@ -1,0 +1,38 @@
+# Procraft — local orchestration scaffold (placeholder)
+#
+# This file documents intended services. Wiring (images, volumes, secrets) must be completed
+# when deployment targets are finalized. Do not put secrets in this repo.
+#
+# Intended pieces:
+#   - postgres       — DATABASE_URL → apps/api (EF Core / Npgsql)
+#   - api            — apps/api Dockerfile
+#   - landing / web / profiles — static files from Vite `dist/` behind nginx OR separate containers
+#   - nginx — see infra/nginx/README.md for path-based and subdomain routing
+#
+# Example (pseudo): uncomment and adjust when implementing
+#
+# services:
+#   postgres:
+#     image: postgres:16-alpine
+#     environment:
+#       POSTGRES_USER: procraft
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # from host env only, never commit
+#       POSTGRES_DB: procraft
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#
+#   api:
+#     build:
+#       context: ./apps/api
+#       dockerfile: Dockerfile
+#     environment:
+#       DATABASE_URL: ${DATABASE_URL}
+#     ports:
+#       - "5010:8080"
+#
+# volumes:
+#   postgres_data:
+
+services: {}

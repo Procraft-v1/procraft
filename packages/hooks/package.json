@@ -1,0 +1,17 @@
+{
+  "name": "@procraft/hooks",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@procraft/services": "workspace:*",
+    "@tanstack/react-query": "^5.80.10"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  }
+}

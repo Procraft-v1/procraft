@@ -1,0 +1,11 @@
+{
+  "name": "@procraft/api-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "dotnet build Procraft.sln -c Release",
+    "dev": "dotnet watch --project src/Procraft.Api/Procraft.Api.csproj run",
+    "test": "dotnet test Procraft.sln -c Release",
+    "lint": "dotnet build Procraft.sln -c Release"
+  }
+}

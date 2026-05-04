@@ -1,0 +1,13 @@
+/**
+ * Lightweight CSS vars mirroring `@procraft/config` brand palette for non-Ant primitives.
+ */
+
+:root {
+  --pro-primary-navy: #0d1b2a;
+  --pro-accent-blue: #2563eb;
+  --pro-cyan: #06b6d4;
+  --pro-bg: #f6f7f9;
+  --pro-border: #e5e7eb;
+  --pro-muted: #64748b;
+  --pro-white: #ffffff;
+}
