@@ -43,6 +43,6 @@ public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
             .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
             .ToDictionary(g => g.Key, g => g.ToArray());
 
-        throw new ValidationException(errors);
+        throw new Procraft.Application.Common.Exceptions.ValidationException(errors);
     }
 }

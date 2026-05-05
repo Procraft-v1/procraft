@@ -1,12 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { listSkills } from '@procraft/services';
+import { skillsService } from '@procraft/services';
+import { createProfileSectionHook } from '../profile-sections/createProfileSectionHook.js';
 
-export const SKILLS_KEY = ['skills', 'list'];
+export const SKILLS_QUERY_KEY = ['profile', 'skills'];
+export const SKILLS_KEY = SKILLS_QUERY_KEY;
 
-export function useSkills(options) {
-  return useQuery({
-    queryKey: SKILLS_KEY,
-    queryFn: () => listSkills().then((res) => res.data),
-    ...options,
-  });
-}
+export const useSkills = createProfileSectionHook({
+  queryKey: SKILLS_QUERY_KEY,
+  dataKey: 'skills',
+  service: skillsService,
+});

@@ -12,7 +12,9 @@ public sealed class Education : BaseEntity
 
     public string? Field { get; set; }
 
-    public DateOnly? StartedOn { get; set; }
+    public DateOnly? StartDate { get; set; }
 
-    public DateOnly? EndedOn { get; set; }
+    public DateOnly? EndDate { get; set; }
+
+    public int SortOrder { get; set; }
 }

@@ -2,6 +2,8 @@ using Procraft.Api.Extensions;
 using Procraft.Api.Middleware;
 using Procraft.Application;
 using Procraft.Infrastructure;
+using Procraft.Infrastructure.Options;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +50,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseCookiePolicy();
+
+var uploadsOptions = builder.Configuration.GetSection("Uploads").Get<UploadsOptions>() ?? new UploadsOptions();
+var uploadsRoot = Path.GetFullPath(uploadsOptions.RootPath);
+Directory.CreateDirectory(uploadsRoot);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsRoot),
+    RequestPath = uploadsOptions.PublicBasePath,
+});
 
 app.UseRouting();
 

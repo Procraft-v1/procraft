@@ -1,17 +1,17 @@
 import { Layout, Menu, Typography } from 'antd';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import {
   BarChartOutlined,
   FilePdfOutlined,
   LayoutOutlined,
   SettingOutlined,
-  TeamOutlined,
   ThunderboltOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 
 import { routes } from '@procraft/config';
+import { Logo } from '@procraft/ui';
 
 const menuItems = [
   { key: routes.dashboardProfile, icon: <UserOutlined />, label: 'Profile' },
@@ -22,43 +22,54 @@ const menuItems = [
   { key: routes.dashboardSettings, icon: <SettingOutlined />, label: 'Settings' },
 ];
 
-/** Navy shell scaffolding — tighten navigation once IAM exists. */
+const pageTitles = {
+  [routes.dashboard]: 'Dashboard',
+  [routes.dashboardProfile]: 'Profile',
+  [routes.dashboardTemplates]: 'Templates',
+  [routes.dashboardAnalytics]: 'Analytics',
+  [routes.dashboardPdf]: 'PDF',
+  [routes.dashboardSubscription]: 'Subscription',
+  [routes.dashboardSettings]: 'Settings',
+};
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const title = pageTitles[location.pathname] || 'Dashboard';
 
   return (
-    <Layout style={{ minHeight: '100%' }}>
+    <Layout className="dashboard-shell">
       <Layout.Sider
-        collapsible
         breakpoint="lg"
-        style={{
-          background: '#0D1B2A',
-          boxShadow: 'inset -1px 0 0 #1e293b',
-        }}
+        collapsedWidth={0}
+        width={264}
+        className="dashboard-sidebar"
+        style={{ background: '#0D1B2A' }}
       >
-        <div style={{ padding: '20px', color: '#fff', display: 'flex', gap: 8 }}>
-          <TeamOutlined />
-          <Typography.Title level={5} style={{ margin: 0, color: '#fff' }}>
-            Procraft
-          </Typography.Title>
+        <div className="dashboard-sidebar__brand">
+          <Logo size={36} textColor="#FFFFFF" />
         </div>
         <Menu
           theme="dark"
           selectedKeys={[location.pathname]}
-          style={{
-            marginTop: 12,
-            background: 'transparent',
-            borderInlineEnd: 'none',
-          }}
           mode="inline"
           items={menuItems}
           onClick={({ key }) => navigate(key)}
+          className="dashboard-menu"
         />
       </Layout.Sider>
-      <Layout>
-        <Layout.Content style={{ padding: 28 }}>
+
+      <Layout className="dashboard-main">
+        <header className="dashboard-topbar">
+          <div>
+            <Typography.Text type="secondary">Workspace</Typography.Text>
+            <Typography.Title level={3} style={{ margin: 0 }}>
+              {title}
+            </Typography.Title>
+          </div>
+          <Typography.Text className="dashboard-topbar__status">Cookie session active</Typography.Text>
+        </header>
+        <Layout.Content className="dashboard-content">
           <Outlet />
         </Layout.Content>
       </Layout>

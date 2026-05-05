@@ -1,5 +1,10 @@
 import { axiosClient } from '@procraft/api';
 
-export function requestPdfExport(payload) {
-  return axiosClient.post('/pdf/export', payload);
+export function downloadResume(config) {
+  return axiosClient.get('/pdf/download', {
+    ...config,
+    responseType: 'blob',
+  });
 }
+
+export const requestPdfExport = downloadResume;

@@ -8,11 +8,15 @@ public sealed class WorkExperience : BaseEntity
 
     public string Company { get; set; } = string.Empty;
 
-    public string Role { get; set; } = string.Empty;
+    public string Position { get; set; } = string.Empty;
 
     public string? Description { get; set; }
 
-    public DateOnly? StartedOn { get; set; }
+    public DateOnly StartDate { get; set; }
 
-    public DateOnly? EndedOn { get; set; }
+    public DateOnly? EndDate { get; set; }
+
+    public bool IsCurrent { get; set; }
+
+    public int SortOrder { get; set; }
 }

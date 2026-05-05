@@ -1,6 +1,12 @@
 import { Button, Card, Col, Row, Spin, Tag, Typography, message } from 'antd';
 import { useProfile, useSelectTemplate, useTemplates } from '@procraft/hooks';
 
+const templateCopy = {
+  minimal: 'Clean white resume style for direct, readable profiles.',
+  modern: 'Structured cards with blue and cyan accents for a sharper digital look.',
+  classic: 'Formal centered presentation with a traditional professional tone.',
+};
+
 export default function TemplatesPage() {
   const { data: templates = [], isLoading } = useTemplates();
   const { profile, fetchMyProfile } = useProfile();
@@ -16,42 +22,43 @@ export default function TemplatesPage() {
   }
 
   return (
-    <section>
-      <Typography.Title level={3}>Templates</Typography.Title>
-      <Row gutter={[16, 16]}>
+    <section className="dashboard-page">
+      <div className="dashboard-page__header">
+        <Typography.Title level={2}>Templates</Typography.Title>
+        <Typography.Paragraph type="secondary">
+          Select how your public profile should be presented. Content stays reusable across every design.
+        </Typography.Paragraph>
+      </div>
+
+      <Row gutter={[18, 18]}>
         {templates.map((template) => {
           const isSelected =
             profile?.templateId === template.id || profile?.templateSlug === template.slug;
 
           return (
-            <Col key={template.id} xs={24} md={8}>
+            <Col key={template.id} xs={24} md={12} xl={8}>
               <Card
-                title={template.name}
+                className={`template-card template-card--${template.slug}`}
                 extra={isSelected ? <Tag color="blue">Selected</Tag> : null}
-                cover={
-                  <div
-                    style={{
-                      height: 140,
-                      background: 'linear-gradient(135deg, #F6F7F9 0%, #E5E7EB 100%)',
-                      borderBottom: '1px solid #E5E7EB',
-                    }}
-                  />
-                }
               >
+                <div className="template-card__preview">
+                  <span />
+                  <strong>{template.name}</strong>
+                  <i />
+                  <i />
+                </div>
+                <Typography.Title level={4}>{template.name}</Typography.Title>
                 <Typography.Paragraph type="secondary">
-                  {template.slug === 'minimal'
-                    ? 'Clean white resume style.'
-                    : template.slug === 'modern'
-                      ? 'Card-based blue and cyan accents.'
-                      : 'Formal centered layout.'}
+                  {templateCopy[template.slug] || 'A clean public profile template.'}
                 </Typography.Paragraph>
                 <Button
                   type={isSelected ? 'default' : 'primary'}
                   disabled={isSelected}
                   loading={selectTemplate.isPending}
                   onClick={() => selectTemplate.mutate(template.id)}
+                  block
                 >
-                  {isSelected ? 'Selected' : 'Select'}
+                  {isSelected ? 'Selected' : 'Select template'}
                 </Button>
               </Card>
             </Col>

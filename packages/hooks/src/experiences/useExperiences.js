@@ -1,12 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { listExperiences } from '@procraft/services';
+import { experiencesService } from '@procraft/services';
+import { createProfileSectionHook } from '../profile-sections/createProfileSectionHook.js';
 
-export const EXPERIENCES_KEY = ['experiences', 'list'];
+export const EXPERIENCES_QUERY_KEY = ['profile', 'experiences'];
+export const EXPERIENCES_KEY = EXPERIENCES_QUERY_KEY;
 
-export function useExperiences(options) {
-  return useQuery({
-    queryKey: EXPERIENCES_KEY,
-    queryFn: () => listExperiences().then((res) => res.data),
-    ...options,
-  });
-}
+export const useExperiences = createProfileSectionHook({
+  queryKey: EXPERIENCES_QUERY_KEY,
+  dataKey: 'experiences',
+  service: experiencesService,
+});

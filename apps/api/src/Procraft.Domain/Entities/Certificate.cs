@@ -12,5 +12,7 @@ public sealed class Certificate : BaseEntity
 
     public DateOnly? IssuedOn { get; set; }
 
-    public string? CredentialUrl { get; set; }
+    public string? Url { get; set; }
+
+    public int SortOrder { get; set; }
 }

@@ -2,8 +2,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Procraft.Application.Profiles.Commands.CreateProfile;
+using Procraft.Application.Profiles.Commands.DeleteProfileAvatar;
 using Procraft.Application.Profiles.Commands.SelectProfileTemplate;
 using Procraft.Application.Profiles.Commands.UpdateProfile;
+using Procraft.Application.Profiles.Commands.UploadProfileAvatar;
 using Procraft.Application.Profiles.Queries.GetMyProfile;
 using Procraft.Application.Profiles.Queries.GetPublicProfile;
 
@@ -75,6 +77,31 @@ public sealed class ProfileController : ControllerBase
     public async Task<ActionResult> SelectTemplateAsync([FromRoute] Guid templateId, CancellationToken cancellationToken)
     {
         var profile = await _mediator.Send(new SelectProfileTemplateCommand(templateId), cancellationToken);
+        return Ok(profile);
+    }
+
+    [HttpPost("avatar")]
+    [Authorize]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(6 * 1024 * 1024)]
+    public async Task<ActionResult> UploadAvatarAsync([FromForm] IFormFile? file, CancellationToken cancellationToken)
+    {
+        var profile = await _mediator.Send(
+            new UploadProfileAvatarCommand(
+                file?.OpenReadStream(),
+                file?.FileName,
+                file?.ContentType,
+                file?.Length ?? 0),
+            cancellationToken);
+
+        return Ok(profile);
+    }
+
+    [HttpDelete("avatar")]
+    [Authorize]
+    public async Task<ActionResult> DeleteAvatarAsync(CancellationToken cancellationToken)
+    {
+        var profile = await _mediator.Send(new DeleteProfileAvatarCommand(), cancellationToken);
         return Ok(profile);
     }
 }

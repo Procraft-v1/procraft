@@ -14,9 +14,13 @@ public sealed class SkillConfiguration : IEntityTypeConfiguration<Skill>
 
         builder.Property(x => x.Name).IsRequired().HasMaxLength(120);
         builder.Property(x => x.Level);
+        builder.Property(x => x.Category).HasMaxLength(50);
+        builder.Property(x => x.SortOrder).IsRequired();
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Property(x => x.UpdatedAt);
 
+        builder.HasIndex(x => x.ProfileId);
+        builder.HasIndex(x => new { x.ProfileId, x.SortOrder });
         builder.HasIndex(x => new { x.ProfileId, x.Name }).IsUnique();
 
         builder.HasOne(x => x.Profile)

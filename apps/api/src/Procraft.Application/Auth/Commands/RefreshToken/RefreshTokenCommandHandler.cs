@@ -6,6 +6,7 @@ using Procraft.Application.Common.Exceptions;
 using Procraft.Application.Common.Interfaces;
 using Procraft.Domain.Entities;
 using Microsoft.Extensions.Options;
+using RefreshTokenEntity = Procraft.Domain.Entities.RefreshToken;
 
 namespace Procraft.Application.Auth.Commands.RefreshToken;
 
@@ -75,7 +76,7 @@ public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCom
         stored.ReplacedByTokenHash = replacementHash;
         stored.UpdatedAt = now;
 
-        var next = new RefreshToken
+        var next = new RefreshTokenEntity
         {
             Id = Guid.NewGuid(),
             UserId = stored.UserId,

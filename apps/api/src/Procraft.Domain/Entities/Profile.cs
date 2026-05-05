@@ -32,6 +32,8 @@ public sealed class Profile : BaseEntity
 
     public ICollection<Certificate> Certificates { get; set; } = new List<Certificate>();
 
+    public ICollection<SocialLink> SocialLinks { get; set; } = new List<SocialLink>();
+
     public ICollection<CustomSection> CustomSections { get; set; } = new List<CustomSection>();
 
     public ICollection<AnalyticsEvent> AnalyticsEvents { get; set; } = new List<AnalyticsEvent>();

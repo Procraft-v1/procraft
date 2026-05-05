@@ -13,10 +13,14 @@ public sealed class CertificateConfiguration : IEntityTypeConfiguration<Certific
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
-        builder.Property(x => x.Issuer).HasMaxLength(200);
-        builder.Property(x => x.CredentialUrl).HasMaxLength(2048);
+        builder.Property(x => x.Issuer).HasMaxLength(100);
+        builder.Property(x => x.Url).HasMaxLength(255);
+        builder.Property(x => x.SortOrder).IsRequired();
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Property(x => x.UpdatedAt);
+
+        builder.HasIndex(x => x.ProfileId);
+        builder.HasIndex(x => new { x.ProfileId, x.SortOrder });
 
         builder.HasOne(x => x.Profile)
             .WithMany(x => x.Certificates)

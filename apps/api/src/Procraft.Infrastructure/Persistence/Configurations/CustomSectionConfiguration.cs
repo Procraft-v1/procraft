@@ -13,9 +13,13 @@ public sealed class CustomSectionConfiguration : IEntityTypeConfiguration<Custom
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Title).IsRequired().HasMaxLength(160);
-        builder.Property(x => x.Body).IsRequired().HasMaxLength(8000);
+        builder.Property(x => x.Content).IsRequired().HasMaxLength(8000);
+        builder.Property(x => x.SortOrder).IsRequired();
         builder.Property(x => x.CreatedAt).IsRequired();
         builder.Property(x => x.UpdatedAt);
+
+        builder.HasIndex(x => x.ProfileId);
+        builder.HasIndex(x => new { x.ProfileId, x.SortOrder });
 
         builder.HasOne(x => x.Profile)
             .WithMany(x => x.CustomSections)

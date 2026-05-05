@@ -1,12 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { listCertificates } from '@procraft/services';
+import { certificatesService } from '@procraft/services';
+import { createProfileSectionHook } from '../profile-sections/createProfileSectionHook.js';
 
-export const CERTIFICATES_KEY = ['certificates', 'list'];
+export const CERTIFICATES_QUERY_KEY = ['profile', 'certificates'];
+export const CERTIFICATES_KEY = CERTIFICATES_QUERY_KEY;
 
-export function useCertificates(options) {
-  return useQuery({
-    queryKey: CERTIFICATES_KEY,
-    queryFn: () => listCertificates().then((res) => res.data),
-    ...options,
-  });
-}
+export const useCertificates = createProfileSectionHook({
+  queryKey: CERTIFICATES_QUERY_KEY,
+  dataKey: 'certificates',
+  service: certificatesService,
+});

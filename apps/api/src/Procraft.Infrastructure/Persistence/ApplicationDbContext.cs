@@ -27,6 +27,8 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Certificate> Certificates => Set<Certificate>();
 
+    public DbSet<SocialLink> SocialLinks => Set<SocialLink>();
+
     public DbSet<CustomSection> CustomSections => Set<CustomSection>();
 
     public DbSet<Template> Templates => Set<Template>();
