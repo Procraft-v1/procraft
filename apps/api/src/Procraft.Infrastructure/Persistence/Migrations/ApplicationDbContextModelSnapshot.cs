@@ -461,6 +461,152 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.ToTable("custom_sections");
         });
 
+        modelBuilder.Entity("Procraft.Domain.Entities.Subscription", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uuid");
+
+            b.Property<DateTimeOffset>("CreatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<DateTimeOffset?>("CurrentPeriodEnd")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("PlanKey")
+                .IsRequired()
+                .HasMaxLength(120)
+                .HasColumnType("character varying(120)");
+
+            b.Property<string>("Status")
+                .IsRequired()
+                .HasMaxLength(32)
+                .HasColumnType("character varying(32)");
+
+            b.Property<DateTimeOffset?>("UpdatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<Guid>("UserId")
+                .HasColumnType("uuid");
+
+            b.HasKey("Id");
+
+            b.HasIndex("UserId");
+
+            b.ToTable("subscriptions");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.PaymentRequest", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uuid");
+
+            b.Property<decimal>("Amount")
+                .HasPrecision(12, 2)
+                .HasColumnType("numeric(12,2)");
+
+            b.Property<DateTimeOffset>("CreatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("Currency")
+                .IsRequired()
+                .HasMaxLength(8)
+                .HasColumnType("character varying(8)");
+
+            b.Property<string>("ExternalReference")
+                .HasMaxLength(200)
+                .HasColumnType("character varying(200)");
+
+            b.Property<string>("Status")
+                .IsRequired()
+                .HasMaxLength(32)
+                .HasColumnType("character varying(32)");
+
+            b.Property<Guid>("SubscriptionId")
+                .HasColumnType("uuid");
+
+            b.Property<string>("Type")
+                .IsRequired()
+                .HasMaxLength(32)
+                .HasColumnType("character varying(32)");
+
+            b.Property<DateTimeOffset?>("UpdatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.HasKey("Id");
+
+            b.HasIndex("SubscriptionId");
+
+            b.ToTable("payment_requests");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.AnalyticsEvent", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uuid");
+
+            b.Property<DateTimeOffset>("CreatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("EventType")
+                .IsRequired()
+                .HasMaxLength(64)
+                .HasColumnType("character varying(64)");
+
+            b.Property<string>("Metadata")
+                .HasMaxLength(8000)
+                .HasColumnType("character varying(8000)");
+
+            b.Property<string>("Path")
+                .HasMaxLength(2048)
+                .HasColumnType("character varying(2048)");
+
+            b.Property<Guid?>("ProfileId")
+                .HasColumnType("uuid");
+
+            b.Property<DateTimeOffset?>("UpdatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.HasKey("Id");
+
+            b.HasIndex("ProfileId", "CreatedAt");
+
+            b.ToTable("analytics_events");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.PdfExport", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uuid");
+
+            b.Property<DateTimeOffset>("CreatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<Guid>("ProfileId")
+                .HasColumnType("uuid");
+
+            b.Property<string>("Status")
+                .IsRequired()
+                .HasMaxLength(64)
+                .HasColumnType("character varying(64)");
+
+            b.Property<string>("StoragePath")
+                .HasMaxLength(1024)
+                .HasColumnType("character varying(1024)");
+
+            b.Property<DateTimeOffset?>("UpdatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.HasKey("Id");
+
+            b.HasIndex("ProfileId");
+
+            b.ToTable("pdf_exports");
+        });
+
         modelBuilder.Entity("Procraft.Domain.Entities.Template", b =>
         {
             b.Property<Guid>("Id")
@@ -611,13 +757,60 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.Navigation("Profile");
         });
 
+        modelBuilder.Entity("Procraft.Domain.Entities.Subscription", b =>
+        {
+            b.HasOne("Procraft.Domain.Entities.User", "User")
+                .WithMany("Subscriptions")
+                .HasForeignKey("UserId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("User");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.PaymentRequest", b =>
+        {
+            b.HasOne("Procraft.Domain.Entities.Subscription", "Subscription")
+                .WithMany("PaymentRequests")
+                .HasForeignKey("SubscriptionId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("Subscription");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.AnalyticsEvent", b =>
+        {
+            b.HasOne("Procraft.Domain.Entities.Profile", "Profile")
+                .WithMany("AnalyticsEvents")
+                .HasForeignKey("ProfileId")
+                .OnDelete(DeleteBehavior.SetNull);
+
+            b.Navigation("Profile");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.PdfExport", b =>
+        {
+            b.HasOne("Procraft.Domain.Entities.Profile", "Profile")
+                .WithMany("PdfExports")
+                .HasForeignKey("ProfileId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("Profile");
+        });
+
         modelBuilder.Entity("Procraft.Domain.Entities.Profile", b =>
         {
+            b.Navigation("AnalyticsEvents");
+
             b.Navigation("Certificates");
 
             b.Navigation("CustomSections");
 
             b.Navigation("Educations");
+
+            b.Navigation("PdfExports");
 
             b.Navigation("Projects");
 
@@ -638,6 +831,13 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.Navigation("Profile");
 
             b.Navigation("RefreshTokens");
+
+            b.Navigation("Subscriptions");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.Subscription", b =>
+        {
+            b.Navigation("PaymentRequests");
         });
     }
 }
