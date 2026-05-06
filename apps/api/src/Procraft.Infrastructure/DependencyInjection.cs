@@ -19,9 +19,31 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
-        services.Configure<AuthCookieOptions>(configuration.GetSection("Cookies"));
-        services.Configure<UploadsOptions>(configuration.GetSection("Uploads"));
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection("Jwt"))
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Secret), "Jwt:Secret is required. Set Jwt:Secret or JWT_SECRET.")
+            .Validate(options => options.Secret.Length >= 32, "Jwt:Secret must be at least 32 characters.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Issuer), "Jwt:Issuer is required. Set Jwt:Issuer or JWT_ISSUER.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.Audience), "Jwt:Audience is required. Set Jwt:Audience or JWT_AUDIENCE.")
+            .Validate(options => options.AccessTokenMinutes > 0, "Jwt:AccessTokenMinutes must be greater than zero.")
+            .Validate(options => options.RefreshTokenDays > 0, "Jwt:RefreshTokenDays must be greater than zero.")
+            .ValidateOnStart();
+
+        services.AddOptions<AuthCookieOptions>()
+            .Bind(configuration.GetSection("Cookies"))
+            .Validate(options => !string.IsNullOrWhiteSpace(options.AccessCookieName), "Cookies:AccessCookieName is required.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.RefreshCookieName), "Cookies:RefreshCookieName is required.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.SameSite), "Cookies:SameSite is required.")
+            .Validate(options => Enum.TryParse<Microsoft.AspNetCore.Http.SameSiteMode>(options.SameSite, true, out _), "Cookies:SameSite must be Strict, Lax, None, or Unspecified.")
+            .ValidateOnStart();
+
+        services.AddOptions<UploadsOptions>()
+            .Bind(configuration.GetSection("Uploads"))
+            .Validate(options => !string.IsNullOrWhiteSpace(options.RootPath), "Uploads:RootPath is required.")
+            .Validate(options => !string.IsNullOrWhiteSpace(options.PublicBasePath), "Uploads:PublicBasePath is required.")
+            .Validate(options => options.PublicBasePath.StartsWith('/'), "Uploads:PublicBasePath must start with '/'.")
+            .Validate(options => options.MaxAvatarSizeMb > 0, "Uploads:MaxAvatarSizeMb must be greater than zero.")
+            .ValidateOnStart();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? configuration["DATABASE_URL"];

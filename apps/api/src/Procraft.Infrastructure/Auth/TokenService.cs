@@ -26,6 +26,11 @@ public sealed class TokenService : ITokenService
             throw new InvalidOperationException("JWT signing secret is not configured (Jwt:Secret or JWT_SECRET).");
         }
 
+        if (_options.Secret.Length < 32)
+        {
+            throw new InvalidOperationException("JWT signing secret must be at least 32 characters.");
+        }
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

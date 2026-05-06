@@ -43,6 +43,11 @@ public static class JwtAuthenticationExtensions
 
             var jwt = _jwt.CurrentValue;
 
+            if (string.IsNullOrWhiteSpace(jwt.Secret) || jwt.Secret.Length < 32)
+            {
+                throw new InvalidOperationException("Jwt:Secret must be configured and at least 32 characters before JWT authentication starts.");
+            }
+
             byte[] signingKeyMaterial = Encoding.UTF8.GetBytes(jwt.Secret ?? string.Empty);
 
             options.TokenValidationParameters = new TokenValidationParameters

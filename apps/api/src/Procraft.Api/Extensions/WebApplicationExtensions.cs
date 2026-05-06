@@ -1,5 +1,6 @@
 using Procraft.Application.Common.Configuration;
 using Procraft.Application.Common.Security;
+using Procraft.Infrastructure.Options;
 
 namespace Procraft.Api.Extensions;
 
@@ -19,31 +20,22 @@ public static class WebApplicationExtensions
     {
         builder.Services.PostConfigure<JwtOptions>(options =>
         {
-            if (string.IsNullOrWhiteSpace(options.Secret))
+            var secret = builder.Configuration["JWT_SECRET"];
+            if (!string.IsNullOrWhiteSpace(secret))
             {
-                var secret = builder.Configuration["JWT_SECRET"];
-                if (!string.IsNullOrWhiteSpace(secret))
-                {
-                    options.Secret = secret;
-                }
+                options.Secret = secret;
             }
 
-            if (string.IsNullOrWhiteSpace(options.Issuer))
+            var issuer = builder.Configuration["JWT_ISSUER"];
+            if (!string.IsNullOrWhiteSpace(issuer))
             {
-                var issuer = builder.Configuration["JWT_ISSUER"];
-                if (!string.IsNullOrWhiteSpace(issuer))
-                {
-                    options.Issuer = issuer;
-                }
+                options.Issuer = issuer;
             }
 
-            if (string.IsNullOrWhiteSpace(options.Audience))
+            var audience = builder.Configuration["JWT_AUDIENCE"];
+            if (!string.IsNullOrWhiteSpace(audience))
             {
-                var audience = builder.Configuration["JWT_AUDIENCE"];
-                if (!string.IsNullOrWhiteSpace(audience))
-                {
-                    options.Audience = audience;
-                }
+                options.Audience = audience;
             }
 
             if (int.TryParse(builder.Configuration["JWT_ACCESS_MINUTES"], out var accessMinutes) &&
@@ -71,6 +63,31 @@ public static class WebApplicationExtensions
             if (!string.IsNullOrWhiteSpace(refreshCookie))
             {
                 options.RefreshCookieName = refreshCookie!;
+            }
+
+            var sameSite = builder.Configuration["JWT_COOKIE_SAMESITE"];
+            if (!string.IsNullOrWhiteSpace(sameSite))
+            {
+                options.SameSite = sameSite;
+            }
+
+            if (bool.TryParse(builder.Configuration["JWT_COOKIE_SECURE"], out var secure))
+            {
+                options.Secure = secure;
+            }
+
+            if (builder.Environment.IsProduction() && !options.Secure)
+            {
+                throw new InvalidOperationException("Cookies:Secure must be true in Production.");
+            }
+        });
+
+        builder.Services.PostConfigure<UploadsOptions>(options =>
+        {
+            var uploadsRoot = builder.Configuration["UPLOADS_ROOT"];
+            if (!string.IsNullOrWhiteSpace(uploadsRoot))
+            {
+                options.RootPath = uploadsRoot;
             }
         });
     }
