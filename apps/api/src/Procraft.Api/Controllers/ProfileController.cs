@@ -84,14 +84,14 @@ public sealed class ProfileController : ControllerBase
     [Authorize]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(6 * 1024 * 1024)]
-    public async Task<ActionResult> UploadAvatarAsync([FromForm] IFormFile? file, CancellationToken cancellationToken)
+    public async Task<ActionResult> UploadAvatarAsync([FromForm] UploadAvatarApiRequest request, CancellationToken cancellationToken)
     {
         var profile = await _mediator.Send(
             new UploadProfileAvatarCommand(
-                file?.OpenReadStream(),
-                file?.FileName,
-                file?.ContentType,
-                file?.Length ?? 0),
+                request.File?.OpenReadStream(),
+                request.File?.FileName,
+                request.File?.ContentType,
+                request.File?.Length ?? 0),
             cancellationToken);
 
         return Ok(profile);
@@ -113,3 +113,8 @@ public sealed record ProfileApiRequest(
     string? Location,
     string? Website,
     string? AvatarUrl);
+
+public sealed class UploadAvatarApiRequest
+{
+    public IFormFile? File { get; init; }
+}

@@ -76,12 +76,17 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapStandaloneHealth();
 
-// Run migrations and seed reference data
-using (var scope = app.Services.CreateScope())
+try
 {
+    // Run migrations and seed reference data
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
     await TemplateSeeder.SeedAsync(db);
+}
+catch (Exception ex) when (app.Environment.IsDevelopment())
+{
+    Log.Warning(ex, "Database migration and template seeding were skipped. Start PostgreSQL and restart the API to enable database-backed endpoints.");
 }
 
 try
