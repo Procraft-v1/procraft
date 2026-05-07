@@ -15,7 +15,9 @@ public sealed class TelegramBotService
     public Task NotifyAsync(string message, CancellationToken cancellationToken = default)
     {
         // TODO: connect authenticated bot client using secure configuration providers.
-        _logger.LogInformation("Telegram stub: {Message}", message);
+        _logger.LogWarning(
+            "Telegram stub is active: no real notification was sent. Message={Message}. Configure TelegramBotService before production notifications.",
+            message);
         return Task.CompletedTask;
     }
 }

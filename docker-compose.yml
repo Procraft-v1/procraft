@@ -1,38 +1,41 @@
-# Procraft — local orchestration scaffold (placeholder)
-#
-# This file documents intended services. Wiring (images, volumes, secrets) must be completed
-# when deployment targets are finalized. Do not put secrets in this repo.
-#
-# Intended pieces:
-#   - postgres       — DATABASE_URL → apps/api (EF Core / Npgsql)
-#   - api            — apps/api Dockerfile
-#   - landing / web / profiles — static files from Vite `dist/` behind nginx OR separate containers
-#   - nginx — see infra/nginx/README.md for path-based and subdomain routing
-#
-# Example (pseudo): uncomment and adjust when implementing
-#
-# services:
-#   postgres:
-#     image: postgres:16-alpine
-#     environment:
-#       POSTGRES_USER: procraft
-#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # from host env only, never commit
-#       POSTGRES_DB: procraft
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - postgres_data:/var/lib/postgresql/data
-#
-#   api:
-#     build:
-#       context: ./apps/api
-#       dockerfile: Dockerfile
-#     environment:
-#       DATABASE_URL: ${DATABASE_URL}
-#     ports:
-#       - "5010:8080"
-#
-# volumes:
-#   postgres_data:
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-procraft}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-services: {}
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-procraft};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD}"
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER:-procraft.local}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-procraft.local}
+      JWT_ACCESS_MINUTES: ${JWT_ACCESS_MINUTES:-15}
+      JWT_REFRESH_DAYS: ${JWT_REFRESH_DAYS:-7}
+      UPLOADS_ROOT: /app/uploads
+    ports:
+      - "5080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/app/uploads
+
+volumes:
+  postgres_data:
+  uploads_data:

@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { SECURITY_DEFAULTS } from '@procraft/config';
+import { getApiBaseUrl, SECURITY_DEFAULTS } from '@procraft/config';
 import { attachAuthInterceptors } from './auth-interceptor.js';
 import { getCsrfTokenFromCookie } from './csrf.js';
 
 /** Shared Axios instance: cookie sessions; no localStorage tokens. */
 
 const axiosClient = axios.create({
-  baseURL: '/api',
+  baseURL: getApiBaseUrl(),
   withCredentials: true,
   headers: {
     Accept: 'application/json',

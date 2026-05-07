@@ -45,6 +45,12 @@ public static class DependencyInjection
             .Validate(options => options.MaxAvatarSizeMb > 0, "Uploads:MaxAvatarSizeMb must be greater than zero.")
             .ValidateOnStart();
 
+        services.AddOptions<SmtpOptions>()
+            .Bind(configuration.GetSection("Smtp"));
+
+        services.AddOptions<TelegramOptions>()
+            .Bind(configuration.GetSection("Telegram"));
+
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? configuration["DATABASE_URL"];
 

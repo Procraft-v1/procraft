@@ -15,7 +15,10 @@ public sealed class SmtpEmailService : IEmailService
     public Task SendAsync(string to, string subject, string body, CancellationToken cancellationToken = default)
     {
         // TODO: wire SMTP / SendGrid configuration without embedding secrets in source.
-        _logger.LogInformation("Email stub: to {To}, subject {Subject}", to, subject);
+        _logger.LogWarning(
+            "Email stub is active: no real email was sent. To={To}, Subject={Subject}. Implement SmtpEmailService before production email delivery.",
+            to,
+            subject);
         return Task.CompletedTask;
     }
 }

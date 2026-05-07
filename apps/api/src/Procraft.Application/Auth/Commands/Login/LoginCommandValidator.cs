@@ -11,7 +11,6 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
             .Must(s => !string.IsNullOrWhiteSpace(s));
 
         RuleFor(x => x.Password)
-            .NotEmpty()
-            .MinimumLength(8);
+            .NotEmpty();
     }
 }

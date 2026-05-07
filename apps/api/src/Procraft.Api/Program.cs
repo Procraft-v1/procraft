@@ -1,6 +1,7 @@
 using Procraft.Api.Extensions;
 using Procraft.Api.Middleware;
 using Procraft.Application;
+using Procraft.Application.Common.Interfaces;
 using Procraft.Infrastructure;
 using Procraft.Infrastructure.Options;
 using Procraft.Infrastructure.Persistence;
@@ -83,6 +84,12 @@ try
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
     await TemplateSeeder.SeedAsync(db);
+
+    if (app.Environment.IsDevelopment())
+    {
+        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+        await StaticAccountSeeder.SeedAsync(db, passwordHasher);
+    }
 }
 catch (Exception ex) when (app.Environment.IsDevelopment())
 {

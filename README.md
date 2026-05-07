@@ -18,6 +18,74 @@ Monorepo for **Procraft** — a professional portfolio and ATS-friendly résumé
 
 Individual apps expose their own `dev`/`build` scripts; see each `apps/*/README.md`.
 
+## Getting Started
+
+### 1. Environment variables
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill the required values. Do not commit secrets.
+
+### 2. Install dependencies
+
+```bash
+pnpm install
+```
+
+### 3. Start PostgreSQL
+
+```bash
+docker compose up postgres -d
+```
+
+The default local development connection string uses:
+
+```text
+Host=127.0.0.1;Port=5432;Database=procraft;Username=postgres;Password=postgres
+```
+
+For local overrides, prefer .NET user secrets from `apps/api`:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=127.0.0.1;Port=5432;Database=procraft;Username=postgres;Password=postgres"
+```
+
+### 4. Start the frontend apps
+
+```bash
+pnpm dev
+```
+
+Or run one app:
+
+```bash
+pnpm --filter @procraft/web dev
+```
+
+### 5. Start the API
+
+```bash
+cd apps/api
+dotnet run --project src/Procraft.Api/Procraft.Api.csproj
+```
+
+Swagger is available in Development at `http://localhost:5080/swagger`.
+
+## API Environment
+
+The API requires these values at runtime:
+
+| Variable | Example |
+| --- | --- |
+| `ConnectionStrings__DefaultConnection` or `DATABASE_URL` | `Host=localhost;Port=5432;Database=procraft;Username=postgres;Password=postgres` |
+| `JWT_SECRET` | At least 32 random characters |
+| `JWT_ISSUER` | `procraft.local` |
+| `JWT_AUDIENCE` | `procraft.local` |
+
+Development can use `appsettings.Development.json`, environment variables, or `dotnet user-secrets`.
+
 ## Repo map
 
 | Path           | Role                                      |
@@ -36,4 +104,4 @@ Start with [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), then [`docs/PROJECT_R
 
 ## Environment
 
-Copy `.env.example` to `.env.local` for Vite apps as needed locally. **Do not commit secrets.**
+Copy `.env.example` to `.env` for local Docker and Vite defaults. Use `.env.local` for app-specific Vite overrides when needed. **Do not commit secrets.**

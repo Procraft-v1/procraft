@@ -1,7 +1,7 @@
 import { Provider as ReduxProvider } from 'react-redux';
 import { ConfigProvider, theme } from 'antd';
 import { QueryClientProvider } from '@tanstack/react-query';
-import enUS from 'antd/locale/en_US';
+import uzUZ from 'antd/locale/uz_UZ';
 import { I18nextProvider } from 'react-i18next';
 
 import { antDesignThemeToken } from '@procraft/config';
@@ -22,7 +22,7 @@ export default function Providers({ children }) {
       <I18nextProvider i18n={i18next}>
         <QueryClientProvider client={queryClient}>
           <ConfigProvider
-            locale={enUS}
+            locale={uzUZ}
             theme={{
               cssVar: { key: 'pc' },
               algorithm: theme.defaultAlgorithm,
