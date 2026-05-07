@@ -65,6 +65,12 @@ public static class WebApplicationExtensions
                 options.RefreshCookieName = refreshCookie!;
             }
 
+            var csrfCookie = builder.Configuration["CSRF_COOKIE_NAME"];
+            if (!string.IsNullOrWhiteSpace(csrfCookie))
+            {
+                options.CsrfCookieName = csrfCookie!;
+            }
+
             var sameSite = builder.Configuration["JWT_COOKIE_SAMESITE"];
             if (!string.IsNullOrWhiteSpace(sameSite))
             {

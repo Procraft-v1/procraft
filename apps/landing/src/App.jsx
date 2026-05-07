@@ -1,4 +1,4 @@
-import { Logo } from '@procraft/ui';
+import { Logo } from '@procraft/ui/logo';
 
 const features = [
   ['Portfolio-first profiles', 'Show your work, skills, and story in a focused public profile.'],

@@ -5,6 +5,17 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5175,
+    host: 'localhost',
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5080',
+        changeOrigin: true,
+      },
+      '/uploads': {
+        target: 'http://localhost:5080',
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     sourcemap: true,
