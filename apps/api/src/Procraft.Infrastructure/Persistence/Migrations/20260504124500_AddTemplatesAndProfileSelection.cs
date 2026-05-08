@@ -38,45 +38,14 @@ public partial class AddTemplatesAndProfileSelection : Migration
             type: "uuid",
             nullable: true);
 
-        migrationBuilder.InsertData(
-            table: "templates",
-            columns: new[] { "Id", "Name", "Slug", "Description", "PreviewUrl", "IsActive", "IsPremium", "CreatedAt", "UpdatedAt" },
-            values: new object[,]
-            {
-                {
-                    new Guid("8f3e3e6c-0f8a-4d90-9b18-0d33f0bb7d01"),
-                    "Minimal",
-                    "minimal",
-                    "Clean typography-forward layout.",
-                    null,
-                    true,
-                    false,
-                    new DateTimeOffset(2026, 5, 4, 12, 45, 0, TimeSpan.Zero),
-                    null,
-                },
-                {
-                    new Guid("8f3e3e6c-0f8a-4d90-9b18-0d33f0bb7d02"),
-                    "Modern",
-                    "modern",
-                    "Card-based modern layout.",
-                    null,
-                    true,
-                    false,
-                    new DateTimeOffset(2026, 5, 4, 12, 45, 0, TimeSpan.Zero),
-                    null,
-                },
-                {
-                    new Guid("8f3e3e6c-0f8a-4d90-9b18-0d33f0bb7d03"),
-                    "Classic",
-                    "classic",
-                    "Traditional chronological resume.",
-                    null,
-                    true,
-                    false,
-                    new DateTimeOffset(2026, 5, 4, 12, 45, 0, TimeSpan.Zero),
-                    null,
-                },
-            });
+        migrationBuilder.Sql("""
+            INSERT INTO templates ("Id", "Name", "Slug", "Description", "PreviewUrl", "IsActive", "IsPremium", "CreatedAt", "UpdatedAt")
+            VALUES
+                ('8f3e3e6c-0f8a-4d90-9b18-0d33f0bb7d01', 'Minimal', 'minimal', 'Clean typography-forward layout.', NULL, TRUE, FALSE, TIMESTAMPTZ '2026-05-04 12:45:00+00', NULL),
+                ('8f3e3e6c-0f8a-4d90-9b18-0d33f0bb7d02', 'Modern', 'modern', 'Card-based modern layout.', NULL, TRUE, FALSE, TIMESTAMPTZ '2026-05-04 12:45:00+00', NULL),
+                ('8f3e3e6c-0f8a-4d90-9b18-0d33f0bb7d03', 'Classic', 'classic', 'Traditional chronological resume.', NULL, TRUE, FALSE, TIMESTAMPTZ '2026-05-04 12:45:00+00', NULL)
+            ON CONFLICT ("Slug") DO NOTHING;
+            """);
 
         migrationBuilder.CreateIndex(
             name: "IX_templates_Slug",
