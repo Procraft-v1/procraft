@@ -2,7 +2,7 @@ node_modules/
 dist/
 build/
 .turbo/
-
+.zip
 .env
 .env.*
 !.env.example

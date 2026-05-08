@@ -60,7 +60,7 @@ public static class DependencyInjection
                 "Database connection string is missing. Set ConnectionStrings:DefaultConnection or DATABASE_URL.");
         }
 
-        var migrationsAssembly = typeof(ApplicationDbContext).Assembly.GetName().Name;
+        var migrationsAssembly = typeof(ApplicationDbContext).Assembly.FullName;
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(

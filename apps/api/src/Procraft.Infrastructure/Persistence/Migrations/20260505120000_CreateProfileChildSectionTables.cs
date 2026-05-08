@@ -1,10 +1,14 @@
 using System;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Procraft.Infrastructure.Persistence;
 
 #nullable disable
 
 namespace Procraft.Infrastructure.Persistence.Migrations;
 
+[DbContext(typeof(ApplicationDbContext))]
+[Migration("20260505120000_CreateProfileChildSectionTables")]
 public partial class CreateProfileChildSectionTables : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)

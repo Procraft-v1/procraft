@@ -90,8 +90,14 @@ try
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-    var migrationsAssembly = typeof(ApplicationDbContext).Assembly.GetName().Name;
+    var migrationsAssembly = typeof(ApplicationDbContext).Assembly.FullName;
     var discoveredMigrations = db.Database.GetMigrations().ToList();
+    Log.Information(
+        "EF Core migration assembly loaded. Assembly={MigrationAssembly}; Discovered={DiscoveredCount}; DiscoveredMigrations={DiscoveredMigrations}",
+        migrationsAssembly,
+        discoveredMigrations.Count,
+        string.Join(", ", discoveredMigrations));
+
     if (discoveredMigrations.Count == 0)
     {
         throw new InvalidOperationException(
@@ -101,6 +107,7 @@ try
 
     var appliedBefore = (await db.Database.GetAppliedMigrationsAsync()).ToList();
     var pendingBefore = (await db.Database.GetPendingMigrationsAsync()).ToList();
+    Log.Information("Pending migrations: {Migrations}", string.Join(", ", pendingBefore));
 
     Log.Information(
         "EF Core migration startup check. Assembly={MigrationAssembly}; Discovered={DiscoveredCount}; Applied={AppliedCount}; Pending={PendingCount}; PendingMigrations={PendingMigrations}",

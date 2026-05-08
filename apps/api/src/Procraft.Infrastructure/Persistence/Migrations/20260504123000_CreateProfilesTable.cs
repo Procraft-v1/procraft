@@ -1,10 +1,14 @@
 using System;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Procraft.Infrastructure.Persistence;
 
 #nullable disable
 
 namespace Procraft.Infrastructure.Persistence.Migrations;
 
+[DbContext(typeof(ApplicationDbContext))]
+[Migration("20260504123000_CreateProfilesTable")]
 public partial class CreateProfilesTable : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
