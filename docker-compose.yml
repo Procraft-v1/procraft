@@ -29,6 +29,7 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
       DATABASE_URL: Host=postgres;Port=5432;Database=${POSTGRES_DB:-procraft};Username=${POSTGRES_USER:-procraft};Password=${POSTGRES_PASSWORD}
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-procraft};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD}"
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_ISSUER: ${JWT_ISSUER:-procraft.app}
       JWT_AUDIENCE: ${JWT_AUDIENCE:-procraft.app}
