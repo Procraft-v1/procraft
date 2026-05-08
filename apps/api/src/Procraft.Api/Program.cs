@@ -29,7 +29,7 @@ builder.Services.AddAuthorization(o =>
 
 builder.Services.AddCookiePolicy(options =>
 {
-    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+    options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
     options.Secure = builder.Environment.IsProduction()
         ? CookieSecurePolicy.Always
         : CookieSecurePolicy.None;
@@ -133,12 +133,8 @@ try
         appliedAfter);
 
     await TemplateSeeder.SeedAsync(db);
-
-    if (app.Environment.IsDevelopment())
-    {
-        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-        await StaticAccountSeeder.SeedAsync(db, passwordHasher);
-    }
+    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+    await StaticAccountSeeder.SeedAsync(db, passwordHasher);
 
     Log.Information("Database migrations and seeding completed successfully.");
 }

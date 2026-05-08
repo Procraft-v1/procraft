@@ -35,6 +35,11 @@ services:
       JWT_AUDIENCE: ${JWT_AUDIENCE:-procraft.app}
       JWT_ACCESS_MINUTES: ${JWT_ACCESS_MINUTES:-15}
       JWT_REFRESH_DAYS: ${JWT_REFRESH_DAYS:-7}
+      JWT_ACCESS_COOKIE_NAME: ${JWT_ACCESS_COOKIE_NAME:-__Host-procraft_access}
+      JWT_REFRESH_COOKIE_NAME: ${JWT_REFRESH_COOKIE_NAME:-__Host-procraft_refresh}
+      CSRF_COOKIE_NAME: ${CSRF_COOKIE_NAME:-procraft_csrf}
+      JWT_COOKIE_SAMESITE: ${JWT_COOKIE_SAMESITE:-None}
+      JWT_COOKIE_SECURE: ${JWT_COOKIE_SECURE:-true}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://procraft.uz}
       UPLOADS_ROOT: /app/uploads
     volumes:

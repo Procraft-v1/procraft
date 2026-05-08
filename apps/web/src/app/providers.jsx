@@ -1,14 +1,15 @@
-import { Provider as ReduxProvider } from 'react-redux';
-import { ConfigProvider, theme } from 'antd';
-import { QueryClientProvider } from '@tanstack/react-query';
-import uzUZ from 'antd/locale/uz_UZ';
-import { I18nextProvider } from 'react-i18next';
+import { Provider as ReduxProvider } from "react-redux";
+import { ConfigProvider, theme } from "antd";
+import { QueryClientProvider } from "@tanstack/react-query";
+import uzUZ from "antd/locale/uz_UZ";
+import { I18nextProvider } from "react-i18next";
 
-import { antDesignThemeToken } from '@procraft/config';
-import { i18next } from '@procraft/i18n';
-import { configureProcraftStore } from '@procraft/store';
+import { antDesignThemeToken } from "@procraft/config";
+import { i18next } from "@procraft/i18n";
+import { configureProcraftStore } from "@procraft/store";
+import { AuthProvider } from "@procraft/hooks";
 
-import { createWebQueryClient } from './query-client.js';
+import { createWebQueryClient } from "./query-client.js";
 
 const store = configureProcraftStore();
 
@@ -24,12 +25,12 @@ export default function Providers({ children }) {
           <ConfigProvider
             locale={uzUZ}
             theme={{
-              cssVar: { key: 'pc' },
+              cssVar: { key: "pc" },
               algorithm: theme.defaultAlgorithm,
               token: antDesignThemeToken,
             }}
           >
-            {children}
+            <AuthProvider>{children}</AuthProvider>
           </ConfigProvider>
         </QueryClientProvider>
       </I18nextProvider>
