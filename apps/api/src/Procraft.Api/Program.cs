@@ -89,7 +89,42 @@ try
 {
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    var migrationsAssembly = typeof(ApplicationDbContext).Assembly.GetName().Name;
+    var discoveredMigrations = db.Database.GetMigrations().ToList();
+    if (discoveredMigrations.Count == 0)
+    {
+        throw new InvalidOperationException(
+            $"No EF Core migrations were discovered in assembly '{migrationsAssembly}'. " +
+            "The published Docker image is missing compiled migrations or the DbContext migration assembly is misconfigured.");
+    }
+
+    var appliedBefore = (await db.Database.GetAppliedMigrationsAsync()).ToList();
+    var pendingBefore = (await db.Database.GetPendingMigrationsAsync()).ToList();
+
+    Log.Information(
+        "EF Core migration startup check. Assembly={MigrationAssembly}; Discovered={DiscoveredCount}; Applied={AppliedCount}; Pending={PendingCount}; PendingMigrations={PendingMigrations}",
+        migrationsAssembly,
+        discoveredMigrations.Count,
+        appliedBefore.Count,
+        pendingBefore.Count,
+        pendingBefore);
+
     await db.Database.MigrateAsync();
+
+    var appliedAfter = (await db.Database.GetAppliedMigrationsAsync()).ToList();
+    var stillPending = (await db.Database.GetPendingMigrationsAsync()).ToList();
+    if (stillPending.Count > 0)
+    {
+        throw new InvalidOperationException(
+            $"EF Core migration did not apply all migrations. Pending migrations: {string.Join(", ", stillPending)}");
+    }
+
+    Log.Information(
+        "EF Core migrations applied successfully. Applied={AppliedCount}; AppliedMigrations={AppliedMigrations}",
+        appliedAfter.Count,
+        appliedAfter);
+
     await TemplateSeeder.SeedAsync(db);
 
     if (app.Environment.IsDevelopment())
@@ -103,11 +138,7 @@ try
 catch (Exception ex)
 {
     Log.Error(ex, "Database migration or seeding failed. Check DATABASE_URL configuration.");
-
-    if (app.Environment.IsProduction())
-    {
-        Log.Warning("API is starting without completed migrations. Some endpoints may fail.");
-    }
+    throw;
 }
 
 try
