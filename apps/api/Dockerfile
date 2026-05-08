@@ -14,6 +14,7 @@ WORKDIR /app
 COPY --from=build /app/out ./
 
 ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "Procraft.Api.dll"]

@@ -6,6 +6,7 @@ using Procraft.Infrastructure;
 using Procraft.Infrastructure.Options;
 using Procraft.Infrastructure.Persistence;
 using Procraft.Infrastructure.Persistence.Seed;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -44,6 +45,11 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+});
+
 app.UseSerilogRequestLogging();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -66,20 +72,21 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseRouting();
 
-app.UseProcraftSwagger();
 app.UseProcraftCors();
+app.UseProcraftSwagger();
 
 app.UseAuthentication();
 app.UseMiddleware<CsrfMiddleware>();
 
 app.UseAuthorization();
 
+app.UseIssueCsrfCookieAfterAuth();
+
 app.MapControllers();
 app.MapStandaloneHealth();
 
 try
 {
-    // Run migrations and seed reference data
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await db.Database.MigrateAsync();
@@ -90,10 +97,17 @@ try
         var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
         await StaticAccountSeeder.SeedAsync(db, passwordHasher);
     }
+
+    Log.Information("Database migrations and seeding completed successfully.");
 }
-catch (Exception ex) when (app.Environment.IsDevelopment())
+catch (Exception ex)
 {
-    Log.Warning(ex, "Database migration and template seeding were skipped. Start PostgreSQL and restart the API to enable database-backed endpoints.");
+    Log.Error(ex, "Database migration or seeding failed. Check DATABASE_URL configuration.");
+
+    if (app.Environment.IsProduction())
+    {
+        Log.Warning("API is starting without completed migrations. Some endpoints may fail.");
+    }
 }
 
 try

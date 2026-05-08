@@ -1,6 +1,7 @@
 using Procraft.Application.Common.Configuration;
 using Procraft.Application.Common.Security;
 using Procraft.Infrastructure.Options;
+using Microsoft.Extensions.Options;
 
 namespace Procraft.Api.Extensions;
 
@@ -11,6 +12,43 @@ public static class WebApplicationExtensions
         app.MapGet(
             "/health",
             () => Results.Ok(new { status = "Healthy" }));
+
+        return app;
+    }
+
+    public static WebApplication UseIssueCsrfCookieAfterAuth(this WebApplication app)
+    {
+        app.Use(async (context, next) =>
+        {
+            var path = context.Request.Path;
+            var method = context.Request.Method;
+            var isAuthEndpoint =
+                HttpMethods.IsPost(method) &&
+                (path.StartsWithSegments("/api/auth/login", StringComparison.OrdinalIgnoreCase) ||
+                 path.StartsWithSegments("/api/auth/register", StringComparison.OrdinalIgnoreCase) ||
+                 path.StartsWithSegments("/api/auth/refresh", StringComparison.OrdinalIgnoreCase));
+
+            if (isAuthEndpoint)
+            {
+                context.Response.OnStarting(() =>
+                {
+                    var statusCode = context.Response.StatusCode;
+                    var options = context.RequestServices
+                        .GetRequiredService<IOptions<AuthCookieOptions>>()
+                        .Value;
+
+                    if (statusCode is >= 200 and < 300 &&
+                        !context.Request.Cookies.ContainsKey(options.CsrfCookieName))
+                    {
+                        CookieExtensions.IssueCsrfTokenCookie(context);
+                    }
+
+                    return Task.CompletedTask;
+                });
+            }
+
+            await next();
+        });
 
         return app;
     }

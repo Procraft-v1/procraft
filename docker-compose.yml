@@ -1,17 +1,18 @@
+version: "3.9"
+
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER:-procraft}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       POSTGRES_DB: ${POSTGRES_DB:-procraft}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-procraft}"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
@@ -19,22 +20,32 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-procraft};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD}"
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_ISSUER: ${JWT_ISSUER:-procraft.local}
-      JWT_AUDIENCE: ${JWT_AUDIENCE:-procraft.local}
-      JWT_ACCESS_MINUTES: ${JWT_ACCESS_MINUTES:-15}
-      JWT_REFRESH_DAYS: ${JWT_REFRESH_DAYS:-7}
-      UPLOADS_ROOT: /app/uploads
-    ports:
-      - "5080:8080"
+    restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      DATABASE_URL: Host=postgres;Port=5432;Database=${POSTGRES_DB:-procraft};Username=${POSTGRES_USER:-procraft};Password=${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_ISSUER: ${JWT_ISSUER:-procraft.app}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-procraft.app}
+      JWT_ACCESS_MINUTES: ${JWT_ACCESS_MINUTES:-15}
+      JWT_REFRESH_DAYS: ${JWT_REFRESH_DAYS:-7}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://procraft.uz}
+      UPLOADS_ROOT: /app/uploads
     volumes:
       - uploads_data:/app/uploads
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 volumes:
   postgres_data:
