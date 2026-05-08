@@ -38,6 +38,12 @@ public partial class AddTemplatesAndProfileSelection : Migration
             type: "uuid",
             nullable: true);
 
+        migrationBuilder.CreateIndex(
+            name: "IX_templates_Slug",
+            table: "templates",
+            column: "Slug",
+            unique: true);
+
         migrationBuilder.Sql("""
             INSERT INTO templates ("Id", "Name", "Slug", "Description", "PreviewUrl", "IsActive", "IsPremium", "CreatedAt", "UpdatedAt")
             VALUES
@@ -46,12 +52,6 @@ public partial class AddTemplatesAndProfileSelection : Migration
                 ('8f3e3e6c-0f8a-4d90-9b18-0d33f0bb7d03', 'Classic', 'classic', 'Traditional chronological resume.', NULL, TRUE, FALSE, TIMESTAMPTZ '2026-05-04 12:45:00+00', NULL)
             ON CONFLICT ("Slug") DO NOTHING;
             """);
-
-        migrationBuilder.CreateIndex(
-            name: "IX_templates_Slug",
-            table: "templates",
-            column: "Slug",
-            unique: true);
 
         migrationBuilder.CreateIndex(
             name: "IX_profiles_TemplateId",
