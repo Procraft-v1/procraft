@@ -31,13 +31,6 @@ public sealed class CsrfMiddleware
             return;
         }
 
-        // TODO (security): tighten allowlist once SPA bootstrapping + cookie issuance finalized.
-        if (context.Request.Path.StartsWithSegments("/api/auth", StringComparison.OrdinalIgnoreCase))
-        {
-            await _next(context);
-            return;
-        }
-
         var cookieName = _options.CsrfCookieName;
         var cookie = context.Request.Cookies[cookieName];
         context.Request.Headers.TryGetValue(CsrfConstants.HeaderName, out var headerValues);

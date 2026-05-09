@@ -22,7 +22,9 @@ export function attachAuthInterceptors(client) {
       originalRequest._retry = true;
 
       try {
-        refreshRequest ??= client.post('/auth/refresh', undefined, { skipAuthRefresh: true });
+        refreshRequest ??= client
+          .get('/auth/csrf', { skipAuthRefresh: true, skipAuthRedirect: true })
+          .then(() => client.post('/auth/refresh', undefined, { skipAuthRefresh: true }));
         await refreshRequest;
         return client.request(originalRequest);
       } catch (refreshError) {

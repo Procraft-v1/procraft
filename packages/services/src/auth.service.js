@@ -1,10 +1,19 @@
 import { axiosClient } from '@procraft/api';
 
-export function register(payload) {
+export function getCsrf() {
+  return axiosClient.get('/auth/csrf', {
+    skipAuthRefresh: true,
+    skipAuthRedirect: true,
+  });
+}
+
+export async function register(payload) {
+  await getCsrf();
   return axiosClient.post('/auth/register', payload);
 }
 
-export function login(payload) {
+export async function login(payload) {
+  await getCsrf();
   return axiosClient.post('/auth/login', payload);
 }
 

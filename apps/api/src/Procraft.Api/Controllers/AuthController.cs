@@ -20,6 +20,14 @@ public sealed class AuthController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet("csrf")]
+    [AllowAnonymous]
+    public IActionResult Csrf()
+    {
+        Procraft.Api.Extensions.CookieExtensions.IssueCsrfTokenCookie(HttpContext);
+        return NoContent();
+    }
+
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<ActionResult> RegisterAsync([FromBody] RegisterApiRequest request, CancellationToken cancellationToken)
