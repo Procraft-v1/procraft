@@ -216,10 +216,10 @@ function LoginScreen({ isLoading, onFinish }) {
           <Form layout="vertical" requiredMark={false} onFinish={onFinish}>
             <Form.Item
               label="Login"
-              name="username"
+              name="login"
               rules={[{ required: true, message: "Login kiriting." }]}
             >
-              <Input autoComplete="username" size="large" />
+              <Input autoComplete="login" size="large" />
             </Form.Item>
             <Form.Item
               label="Parol"
