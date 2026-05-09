@@ -1,4 +1,5 @@
 import { Typography } from "antd";
+import { resolveAssetUrl } from "@procraft/config";
 import "./ModernTemplate.css";
 /* ─── DATA / LOGIC (o'zgartirilmagan) ──────────────────────── */
 const educationTypeLabels = {
@@ -170,7 +171,7 @@ function HeroSection({ profile, projects, skills, experiences }) {
         <div className="mw-hero__avatar-ring" aria-hidden="true" />
         <div className="mw-avatar">
           {profile.avatarUrl ? (
-            <img src={profile.avatarUrl} alt={profile.fullName || "Profile"} />
+            <img src={resolveAssetUrl(profile.avatarUrl)} alt={profile.fullName || "Profile"} />
           ) : (
             <span>{initials(profile)}</span>
           )}
@@ -457,7 +458,7 @@ function CredentialsSection({ educations, certificates }) {
                 <span className="mw-cred-card__type">{item.issuer}</span>
               )}
               {item.url && (
-                <ExternalLink href={item.url} className="mw-cred-card__link">
+                <ExternalLink href={resolveAssetUrl(item.url)} className="mw-cred-card__link">
                   Sertifikatni ko'rish →
                 </ExternalLink>
               )}

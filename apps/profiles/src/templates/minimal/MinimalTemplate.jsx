@@ -1,4 +1,5 @@
 import { Typography } from 'antd';
+import { resolveAssetUrl } from '@procraft/config';
 import './MinimalTemplate.css';
 
 function hasItems(items) {
@@ -76,7 +77,7 @@ export default function MinimalTemplate({ profile }) {
         <aside className="site-hero__card">
           <div className="site-avatar">
             {profile.avatarUrl ? (
-              <img src={profile.avatarUrl} alt={profile.fullName || 'Profile avatar'} />
+              <img src={resolveAssetUrl(profile.avatarUrl)} alt={profile.fullName || 'Profile avatar'} />
             ) : (
               <span>{initials(profile)}</span>
             )}
@@ -159,7 +160,7 @@ export default function MinimalTemplate({ profile }) {
                 <article key={item.id || item.name}>
                   <strong>{item.name}</strong>
                   {item.issuer ? <p>{item.issuer}</p> : null}
-                  {item.url ? <ExternalLink href={item.url}>Sertifikatni ko'rish</ExternalLink> : null}
+                  {item.url ? <ExternalLink href={resolveAssetUrl(item.url)}>Sertifikatni ko'rish</ExternalLink> : null}
                 </article>
               ))}
             </div>

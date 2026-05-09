@@ -20,6 +20,7 @@ import {
   message,
 } from "antd";
 import { DeleteOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { resolveAssetUrl } from "@procraft/config";
 import { getErrorMessage } from "@procraft/i18n";
 import {
   useCertificates,
@@ -400,7 +401,7 @@ function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
       <Space size={18} align="center" wrap>
         <Avatar
           size={96}
-          src={profile?.avatarUrl}
+          src={resolveAssetUrl(profile?.avatarUrl)}
           style={{ background: "#2563EB", fontSize: 30, fontWeight: 800 }}
         >
           {getProfileInitials(profile)}
@@ -851,7 +852,7 @@ export default function ProfilePage() {
                   </Typography.Text>
                 ) : null}
                 {item.url ? (
-                  <Typography.Link href={item.url}>{item.url}</Typography.Link>
+                  <Typography.Link href={resolveAssetUrl(item.url)}>{item.url}</Typography.Link>
                 ) : null}
               </Space>
             }

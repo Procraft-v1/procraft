@@ -21,6 +21,24 @@ export function getUploadsBaseUrl() {
   return readVite('VITE_UPLOADS_URL', '/uploads');
 }
 
+export function resolveAssetUrl(value) {
+  if (!value) {
+    return value;
+  }
+
+  if (/^(https?:)?\/\//i.test(value) || value.startsWith('data:') || value.startsWith('blob:')) {
+    return value;
+  }
+
+  if (!value.startsWith('/uploads')) {
+    return value;
+  }
+
+  const baseUrl = getUploadsBaseUrl().replace(/\/$/, '');
+  const path = value.startsWith('/') ? value : `/${value}`;
+  return `${baseUrl}${path.replace(/^\/uploads/, '')}`;
+}
+
 export function getAppName() {
   return readVite('VITE_APP_NAME', 'Procraft');
 }
