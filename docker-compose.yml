@@ -41,9 +41,9 @@ services:
       CSRF_COOKIE_DOMAIN: ${CSRF_COOKIE_DOMAIN:-.procraft.uz}
       JWT_COOKIE_SAMESITE: ${JWT_COOKIE_SAMESITE:-None}
       JWT_COOKIE_SECURE: ${JWT_COOKIE_SECURE:-true}
-      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-CHANGE_ME}
-      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:-CHANGE_ME_LONG_RANDOM_VALUE}
+      Admin__Username: ${ADMIN_USERNAME:-admin}
+      Admin__Password: ${ADMIN_PASSWORD:-CHANGE_ME}
+      Admin__SessionSecret: ${ADMIN_SESSION_SECRET:-CHANGE_ME_LONG_RANDOM_VALUE}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://procraft.uz,https://www.procraft.uz,https://dashboard.procraft.uz,https://admin.procraft.uz}
       UPLOADS_ROOT: /app/uploads
     volumes:

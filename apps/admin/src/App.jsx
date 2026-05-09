@@ -15,9 +15,12 @@ import {
   message,
 } from "antd";
 import {
+  EyeOutlined,
   LogoutOutlined,
   ReloadOutlined,
+  RiseOutlined,
   TeamOutlined,
+  UserAddOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons";
 import { getApiBaseUrl } from "@procraft/config";
@@ -148,9 +151,69 @@ export default function App() {
           />
         </Card>
         <Card>
+          <Statistic
+            title="Bugun ro'yxatdan o'tganlar"
+            value={stats?.usersToday ?? 0}
+            prefix={<UserAddOutlined />}
+          />
+        </Card>
+        <Card>
+          <Statistic title="Bugun profil yaratganlar" value={stats?.profilesToday ?? 0} />
+        </Card>
+        <Card>
+          <Statistic
+            title="Public profil ko'rishlari"
+            value={stats?.totalProfileViews ?? 0}
+            prefix={<EyeOutlined />}
+          />
+        </Card>
+        <Card>
+          <Statistic
+            title="Oxirgi 7 kun ko'rishlari"
+            value={stats?.profileViewsLast7Days ?? 0}
+            prefix={<RiseOutlined />}
+          />
+        </Card>
+        <Card>
           <Statistic title="Template tanlamagan profillar" value={stats?.profilesWithoutTemplate ?? 0} />
         </Card>
       </section>
+
+      <Card
+        className="admin-table-card"
+        title="Eng ko'p ko'rilgan profillar"
+        extra={<Typography.Text type="secondary">{stats?.topProfiles?.length ?? 0} ta profil</Typography.Text>}
+      >
+        {stats?.topProfiles?.length ? (
+          <Table
+            rowKey="profileId"
+            pagination={false}
+            dataSource={stats.topProfiles}
+            columns={[
+              {
+                title: "Profil",
+                dataIndex: "fullName",
+                render: (fullName, item) => (
+                  <div>
+                    <Typography.Text strong>{fullName || item.username}</Typography.Text>
+                    <Typography.Text type="secondary" className="admin-template-slug">
+                      {item.username}.procraft.uz
+                    </Typography.Text>
+                  </div>
+                ),
+              },
+              {
+                title: "Ko'rishlar",
+                dataIndex: "views",
+                width: 160,
+                render: (views) => <Typography.Text strong>{views}</Typography.Text>,
+              },
+            ]}
+          />
+        ) : (
+          <Alert type="info" message="Hali public profile ko'rishlari yo'q." />
+        )}
+      </Card>
 
       <Card
         className="admin-table-card"

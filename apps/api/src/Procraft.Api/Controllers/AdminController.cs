@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Procraft.Application.Common.Interfaces;
+using Procraft.Domain.Enums;
 
 namespace Procraft.Api.Controllers;
 
@@ -67,6 +68,20 @@ public sealed class AdminController : ControllerBase
 
         var totalUsers = await _db.Users.AsNoTracking().CountAsync(cancellationToken);
         var totalProfiles = await _db.Profiles.AsNoTracking().CountAsync(cancellationToken);
+        var today = new DateTimeOffset(DateTimeOffset.UtcNow.Date, TimeSpan.Zero);
+        var sevenDaysAgo = DateTimeOffset.UtcNow.AddDays(-7);
+        var usersToday = await _db.Users
+            .AsNoTracking()
+            .CountAsync(user => user.CreatedAt >= today, cancellationToken);
+        var profilesToday = await _db.Profiles
+            .AsNoTracking()
+            .CountAsync(profile => profile.CreatedAt >= today, cancellationToken);
+        var totalProfileViews = await _db.AnalyticsEvents
+            .AsNoTracking()
+            .CountAsync(item => item.EventType == AnalyticsEventType.PageView, cancellationToken);
+        var profileViewsLast7Days = await _db.AnalyticsEvents
+            .AsNoTracking()
+            .CountAsync(item => item.EventType == AnalyticsEventType.PageView && item.CreatedAt >= sevenDaysAgo, cancellationToken);
         var profilesWithoutTemplate = await _db.Profiles
             .AsNoTracking()
             .CountAsync(profile => profile.TemplateId == null, cancellationToken);
@@ -81,7 +96,43 @@ public sealed class AdminController : ControllerBase
                 template.Profiles.Count))
             .ToListAsync(cancellationToken);
 
-        return Ok(new AdminStatsResponse(totalUsers, totalProfiles, profilesWithoutTemplate, templateUsage));
+        var topProfiles = await _db.AnalyticsEvents
+            .AsNoTracking()
+            .Where(item => item.EventType == AnalyticsEventType.PageView && item.ProfileId != null)
+            .GroupBy(item => item.ProfileId!.Value)
+            .Select(group => new
+            {
+                ProfileId = group.Key,
+                Views = group.Count(),
+            })
+            .OrderByDescending(item => item.Views)
+            .Take(5)
+            .Join(
+                _db.Profiles.AsNoTracking(),
+                item => item.ProfileId,
+                profile => profile.Id,
+                (item, profile) => new { item, profile })
+            .Join(
+                _db.Users.AsNoTracking(),
+                item => item.profile.UserId,
+                user => user.Id,
+                (item, user) => new AdminTopProfileDto(
+                    item.profile.Id,
+                    item.profile.FullName,
+                    user.Username,
+                    item.item.Views))
+            .ToListAsync(cancellationToken);
+
+        return Ok(new AdminStatsResponse(
+            totalUsers,
+            totalProfiles,
+            usersToday,
+            profilesToday,
+            totalProfileViews,
+            profileViewsLast7Days,
+            profilesWithoutTemplate,
+            templateUsage,
+            topProfiles));
     }
 
     private bool IsAdminAuthenticated()
@@ -149,7 +200,14 @@ public sealed record AdminLoginRequest(string Username, string Password);
 public sealed record AdminStatsResponse(
     int TotalUsers,
     int TotalProfiles,
+    int UsersToday,
+    int ProfilesToday,
+    int TotalProfileViews,
+    int ProfileViewsLast7Days,
     int ProfilesWithoutTemplate,
-    IReadOnlyCollection<AdminTemplateUsageDto> TemplateUsage);
+    IReadOnlyCollection<AdminTemplateUsageDto> TemplateUsage,
+    IReadOnlyCollection<AdminTopProfileDto> TopProfiles);
 
 public sealed record AdminTemplateUsageDto(Guid TemplateId, string Name, string Slug, int Users);
+
+public sealed record AdminTopProfileDto(Guid ProfileId, string FullName, string Username, int Views);

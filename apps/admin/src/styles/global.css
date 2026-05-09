@@ -93,6 +93,10 @@ body {
   box-shadow: 0 14px 40px rgb(13 27 42 / 5%);
 }
 
+.admin-table-card {
+  margin-bottom: 16px;
+}
+
 .admin-template-slug {
   display: block;
   margin-top: 2px;
