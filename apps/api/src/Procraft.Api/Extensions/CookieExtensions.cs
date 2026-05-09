@@ -23,6 +23,9 @@ public static class CookieExtensions
                 Secure = options.Secure,
                 SameSite = ParseSameSite(options.SameSite),
                 Path = "/",
+                Domain = string.IsNullOrWhiteSpace(options.CsrfCookieDomain)
+                    ? null
+                    : options.CsrfCookieDomain,
             });
     }
 

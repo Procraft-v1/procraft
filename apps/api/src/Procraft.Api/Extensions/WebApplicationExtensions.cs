@@ -109,6 +109,12 @@ public static class WebApplicationExtensions
                 options.CsrfCookieName = csrfCookie!;
             }
 
+            var csrfCookieDomain = builder.Configuration["CSRF_COOKIE_DOMAIN"];
+            if (!string.IsNullOrWhiteSpace(csrfCookieDomain))
+            {
+                options.CsrfCookieDomain = csrfCookieDomain!;
+            }
+
             var sameSite = builder.Configuration["JWT_COOKIE_SAMESITE"];
             if (!string.IsNullOrWhiteSpace(sameSite))
             {

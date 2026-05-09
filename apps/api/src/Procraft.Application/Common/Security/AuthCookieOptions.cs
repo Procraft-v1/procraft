@@ -8,6 +8,8 @@ public sealed class AuthCookieOptions
 
     public string CsrfCookieName { get; set; } = CookieNames.Csrf;
 
+    public string? CsrfCookieDomain { get; set; }
+
     public string SameSite { get; set; } = "Lax";
 
     public bool Secure { get; set; }
