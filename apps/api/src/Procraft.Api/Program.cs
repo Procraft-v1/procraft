@@ -133,8 +133,19 @@ try
         appliedAfter);
 
     await TemplateSeeder.SeedAsync(db);
-    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-    await StaticAccountSeeder.SeedAsync(db, passwordHasher);
+    try
+    {
+        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+        var staticSeedLogger = scope.ServiceProvider
+            .GetRequiredService<ILoggerFactory>()
+            .CreateLogger("Procraft.Infrastructure.Persistence.Seed.StaticAccountSeeder");
+
+        await StaticAccountSeeder.SeedAsync(db, passwordHasher, staticSeedLogger);
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Static account seeding failed after migrations. API startup will continue.");
+    }
 
     Log.Information("Database migrations and seeding completed successfully.");
 }

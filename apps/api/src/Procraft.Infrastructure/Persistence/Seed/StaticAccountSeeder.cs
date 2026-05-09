@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Procraft.Application.Common.Interfaces;
 using Procraft.Domain.Entities;
 
@@ -13,55 +14,140 @@ public static class StaticAccountSeeder
     public static async Task SeedAsync(
         ApplicationDbContext db,
         IPasswordHasher passwordHasher,
+        ILogger? logger = null,
         CancellationToken cancellationToken = default)
     {
-        var user = await db.Users
-            .Include(x => x.Profile)
-            .FirstOrDefaultAsync(x => x.Email == Email || x.Username == Username, cancellationToken);
+        try
+        {
+            await SeedCoreAsync(db, passwordHasher, logger, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(
+                ex,
+                "Static account seeding failed. API startup will continue. Email={Email}; Username={Username}",
+                Email,
+                Username);
+        }
+    }
 
+    private static async Task SeedCoreAsync(
+        ApplicationDbContext db,
+        IPasswordHasher passwordHasher,
+        ILogger? logger,
+        CancellationToken cancellationToken)
+    {
+        var normalizedEmail = Email.Trim().ToLowerInvariant();
+        var normalizedUsername = Username.Trim().ToLowerInvariant();
         var now = DateTimeOffset.UtcNow;
 
-        if (user is null)
-        {
-            user = new User
-            {
-                Id = Guid.NewGuid(),
-                Email = Email,
-                Username = Username,
-                PasswordHash = passwordHasher.Hash(Password),
-                IsEmailConfirmed = true,
-                CreatedAt = now,
-            };
+        var matches = await db.Users
+            .AsNoTracking()
+            .Where(x => x.Email.ToLower() == normalizedEmail || x.Username.ToLower() == normalizedUsername)
+            .Select(x => new { x.Id, x.Email, x.Username })
+            .ToListAsync(cancellationToken);
 
-            await db.Users.AddAsync(user, cancellationToken);
+        if (matches.Count > 1)
+        {
+            logger?.LogWarning(
+                "Static account seed skipped because multiple users match the configured email or username. Email={Email}; Username={Username}; Count={Count}",
+                Email,
+                Username,
+                matches.Count);
+            return;
+        }
+
+        var existing = matches.SingleOrDefault();
+        Guid userId;
+
+        if (existing is null)
+        {
+            userId = Guid.NewGuid();
+
+            await db.Users.AddAsync(
+                new User
+                {
+                    Id = userId,
+                    Email = normalizedEmail,
+                    Username = normalizedUsername,
+                    PasswordHash = passwordHasher.Hash(Password),
+                    IsEmailConfirmed = true,
+                    CreatedAt = now,
+                },
+                cancellationToken);
+
+            await db.SaveChangesAsync(cancellationToken);
+
+            logger?.LogInformation(
+                "Static account created. UserId={UserId}; Email={Email}; Username={Username}",
+                userId,
+                normalizedEmail,
+                normalizedUsername);
         }
         else
         {
-            user.Email = Email;
-            user.Username = Username;
-            user.PasswordHash = passwordHasher.Hash(Password);
-            user.IsEmailConfirmed = true;
-            user.UpdatedAt = now;
+            userId = existing.Id;
+
+            var updated = await db.Users
+                .Where(x => x.Id == userId)
+                .ExecuteUpdateAsync(
+                    setters => setters
+                        .SetProperty(x => x.Email, normalizedEmail)
+                        .SetProperty(x => x.Username, normalizedUsername)
+                        .SetProperty(x => x.PasswordHash, passwordHasher.Hash(Password))
+                        .SetProperty(x => x.IsEmailConfirmed, true)
+                        .SetProperty(x => x.UpdatedAt, now),
+                    cancellationToken);
+
+            if (updated == 0)
+            {
+                logger?.LogWarning(
+                    "Static account seed skipped because the matched user no longer exists. UserId={UserId}; Email={Email}; Username={Username}",
+                    userId,
+                    normalizedEmail,
+                    normalizedUsername);
+                return;
+            }
+
+            logger?.LogInformation(
+                "Static account updated. UserId={UserId}; Email={Email}; Username={Username}",
+                userId,
+                normalizedEmail,
+                normalizedUsername);
         }
 
-        if (user.Profile is null)
-        {
-            var templateId = await db.Templates
-                .Where(x => x.Slug == "minimal")
-                .Select(x => (Guid?)x.Id)
-                .FirstOrDefaultAsync(cancellationToken);
+        var hasProfile = await db.Profiles
+            .AsNoTracking()
+            .AnyAsync(x => x.UserId == userId, cancellationToken);
 
-            user.Profile = new Profile
+        if (hasProfile)
+        {
+            return;
+        }
+
+        var templateId = await db.Templates
+            .AsNoTracking()
+            .Where(x => x.Slug == "minimal")
+            .Select(x => (Guid?)x.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        await db.Profiles.AddAsync(
+            new Profile
             {
                 Id = Guid.NewGuid(),
-                UserId = user.Id,
+                UserId = userId,
                 TemplateId = templateId,
                 FullName = "Raximjon Tulaganov",
                 Title = "Procraft User",
                 CreatedAt = now,
-            };
-        }
+            },
+            cancellationToken);
 
         await db.SaveChangesAsync(cancellationToken);
+
+        logger?.LogInformation(
+            "Static account profile created. UserId={UserId}; TemplateId={TemplateId}",
+            userId,
+            templateId);
     }
 }

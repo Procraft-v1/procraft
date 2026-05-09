@@ -25,7 +25,11 @@ export default function Login() {
       await login(values);
       navigate(searchParams.get("returnTo") || "/dashboard", { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed.");
+      if (!err.response) {
+        setError("Login request failed. Check API CORS/origin configuration.");
+      } else {
+        setError(err.response?.data?.message || "Login failed.");
+      }
     } finally {
       setIsSubmitting(false);
     }
