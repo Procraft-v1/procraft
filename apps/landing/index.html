@@ -2,30 +2,254 @@
 <html lang="uz">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/brand/procraft-app-icon-rounded.png" />
-    <link rel="apple-touch-icon" href="/brand/procraft-app-icon-rounded.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#0D1B2A" />
+
+    <title>Procraft - Portfolio sayt va resume yaratish platformasi</title>
     <meta
       name="description"
-      content="Procraft - professional portfolios, ATS-friendly PDF resumes, and analytics built for Uzbekistan-based professionals."
+      content="Procraft orqali professional portfolio sayt yarating, shablon tanlang, resume tayyorlang va public profilingizni tez ulashing."
+    />
+    <meta
+      name="keywords"
+      content="portfolio yaratish, resume yaratish, CV builder, portfolio website, Procraft, Uzbekistan portfolio, public profile"
     />
     <link rel="canonical" href="https://procraft.uz/" />
+    <link rel="alternate" hreflang="uz" href="https://procraft.uz/" />
+
+    <link rel="icon" type="image/png" href="/brand/procraft-app-icon-rounded.png" />
+    <link rel="apple-touch-icon" href="/brand/procraft-app-icon-rounded.png" />
+    <link rel="preload" as="image" href="/templates/modern.jpg" />
+    <link rel="stylesheet" href="/styles/landing.css" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Procraft - Professional Portfolio & ATS Resumes" />
-    <meta property="og:description" content="Create polished public portfolios, export ATS-friendly resumes, and track analytics." />
+    <meta property="og:site_name" content="Procraft" />
+    <meta property="og:title" content="Procraft - Portfolio sayt va resume yaratish platformasi" />
+    <meta
+      property="og:description"
+      content="Professional portfolio sayt yarating, shablon tanlang va profilingizni mijozlar yoki ish beruvchilar bilan ulashing."
+    />
     <meta property="og:url" content="https://procraft.uz/" />
-    <!-- og:image finalized when OG asset pipeline exists -->
+    <meta property="og:image" content="https://procraft.uz/templates/modern.jpg" />
+    <meta property="og:locale" content="uz_UZ" />
 
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Procraft - Portfolio sayt yaratish" />
+    <meta
+      name="twitter:description"
+      content="Portfolio, resume va public profile uchun sodda platforma."
+    />
+    <meta name="twitter:image" content="https://procraft.uz/templates/modern.jpg" />
 
-    <title>Procraft</title>
-
-    <!-- JSON-LD plan: Organization + Product once legal entity finalized -->
-    <!-- <script type="application/ld+json">...</script> -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Procraft",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "url": "https://procraft.uz/",
+        "image": "https://procraft.uz/templates/modern.jpg",
+        "description": "Professional portfolio sayt va resume yaratish platformasi.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Procraft nima uchun kerak?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Procraft mutaxassislar uchun portfolio sayt, resume va public profile yaratishga yordam beradi."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Dashboard qayerda joylashgan?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Portfolio yaratish ilovasi dashboard.procraft.uz manzilida ishlaydi."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Template keyin almashtiriladimi?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ha. Profil ma'lumotlari saqlanadi, faqat public ko'rinish tanlangan template bo'yicha o'zgaradi."
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Procraft bosh sahifa">
+        <img src="/brand/procraft-logo-mark-transparent.png" width="34" height="34" alt="" />
+        <span>Procraft</span>
+      </a>
+      <nav class="site-nav" aria-label="Asosiy navigatsiya">
+        <a href="#features">Imkoniyatlar</a>
+        <a href="#templates">Shablonlar</a>
+        <a href="#how">Jarayon</a>
+        <a href="#faq">FAQ</a>
+        <a class="nav-action" href="https://dashboard.procraft.uz/">Dashboard</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__content">
+          <p class="eyebrow">Portfolio sayt yaratish platformasi</p>
+          <h1 id="hero-title">Procraft</h1>
+          <p class="hero__lead">
+            Professional public profile, portfolio sayt va resume uchun bitta joy. Ma'lumotlarni kiriting,
+            shablon tanlang va profilingizni ulashing.
+          </p>
+          <div class="hero__actions">
+            <a class="button button--primary" href="https://dashboard.procraft.uz/register">Bepul boshlash</a>
+            <a class="button button--secondary" href="#templates">Shablonlarni ko'rish</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="proof-band" aria-label="Procraft qisqa statistikasi">
+        <div>
+          <strong>3</strong>
+          <span>tayyor portfolio shabloni</span>
+        </div>
+        <div>
+          <strong>1</strong>
+          <span>public profile link</span>
+        </div>
+        <div>
+          <strong>PDF</strong>
+          <span>resume eksport moduli</span>
+        </div>
+      </section>
+
+      <section class="section" id="features" aria-labelledby="features-title">
+        <div class="section__header">
+          <p class="eyebrow">Imkoniyatlar</p>
+          <h2 id="features-title">Portfolio profilingiz ishga tayyor ko'rinadi.</h2>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Public profile</h3>
+            <p>Username asosida esda qoladigan procraft.uz public link hosil bo'ladi.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Resume ma'lumotlari</h3>
+            <p>Tajriba, ta'lim, ko'nikma, loyiha va sertifikatlarni tartibli saqlang.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Shablon nazorati</h3>
+            <p>Minimal, Modern yoki Classic ko'rinishlar orasidan o'zingizga mosini tanlang.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section--muted" id="templates" aria-labelledby="templates-title">
+        <div class="section__header">
+          <p class="eyebrow">Shablonlar</p>
+          <h2 id="templates-title">Bitta profil, uch xil professional ko'rinish.</h2>
+        </div>
+        <div class="template-grid">
+          <article class="template-card">
+            <img src="/templates/minimal.jpg" width="640" height="400" loading="lazy" alt="Minimal portfolio shabloni" />
+            <h3>Minimal</h3>
+            <p>Oq, tinch va resume uslubiga yaqin ko'rinish.</p>
+          </article>
+          <article class="template-card">
+            <img src="/templates/modern.jpg" width="640" height="400" loading="lazy" alt="Modern portfolio shabloni" />
+            <h3>Modern</h3>
+            <p>Karta va accent ranglar bilan zamonaviy public profile.</p>
+          </article>
+          <article class="template-card">
+            <img src="/templates/classic.jpg" width="640" height="400" loading="lazy" alt="Classic portfolio shabloni" />
+            <h3>Classic</h3>
+            <p>Rasmiy, tartibli va klassik portfolio taqdimoti.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="how" aria-labelledby="how-title">
+        <div class="section__header">
+          <p class="eyebrow">Jarayon</p>
+          <h2 id="how-title">Profil yaratish sodda.</h2>
+        </div>
+        <ol class="steps">
+          <li>
+            <span>1</span>
+            <div>
+              <h3>Ro'yxatdan o'ting</h3>
+              <p>Dashboard orqali account yarating va asosiy profil ma'lumotlarini kiriting.</p>
+            </div>
+          </li>
+          <li>
+            <span>2</span>
+            <div>
+              <h3>Kontentni to'ldiring</h3>
+              <p>Loyihalar, tajriba, ta'lim, ko'nikmalar va sertifikatlarni qo'shing.</p>
+            </div>
+          </li>
+          <li>
+            <span>3</span>
+            <div>
+              <h3>Public linkni ulashing</h3>
+              <p>Profil tayyor bo'lgach public linkni mijozlar, HR yoki hamkorlarga yuboring.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="cta-section" aria-labelledby="cta-title">
+        <div>
+          <p class="eyebrow">Dashboard</p>
+          <h2 id="cta-title">Portfolio yaratishni boshlang.</h2>
+          <p>Asosiy sayt procraft.uz, ilova esa dashboard.procraft.uz manzilida ishlaydi.</p>
+        </div>
+        <a class="button button--primary" href="https://dashboard.procraft.uz/register">Dashboardga o'tish</a>
+      </section>
+
+      <section class="section" id="faq" aria-labelledby="faq-title">
+        <div class="section__header">
+          <p class="eyebrow">FAQ</p>
+          <h2 id="faq-title">Tez-tez so'raladigan savollar.</h2>
+        </div>
+        <div class="faq-list">
+          <details>
+            <summary>Procraft bepulmi?</summary>
+            <p>Profil yaratish va asosiy shablonlar bilan boshlash bepul.</p>
+          </details>
+          <details>
+            <summary>Dashboard qayerda?</summary>
+            <p>Portfolio yaratish ilovasi dashboard.procraft.uz manzilida joylashadi.</p>
+          </details>
+          <details>
+            <summary>Template keyin almashtiriladimi?</summary>
+            <p>Ha. Kontent saqlanadi, faqat public sahifa ko'rinishi o'zgaradi.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand brand--footer" href="/" aria-label="Procraft bosh sahifa">
+        <img src="/brand/procraft-logo-mark-transparent.png" width="30" height="30" alt="" />
+        <span>Procraft</span>
+      </a>
+      <p>Portfolio sayt, resume va public profile yaratish uchun platforma.</p>
+    </footer>
   </body>
 </html>

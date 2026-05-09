@@ -74,6 +74,11 @@ public sealed class CsrfMiddleware
             return true;
         }
 
+        if (context.Request.Path.StartsWithSegments("/api/admin", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
         return false;
     }
 
