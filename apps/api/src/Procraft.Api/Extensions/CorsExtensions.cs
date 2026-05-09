@@ -32,16 +32,8 @@ public static class CorsExtensions
                 ProductionPolicy,
                 policy =>
                 {
-                    if (prodOrigins.Length > 0)
-                    {
-                        policy.WithOrigins(prodOrigins);
-                    }
-                    else
-                    {
-                        policy.WithOrigins();
-                    }
-
-                    policy.AllowAnyHeader()
+                    policy.SetIsOriginAllowed(origin => IsAllowedProductionOrigin(origin, prodOrigins))
+                        .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
                 });
@@ -55,5 +47,26 @@ public static class CorsExtensions
         var policy = app.Environment.IsDevelopment() ? DevelopmentPolicy : ProductionPolicy;
         app.UseCors(policy);
         return app;
+    }
+
+    private static bool IsAllowedProductionOrigin(string origin, IReadOnlyCollection<string> configuredOrigins)
+    {
+        if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+        {
+            return false;
+        }
+
+        if (!string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (configuredOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return string.Equals(uri.Host, "procraft.uz", StringComparison.OrdinalIgnoreCase)
+            || uri.Host.EndsWith(".procraft.uz", StringComparison.OrdinalIgnoreCase);
     }
 }

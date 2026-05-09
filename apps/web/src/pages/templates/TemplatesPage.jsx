@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, Spin, Tag, Typography, message } from 'antd';
+import { Button, Card, Col, Image, Row, Spin, Tag, Typography, message } from 'antd';
 import { useProfile, useSelectTemplate, useTemplates } from '@procraft/hooks';
 import { getErrorMessage } from '@procraft/i18n';
 
@@ -50,7 +50,11 @@ export default function TemplatesPage() {
                 extra={isSelected ? <Tag color="blue">Tanlangan</Tag> : null}
               >
                 <div className="template-card__preview">
-                  <img src={getTemplatePreviewUrl(template)} alt={`${template.name} preview`} />
+                  <Image
+                    src={getTemplatePreviewUrl(template)}
+                    alt={`${template.name} preview`}
+                    preview={{ mask: "Kattaroq ko'rish" }}
+                  />
                 </div>
                 <Typography.Title level={4}>{template.name}</Typography.Title>
                 <Typography.Paragraph type="secondary">

@@ -10,7 +10,6 @@ import ProfilePage from '../pages/profile/ProfilePage.jsx';
 import AnalyticsPage from '../pages/analytics/AnalyticsPage.jsx';
 import TemplatesPage from '../pages/templates/TemplatesPage.jsx';
 import PdfPage from '../pages/pdf/PdfPage.jsx';
-import SubscriptionPage from '../pages/subscription/SubscriptionPage.jsx';
 import SettingsPage from '../pages/settings/SettingsPage.jsx';
 import NotFoundPage from '../pages/not-found/NotFoundPage.jsx';
 
@@ -40,7 +39,7 @@ const router = createBrowserRouter(
         { path: 'templates', element: <TemplatesPage /> },
         { path: 'analytics', element: <AnalyticsPage /> },
         { path: 'pdf', element: <PdfPage /> },
-        { path: 'subscription', element: <SubscriptionPage /> },
+        { path: 'subscription', element: <Navigate to="/dashboard" replace /> },
         { path: 'settings', element: <SettingsPage /> },
       ],
     },

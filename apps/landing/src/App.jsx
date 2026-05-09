@@ -14,7 +14,7 @@ const steps = [
 
 const faqs = [
   ['Can I change templates later?', 'Yes. Your profile content stays the same while the presentation changes.'],
-  ['Does Procraft store tokens in the browser?', 'No. Authentication is cookie-based with HttpOnly session cookies.'],
+  ['Is my account protected?', 'Yes. Procraft keeps sign-in sessions protected and avoids showing sensitive details in the app.'],
   ['Are PDF and analytics included?', 'They are planned modules, but this landing page focuses on the live profile workflow.'],
 ];
 

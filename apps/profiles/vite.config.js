@@ -12,12 +12,12 @@ export default defineConfig({
       "/api": {
         target: "https://api.procraft.uz",
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
       "/uploads": {
         target: "https://api.procraft.uz",
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },

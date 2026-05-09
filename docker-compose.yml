@@ -41,7 +41,7 @@ services:
       CSRF_COOKIE_DOMAIN: ${CSRF_COOKIE_DOMAIN:-.procraft.uz}
       JWT_COOKIE_SAMESITE: ${JWT_COOKIE_SAMESITE:-None}
       JWT_COOKIE_SECURE: ${JWT_COOKIE_SECURE:-true}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5174,http://localhost:5173,https://procraft.uz,https://www.procraft.uz}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://procraft.uz,https://www.procraft.uz}
       UPLOADS_ROOT: /app/uploads
     volumes:
       - uploads_data:/app/uploads

@@ -1,4 +1,6 @@
-import { Card, Col, Row, Typography } from 'antd';
+import { Button, Card, Col, Row, Typography } from 'antd';
+import { ExportOutlined } from '@ant-design/icons';
+import { useAuth } from '@procraft/hooks';
 
 const cards = [
   ['Profil', "Ommaviy profilingizni doim tayyor va yangilangan holda saqlang."],
@@ -7,6 +9,9 @@ const cards = [
 ];
 
 export default function DashboardHomePage() {
+  const { user } = useAuth();
+  const portfolioUrl = user?.username ? `https://${user.username}.procraft.uz/` : '';
+
   return (
     <section className="dashboard-page">
       <div className="dashboard-page__header">
@@ -26,6 +31,21 @@ export default function DashboardHomePage() {
           </Col>
         ))}
       </Row>
+
+      {portfolioUrl ? (
+        <Card className="dashboard-card dashboard-public-link-card">
+          <div>
+            <Typography.Title level={4}>Portfolio linkingiz</Typography.Title>
+            <Typography.Paragraph type="secondary">
+              Public portfolio sahifangiz shu manzilda ochiladi.
+            </Typography.Paragraph>
+            <Typography.Text copyable>{portfolioUrl}</Typography.Text>
+          </div>
+          <Button icon={<ExportOutlined />} href={portfolioUrl} target="_blank" rel="noreferrer">
+            Ochish
+          </Button>
+        </Card>
+      ) : null}
     </section>
   );
 }
