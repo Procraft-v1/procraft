@@ -9,13 +9,14 @@ import {
   IdcardOutlined,
   LayoutOutlined,
   LinkOutlined,
+  LogoutOutlined,
   MenuOutlined,
   ThunderboltOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
 import { routes } from "@procraft/config";
-import { useAuth } from "@procraft/hooks";
+import { useAuth, useProfile } from "@procraft/hooks";
 import { Logo } from "@procraft/ui";
 
 const menuItems = [
@@ -82,20 +83,43 @@ function getPortfolioUrl(user) {
 
 export default function DashboardLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { profile, isLoading: isProfileLoading } = useProfile();
   const title = pageTitles[location.pathname] || "Bosh panel";
   const description =
     pageDescriptions[location.pathname] || "Procraft ish maydoni.";
   const userLabel = user?.username || user?.email || "Account";
-  const portfolioUrl = getPortfolioUrl(user);
+  const portfolioUrl = profile ? getPortfolioUrl(user) : "";
   const selectedKeys = [location.pathname];
 
   const handleMenuClick = ({ key }) => {
     navigate(key);
     setIsMobileMenuOpen(false);
   };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    setIsMobileMenuOpen(false);
+
+    try {
+      await logout();
+      navigate(routes.login, { replace: true });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
+  const logoutMenuItems = [
+    {
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: isLoggingOut ? "Chiqilmoqda..." : "Chiqish",
+      disabled: isLoggingOut,
+    },
+  ];
 
   return (
     <Layout className="dashboard-shell">
@@ -117,6 +141,16 @@ export default function DashboardLayout() {
           onClick={handleMenuClick}
           className="dashboard-menu"
         />
+        <div className="dashboard-sidebar__footer">
+          <Menu
+            theme="dark"
+            selectable={false}
+            mode="inline"
+            items={logoutMenuItems}
+            onClick={handleLogout}
+            className="dashboard-menu dashboard-menu--logout"
+          />
+        </div>
       </Layout.Sider>
 
       <Drawer
@@ -142,6 +176,16 @@ export default function DashboardLayout() {
           onClick={handleMenuClick}
           className="dashboard-menu"
         />
+        <div className="dashboard-sidebar__footer">
+          <Menu
+            theme="dark"
+            selectable={false}
+            mode="inline"
+            items={logoutMenuItems}
+            onClick={handleLogout}
+            className="dashboard-menu dashboard-menu--logout"
+          />
+        </div>
       </Drawer>
 
       <Layout className="dashboard-main">
@@ -175,6 +219,7 @@ export default function DashboardLayout() {
               <Button
                 icon={<LinkOutlined />}
                 onClick={() => navigate(routes.dashboardProfile)}
+                loading={isProfileLoading}
               >
                 Profil
               </Button>

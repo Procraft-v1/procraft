@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Button, Form, Input, Space, Typography, Spin } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@procraft/hooks";
-import { getErrorMessage } from "@procraft/i18n";
+import { getErrorFieldMessages, getErrorMessage } from "@procraft/i18n";
 import { Logo } from "@procraft/ui";
 
 export default function Register() {
   const navigate = useNavigate();
   const { register, isAuthenticated, isLoading } = useAuth();
+  const [form] = Form.useForm();
 
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,7 +26,14 @@ export default function Register() {
       await register(values);
       navigate("/dashboard", { replace: true });
     } catch (err) {
-      setError(getErrorMessage(err));
+      const fieldMessages = getErrorFieldMessages(err);
+
+      if (fieldMessages.length > 0) {
+        form.setFields(fieldMessages);
+        setError("");
+      } else {
+        setError(getErrorMessage(err));
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -68,7 +76,13 @@ export default function Register() {
           </Typography.Text>
         </div>
 
-        <Form layout="vertical" requiredMark={false} onFinish={handleFinish}>
+        <Form
+          form={form}
+          layout="vertical"
+          requiredMark={false}
+          autoComplete="off"
+          onFinish={handleFinish}
+        >
           <Form.Item
             label="Elektron pochta"
             name="email"
@@ -99,7 +113,7 @@ export default function Register() {
               { min: 3, max: 30, message: "Foydalanuvchi nomi 3-30 ta belgidan iborat bo'lishi kerak." },
             ]}
           >
-            <Input autoComplete="username" size="large" />
+            <Input autoComplete="off" spellCheck={false} size="large" />
           </Form.Item>
 
           <Form.Item

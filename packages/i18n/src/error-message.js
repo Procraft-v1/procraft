@@ -1,6 +1,9 @@
 import i18next from 'i18next';
 
 const backendMessageKeys = new Map([
+  ['email is already taken', 'errors.emailTaken'],
+  ['username is already taken', 'errors.usernameTaken'],
+  ['username may only contain lowercase letters, digits, hyphen, or underscore', 'errors.usernameFormat'],
   ['invalid credentials', 'errors.invalidCredentials'],
   ['not authenticated', 'errors.notAuthenticated'],
   ['profile not found', 'errors.profileNotFound'],
@@ -16,6 +19,11 @@ const statusKeys = new Map([
   [404, 'errors.notFound'],
   [409, 'errors.conflict'],
   [500, 'errors.server'],
+]);
+
+const backendFieldKeys = new Map([
+  ['email', 'errors.emailTaken'],
+  ['username', 'errors.usernameTaken'],
 ]);
 
 function t(key, defaultValue) {
@@ -59,6 +67,51 @@ function readBackendMessage(error) {
   return '';
 }
 
+function readBackendErrors(error) {
+  const data = error?.response?.data;
+  return data && typeof data === 'object' && data.errors && typeof data.errors === 'object'
+    ? data.errors
+    : null;
+}
+
+function translateBackendError(field, message) {
+  const rawMessage = cleanMessage(message);
+  const messageKey = backendMessageKeys.get(rawMessage.toLowerCase());
+
+  if (messageKey) {
+    return t(messageKey, rawMessage);
+  }
+
+  const fieldKey = rawMessage ? null : backendFieldKeys.get(String(field).toLowerCase());
+
+  if (fieldKey) {
+    return t(fieldKey, rawMessage || "Bu ma'lumot allaqachon mavjud.");
+  }
+
+  return rawMessage || t('errors.validation', "Kiritilgan ma'lumotlarni tekshiring.");
+}
+
+export function getErrorFieldMessages(error) {
+  const errors = readBackendErrors(error);
+
+  if (!errors) {
+    return [];
+  }
+
+  return Object.entries(errors).map(([name, messages]) => {
+    const firstMessage = Array.isArray(messages)
+      ? messages.find((item) => typeof item === 'string')
+      : typeof messages === 'string'
+        ? messages
+        : '';
+
+    return {
+      name,
+      errors: [translateBackendError(name, firstMessage)],
+    };
+  });
+}
+
 export function getErrorMessage(error, fallbackKey = 'errors.generic') {
   if (!error) {
     return t(fallbackKey, "Xatolik yuz berdi. Qayta urinib ko'ring.");
@@ -66,6 +119,12 @@ export function getErrorMessage(error, fallbackKey = 'errors.generic') {
 
   if (!error.response) {
     return t('errors.network', "Serverga ulanishda muammo bor. CORS yoki internet aloqasini tekshiring.");
+  }
+
+  const fieldMessages = getErrorFieldMessages(error);
+
+  if (fieldMessages.length > 0) {
+    return fieldMessages[0].errors[0];
   }
 
   const rawMessage = cleanMessage(readBackendMessage(error));

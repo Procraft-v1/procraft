@@ -36,3 +36,9 @@ body {
 a {
   color: var(--pc-blue);
 }
+
+.profile-loading {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+}

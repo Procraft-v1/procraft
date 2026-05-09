@@ -13,9 +13,12 @@ import {
 import {
   ExportOutlined,
   GlobalOutlined,
+  LinkOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useAuth } from '@procraft/hooks';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '@procraft/config';
+import { useAuth, useProfile } from '@procraft/hooks';
 
 function read(user, camelKey, pascalKey, fallback = '') {
   return user?.[camelKey] ?? user?.[pascalKey] ?? fallback;
@@ -27,11 +30,13 @@ function getPortfolioUrl(user) {
 }
 
 export default function SettingsPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
+  const { profile, isLoading: isProfileLoading } = useProfile();
   const email = read(user, 'email', 'Email', '-');
   const username = read(user, 'username', 'Username', '-');
   const isEmailConfirmed = Boolean(read(user, 'isEmailConfirmed', 'IsEmailConfirmed', false));
-  const portfolioUrl = getPortfolioUrl(user);
+  const portfolioUrl = profile ? getPortfolioUrl(user) : '';
 
   if (!user) {
     return (
@@ -79,7 +84,7 @@ export default function SettingsPage() {
                 {portfolioUrl ? (
                   <Typography.Text copyable>{portfolioUrl}</Typography.Text>
                 ) : (
-                  <Typography.Text type="secondary">Username hali mavjud emas</Typography.Text>
+                  <Typography.Text type="secondary">Profil yaratilgandan keyin chiqadi</Typography.Text>
                 )}
               </Descriptions.Item>
             </Descriptions>
@@ -93,7 +98,15 @@ export default function SettingsPage() {
               >
                 Portfolio ochish
               </Button>
-            ) : null}
+            ) : (
+              <Button
+                icon={<LinkOutlined />}
+                loading={isProfileLoading}
+                onClick={() => navigate(routes.dashboardProfile)}
+              >
+                Profilni to'ldirish
+              </Button>
+            )}
           </Card>
         </Col>
 

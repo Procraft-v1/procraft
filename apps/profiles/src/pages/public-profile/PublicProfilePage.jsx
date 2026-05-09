@@ -31,7 +31,11 @@ export default function PublicProfilePage() {
   }
 
   if (isLoading) {
-    return <Spin />;
+    return (
+      <div className="profile-loading">
+        <Spin size="large" />
+      </div>
+    );
   }
 
   if (isError || !profile) {
