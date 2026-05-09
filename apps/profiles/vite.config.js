@@ -10,12 +10,12 @@ export default defineConfig({
     host: "localhost",
     proxy: {
       "/api": {
-        target: "http://localhost:5080",
+        target: "https://api.procraft.uz",
         changeOrigin: true,
         secure: false,
       },
       "/uploads": {
-        target: "http://localhost:5080",
+        target: "https://api.procraft.uz",
         changeOrigin: true,
         secure: false,
       },
