@@ -8,15 +8,15 @@ using ProjectEntity = Procraft.Domain.Entities.Project;
 
 namespace Procraft.Application.ProfileSections.Projects;
 
-public sealed record ProjectDto(Guid Id, string Name, string? Description, string? GithubUrl, string? LiveUrl, int SortOrder, DateTimeOffset CreatedAt, DateTimeOffset? UpdatedAt)
+public sealed record ProjectDto(Guid Id, string Name, string? Description, string? GithubUrl, bool IsRepositoryPrivate, string? LiveUrl, int SortOrder, DateTimeOffset CreatedAt, DateTimeOffset? UpdatedAt)
 {
     public static ProjectDto FromEntity(ProjectEntity project) =>
-        new(project.Id, project.Name, project.Description, project.GithubUrl, project.LiveUrl, project.SortOrder, project.CreatedAt, project.UpdatedAt);
+        new(project.Id, project.Name, project.Description, project.GithubUrl, project.IsRepositoryPrivate, project.LiveUrl, project.SortOrder, project.CreatedAt, project.UpdatedAt);
 }
 
 public sealed record GetProjectsQuery : IRequest<IReadOnlyCollection<ProjectDto>>;
-public sealed record CreateProjectCommand(string Name, string? Description, string? GithubUrl, string? LiveUrl, int? SortOrder) : IRequest<ProjectDto>;
-public sealed record UpdateProjectCommand(Guid Id, string Name, string? Description, string? GithubUrl, string? LiveUrl, int? SortOrder) : IRequest<ProjectDto>;
+public sealed record CreateProjectCommand(string Name, string? Description, string? GithubUrl, bool IsRepositoryPrivate, string? LiveUrl, int? SortOrder) : IRequest<ProjectDto>;
+public sealed record UpdateProjectCommand(Guid Id, string Name, string? Description, string? GithubUrl, bool IsRepositoryPrivate, string? LiveUrl, int? SortOrder) : IRequest<ProjectDto>;
 public sealed record DeleteProjectCommand(Guid Id) : IRequest<ProjectDto>;
 
 public sealed class CreateProjectCommandValidator : AbstractValidator<CreateProjectCommand>
@@ -91,6 +91,7 @@ public sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectC
             Name = request.Name.Trim(),
             Description = Normalize(request.Description),
             GithubUrl = Normalize(request.GithubUrl),
+            IsRepositoryPrivate = request.IsRepositoryPrivate,
             LiveUrl = Normalize(request.LiveUrl),
             SortOrder = request.SortOrder ?? 0,
             CreatedAt = DateTimeOffset.UtcNow,
@@ -122,6 +123,7 @@ public sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectC
         project.Name = request.Name.Trim();
         project.Description = Normalize(request.Description);
         project.GithubUrl = Normalize(request.GithubUrl);
+        project.IsRepositoryPrivate = request.IsRepositoryPrivate;
         project.LiveUrl = Normalize(request.LiveUrl);
         project.SortOrder = request.SortOrder ?? project.SortOrder;
         project.UpdatedAt = DateTimeOffset.UtcNow;

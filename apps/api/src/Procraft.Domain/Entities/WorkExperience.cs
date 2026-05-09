@@ -8,6 +8,8 @@ public sealed class WorkExperience : BaseEntity
 
     public string Company { get; set; } = string.Empty;
 
+    public string ExperienceType { get; set; } = "work";
+
     public string Position { get; set; } = string.Empty;
 
     public string? Description { get; set; }

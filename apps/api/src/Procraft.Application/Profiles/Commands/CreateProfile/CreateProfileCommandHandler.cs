@@ -46,7 +46,6 @@ public sealed class CreateProfileCommandHandler : IRequestHandler<CreateProfileC
             Title = Normalize(request.Title),
             Bio = Normalize(request.Bio),
             Location = Normalize(request.Location),
-            Website = Normalize(request.Website),
             AvatarUrl = Normalize(request.AvatarUrl),
             CreatedAt = now,
         };

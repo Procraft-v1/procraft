@@ -8,5 +8,4 @@ public sealed record UpdateProfileCommand(
     string? Title,
     string? Bio,
     string? Location,
-    string? Website,
     string? AvatarUrl) : IRequest<ProfileDto>;

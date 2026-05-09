@@ -148,10 +148,6 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.Property<Guid>("UserId")
                 .HasColumnType("uuid");
 
-            b.Property<string>("Website")
-                .HasMaxLength(2048)
-                .HasColumnType("character varying(2048)");
-
             b.HasKey("Id");
 
             b.HasIndex("UserId")
@@ -204,6 +200,41 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.ToTable("skills");
         });
 
+        modelBuilder.Entity("Procraft.Domain.Entities.SkillCategory", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uuid");
+
+            b.Property<DateTimeOffset>("CreatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("Name")
+                .IsRequired()
+                .HasMaxLength(80)
+                .HasColumnType("character varying(80)");
+
+            b.Property<Guid>("ProfileId")
+                .HasColumnType("uuid");
+
+            b.Property<int>("SortOrder")
+                .HasColumnType("integer");
+
+            b.Property<DateTimeOffset?>("UpdatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.HasKey("Id");
+
+            b.HasIndex("ProfileId");
+
+            b.HasIndex("ProfileId", "Name")
+                .IsUnique();
+
+            b.HasIndex("ProfileId", "SortOrder");
+
+            b.ToTable("skill_categories");
+        });
+
         modelBuilder.Entity("Procraft.Domain.Entities.Project", b =>
         {
             b.Property<Guid>("Id")
@@ -220,6 +251,9 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.Property<string>("GithubUrl")
                 .HasMaxLength(255)
                 .HasColumnType("character varying(255)");
+
+            b.Property<bool>("IsRepositoryPrivate")
+                .HasColumnType("boolean");
 
             b.Property<string>("LiveUrl")
                 .HasMaxLength(255)
@@ -269,6 +303,11 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.Property<DateOnly?>("EndDate")
                 .HasColumnType("date");
 
+            b.Property<string>("ExperienceType")
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasColumnType("character varying(30)");
+
             b.Property<bool>("IsCurrent")
                 .HasColumnType("boolean");
 
@@ -306,6 +345,11 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
 
             b.Property<DateTimeOffset>("CreatedAt")
                 .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("EducationType")
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasColumnType("character varying(30)");
 
             b.Property<string>("Degree")
                 .HasMaxLength(100)
@@ -691,6 +735,17 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.Navigation("Profile");
         });
 
+        modelBuilder.Entity("Procraft.Domain.Entities.SkillCategory", b =>
+        {
+            b.HasOne("Procraft.Domain.Entities.Profile", "Profile")
+                .WithMany("SkillCategories")
+                .HasForeignKey("ProfileId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("Profile");
+        });
+
         modelBuilder.Entity("Procraft.Domain.Entities.Project", b =>
         {
             b.HasOne("Procraft.Domain.Entities.Profile", "Profile")
@@ -813,6 +868,8 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.Navigation("PdfExports");
 
             b.Navigation("Projects");
+
+            b.Navigation("SkillCategories");
 
             b.Navigation("Skills");
 

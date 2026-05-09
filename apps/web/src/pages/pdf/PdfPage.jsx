@@ -1,23 +1,24 @@
 import { Button, Card, Space, Typography, message } from 'antd';
 import { FilePdfOutlined } from '@ant-design/icons';
 import { useDownloadResume } from '@procraft/hooks';
+import { getErrorMessage } from '@procraft/i18n';
 
 export default function PdfPage() {
   const downloadResume = useDownloadResume({
     onSuccess: () => {
-      message.success('PDF download started');
+      message.success('PDF yuklab olish boshlandi');
     },
-    onError: () => {
-      message.error('Could not download PDF');
+    onError: (error) => {
+      message.error(getErrorMessage(error));
     },
   });
 
   return (
     <section className="dashboard-page">
       <div className="dashboard-page__header">
-        <Typography.Title level={2}>PDF export</Typography.Title>
+        <Typography.Title level={2}>PDF eksport</Typography.Title>
         <Typography.Paragraph type="secondary">
-          Download an ATS-friendly resume generated from your Procraft profile.
+          Procraft profilingiz asosida ATS uchun qulay resume PDF yuklab oling.
         </Typography.Paragraph>
       </div>
 
@@ -27,7 +28,7 @@ export default function PdfPage() {
           <div>
             <Typography.Title level={4}>Resume PDF</Typography.Title>
             <Typography.Paragraph type="secondary" style={{ maxWidth: 560 }}>
-              Your profile details, experience, education, skills, projects, and certificates are compiled into a clean PDF.
+              Profil ma'lumotlari, tajriba, ta'lim, ko'nikmalar, loyihalar va sertifikatlar toza PDF faylga jamlanadi.
             </Typography.Paragraph>
           </div>
           <Button
@@ -37,7 +38,7 @@ export default function PdfPage() {
             loading={downloadResume.isPending}
             onClick={() => downloadResume.mutate()}
           >
-            Download PDF
+            PDF yuklab olish
           </Button>
         </Space>
       </Card>

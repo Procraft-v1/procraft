@@ -20,11 +20,11 @@ public sealed class ExperiencesController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult> CreateAsync([FromBody] ExperienceApiRequest request, CancellationToken cancellationToken) =>
-        Ok(await _mediator.Send(new CreateExperienceCommand(request.Company, request.Position, request.Description, request.StartDate, request.EndDate, request.IsCurrent, request.SortOrder), cancellationToken));
+        Ok(await _mediator.Send(new CreateExperienceCommand(request.Company, request.ExperienceType, request.Position, request.Description, request.StartDate, request.EndDate, request.IsCurrent, request.SortOrder), cancellationToken));
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] ExperienceApiRequest request, CancellationToken cancellationToken) =>
-        Ok(await _mediator.Send(new UpdateExperienceCommand(id, request.Company, request.Position, request.Description, request.StartDate, request.EndDate, request.IsCurrent, request.SortOrder), cancellationToken));
+        Ok(await _mediator.Send(new UpdateExperienceCommand(id, request.Company, request.ExperienceType, request.Position, request.Description, request.StartDate, request.EndDate, request.IsCurrent, request.SortOrder), cancellationToken));
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteAsync([FromRoute] Guid id, CancellationToken cancellationToken) =>
@@ -33,6 +33,7 @@ public sealed class ExperiencesController : ControllerBase
 
 public sealed record ExperienceApiRequest(
     string Company,
+    string ExperienceType,
     string Position,
     string? Description,
     DateOnly StartDate,

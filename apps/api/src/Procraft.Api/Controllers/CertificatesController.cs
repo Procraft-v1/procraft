@@ -22,6 +22,18 @@ public sealed class CertificatesController : ControllerBase
     public async Task<ActionResult> CreateAsync([FromBody] CertificateApiRequest request, CancellationToken cancellationToken) =>
         Ok(await _mediator.Send(new CreateCertificateCommand(request.Name, request.Issuer, request.IssuedOn, request.Url, request.SortOrder), cancellationToken));
 
+    [HttpPost("file")]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(11 * 1024 * 1024)]
+    public async Task<ActionResult> UploadFileAsync([FromForm] UploadCertificateFileApiRequest request, CancellationToken cancellationToken) =>
+        Ok(await _mediator.Send(
+            new UploadCertificateFileCommand(
+                request.File?.OpenReadStream(),
+                request.File?.FileName,
+                request.File?.ContentType,
+                request.File?.Length ?? 0),
+            cancellationToken));
+
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] CertificateApiRequest request, CancellationToken cancellationToken) =>
         Ok(await _mediator.Send(new UpdateCertificateCommand(id, request.Name, request.Issuer, request.IssuedOn, request.Url, request.SortOrder), cancellationToken));
@@ -32,3 +44,8 @@ public sealed class CertificatesController : ControllerBase
 }
 
 public sealed record CertificateApiRequest(string Name, string? Issuer, DateOnly? IssuedOn, string? Url, int? SortOrder);
+
+public sealed class UploadCertificateFileApiRequest
+{
+    public IFormFile? File { get; init; }
+}

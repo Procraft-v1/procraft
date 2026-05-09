@@ -44,21 +44,21 @@ public sealed class GeneratePdfCommandHandler : IRequestHandler<GeneratePdfComma
             .Where(x => x.ProfileId == profile.Id)
             .OrderBy(x => x.SortOrder)
             .ThenBy(x => x.Name)
-            .Select(x => new PdfProjectModel(x.Name, x.Description, x.GithubUrl, x.LiveUrl))
+            .Select(x => new PdfProjectModel(x.Name, x.Description, x.GithubUrl, x.IsRepositoryPrivate, x.LiveUrl))
             .ToListAsync(cancellationToken);
 
         var experiences = await _db.WorkExperiences.AsNoTracking()
             .Where(x => x.ProfileId == profile.Id)
             .OrderBy(x => x.SortOrder)
             .ThenByDescending(x => x.StartDate)
-            .Select(x => new PdfExperienceModel(x.Company, x.Position, x.Description, x.StartDate, x.EndDate, x.IsCurrent))
+            .Select(x => new PdfExperienceModel(x.Company, x.ExperienceType, x.Position, x.Description, x.StartDate, x.EndDate, x.IsCurrent))
             .ToListAsync(cancellationToken);
 
         var educations = await _db.Educations.AsNoTracking()
             .Where(x => x.ProfileId == profile.Id)
             .OrderBy(x => x.SortOrder)
             .ThenByDescending(x => x.StartDate)
-            .Select(x => new PdfEducationModel(x.Institution, x.Degree, x.Field, x.StartDate, x.EndDate))
+            .Select(x => new PdfEducationModel(x.Institution, x.EducationType, x.Degree, x.Field, x.StartDate, x.EndDate))
             .ToListAsync(cancellationToken);
 
         var certificates = await _db.Certificates.AsNoTracking()
@@ -80,7 +80,6 @@ public sealed class GeneratePdfCommandHandler : IRequestHandler<GeneratePdfComma
             profile.Title,
             profile.Bio,
             profile.Location,
-            profile.Website,
             skills,
             projects,
             experiences,

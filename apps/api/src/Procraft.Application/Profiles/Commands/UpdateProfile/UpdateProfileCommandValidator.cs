@@ -10,7 +10,6 @@ public sealed class UpdateProfileCommandValidator : AbstractValidator<UpdateProf
         RuleFor(x => x.Title).MaximumLength(100);
         RuleFor(x => x.Bio).MaximumLength(1000);
         RuleFor(x => x.Location).MaximumLength(160);
-        RuleFor(x => x.Website).MaximumLength(2048);
         RuleFor(x => x.AvatarUrl).MaximumLength(2048);
     }
 }

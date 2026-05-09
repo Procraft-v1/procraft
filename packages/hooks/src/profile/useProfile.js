@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { createProfile, getMyProfile, updateProfile as updateProfileRequest } from '@procraft/services';
+import {
+  createProfile,
+  deleteAvatar as deleteAvatarRequest,
+  getMyProfile,
+  updateProfile as updateProfileRequest,
+  uploadAvatar as uploadAvatarRequest,
+} from '@procraft/services';
 
 export function useProfile() {
   const [profile, setProfile] = useState(null);
@@ -30,6 +36,18 @@ export function useProfile() {
     [profile],
   );
 
+  const uploadAvatar = useCallback(async (file) => {
+    const response = await uploadAvatarRequest(file);
+    setProfile(response.data);
+    return response.data;
+  }, []);
+
+  const deleteAvatar = useCallback(async () => {
+    const response = await deleteAvatarRequest();
+    setProfile(response.data);
+    return response.data;
+  }, []);
+
   useEffect(() => {
     fetchMyProfile();
   }, [fetchMyProfile]);
@@ -39,5 +57,7 @@ export function useProfile() {
     isLoading,
     fetchMyProfile,
     updateProfile,
+    uploadAvatar,
+    deleteAvatar,
   };
 }

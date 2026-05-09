@@ -20,15 +20,15 @@ public sealed class EducationsController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult> CreateAsync([FromBody] EducationApiRequest request, CancellationToken cancellationToken) =>
-        Ok(await _mediator.Send(new CreateEducationCommand(request.Institution, request.Degree, request.Field, request.StartDate, request.EndDate, request.SortOrder), cancellationToken));
+        Ok(await _mediator.Send(new CreateEducationCommand(request.Institution, request.EducationType, request.Degree, request.Field, request.StartDate, request.EndDate, request.SortOrder), cancellationToken));
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] EducationApiRequest request, CancellationToken cancellationToken) =>
-        Ok(await _mediator.Send(new UpdateEducationCommand(id, request.Institution, request.Degree, request.Field, request.StartDate, request.EndDate, request.SortOrder), cancellationToken));
+        Ok(await _mediator.Send(new UpdateEducationCommand(id, request.Institution, request.EducationType, request.Degree, request.Field, request.StartDate, request.EndDate, request.SortOrder), cancellationToken));
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteAsync([FromRoute] Guid id, CancellationToken cancellationToken) =>
         Ok(await _mediator.Send(new DeleteEducationCommand(id), cancellationToken));
 }
 
-public sealed record EducationApiRequest(string Institution, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate, int? SortOrder);
+public sealed record EducationApiRequest(string Institution, string EducationType, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate, int? SortOrder);

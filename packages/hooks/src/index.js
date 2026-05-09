@@ -6,6 +6,7 @@ export * from "./auth/useRegister.js";
 export * from "./profile/useProfile.js";
 export * from "./public-profile/usePublicProfile.js";
 export * from "./skills/useSkills.js";
+export * from "./skill-categories/useSkillCategories.js";
 export * from "./experiences/useExperiences.js";
 export * from "./projects/useProjects.js";
 export * from "./education/useEducations.js";

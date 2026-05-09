@@ -12,6 +12,8 @@ public sealed class Project : BaseEntity
 
     public string? GithubUrl { get; set; }
 
+    public bool IsRepositoryPrivate { get; set; }
+
     public string? LiveUrl { get; set; }
 
     public int SortOrder { get; set; }

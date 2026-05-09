@@ -1,41 +1,66 @@
-import { Layout, Menu, Typography } from 'antd';
+import { Avatar, Button, Layout, Menu, Space, Typography } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import {
   BarChartOutlined,
   FilePdfOutlined,
   LayoutOutlined,
+  LinkOutlined,
   SettingOutlined,
   ThunderboltOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 
 import { routes } from '@procraft/config';
+import { useAuth } from '@procraft/hooks';
 import { Logo } from '@procraft/ui';
 
 const menuItems = [
-  { key: routes.dashboardProfile, icon: <UserOutlined />, label: 'Profile' },
-  { key: routes.dashboardTemplates, icon: <LayoutOutlined />, label: 'Templates' },
-  { key: routes.dashboardAnalytics, icon: <BarChartOutlined />, label: 'Analytics' },
+  { key: routes.dashboardProfile, icon: <UserOutlined />, label: 'Profil' },
+  { key: routes.dashboardTemplates, icon: <LayoutOutlined />, label: 'Shablonlar' },
+  { key: routes.dashboardAnalytics, icon: <BarChartOutlined />, label: 'Analitika' },
   { key: routes.dashboardPdf, icon: <FilePdfOutlined />, label: 'PDF' },
-  { key: routes.dashboardSubscription, icon: <ThunderboltOutlined />, label: 'Subscription' },
-  { key: routes.dashboardSettings, icon: <SettingOutlined />, label: 'Settings' },
+  { key: routes.dashboardSubscription, icon: <ThunderboltOutlined />, label: 'Obuna' },
+  { key: routes.dashboardSettings, icon: <SettingOutlined />, label: 'Sozlamalar' },
 ];
 
 const pageTitles = {
-  [routes.dashboard]: 'Dashboard',
-  [routes.dashboardProfile]: 'Profile',
-  [routes.dashboardTemplates]: 'Templates',
-  [routes.dashboardAnalytics]: 'Analytics',
+  [routes.dashboard]: 'Bosh panel',
+  [routes.dashboardProfile]: 'Profil',
+  [routes.dashboardTemplates]: 'Shablonlar',
+  [routes.dashboardAnalytics]: 'Analitika',
   [routes.dashboardPdf]: 'PDF',
-  [routes.dashboardSubscription]: 'Subscription',
-  [routes.dashboardSettings]: 'Settings',
+  [routes.dashboardSubscription]: 'Obuna',
+  [routes.dashboardSettings]: 'Sozlamalar',
 };
+
+const pageDescriptions = {
+  [routes.dashboard]: 'Profilingiz holati va tezkor amallar.',
+  [routes.dashboardProfile]: "Portfolio ma'lumotlarini to'ldiring va tartiblang.",
+  [routes.dashboardTemplates]: 'Public profilingiz uchun ko\'rinish tanlang.',
+  [routes.dashboardAnalytics]: "Profil ko'rishlari va faollik statistikasi.",
+  [routes.dashboardPdf]: 'Resume faylingizni PDF formatida yuklab oling.',
+  [routes.dashboardSubscription]: 'Tarif va imkoniyatlarni boshqaring.',
+  [routes.dashboardSettings]: 'Account va xavfsizlik sozlamalari.',
+};
+
+function getInitials(user) {
+  const source = user?.fullName || user?.username || user?.email || 'P';
+  return source
+    .split(/[ @._-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+}
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const title = pageTitles[location.pathname] || 'Dashboard';
+  const { user } = useAuth();
+  const title = pageTitles[location.pathname] || 'Bosh panel';
+  const description = pageDescriptions[location.pathname] || 'Procraft ish maydoni.';
+  const userLabel = user?.username || user?.email || 'Account';
 
   return (
     <Layout className="dashboard-shell">
@@ -61,13 +86,29 @@ export default function DashboardLayout() {
 
       <Layout className="dashboard-main">
         <header className="dashboard-topbar">
-          <div>
-            <Typography.Text type="secondary">Workspace</Typography.Text>
-            <Typography.Title level={3} style={{ margin: 0 }}>
+          <div className="dashboard-topbar__heading">
+            <Typography.Title level={3}>
               {title}
             </Typography.Title>
+            <Typography.Text type="secondary">{description}</Typography.Text>
           </div>
-          <Typography.Text className="dashboard-topbar__status">Cookie session active</Typography.Text>
+
+          <div className="dashboard-topbar__actions">
+            <Button
+              icon={<LinkOutlined />}
+              onClick={() => navigate(routes.dashboardProfile)}
+            >
+              Profil
+            </Button>
+            <Space className="dashboard-topbar__account" size={10}>
+              <Avatar size={36} style={{ background: '#2563EB' }}>
+                {getInitials(user)}
+              </Avatar>
+              <div>
+                <Typography.Text strong>{userLabel}</Typography.Text>
+              </div>
+            </Space>
+          </div>
         </header>
         <Layout.Content className="dashboard-content">
           <Outlet />

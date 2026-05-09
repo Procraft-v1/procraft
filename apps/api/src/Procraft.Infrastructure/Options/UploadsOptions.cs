@@ -8,5 +8,9 @@ public sealed class UploadsOptions
 
     public int MaxAvatarSizeMb { get; set; } = 5;
 
+    public int MaxCertificateSizeMb { get; set; } = 10;
+
     public long MaxAvatarSizeBytes => MaxAvatarSizeMb * 1024L * 1024L;
+
+    public long MaxCertificateSizeBytes => MaxCertificateSizeMb * 1024L * 1024L;
 }

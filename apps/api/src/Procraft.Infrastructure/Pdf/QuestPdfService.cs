@@ -7,6 +7,11 @@ namespace Procraft.Infrastructure.Pdf;
 
 public sealed class QuestPdfService : IPdfService
 {
+    private static readonly string HeadingColor = Colors.BlueGrey.Darken4;
+    private static readonly string MutedColor = Colors.Grey.Darken2;
+    private static readonly string RuleColor = Colors.Grey.Lighten2;
+    private static readonly string LinkColor = Colors.Blue.Darken2;
+
     public Task<byte[]> GenerateResumeAsync(PdfResumeModel resume, CancellationToken cancellationToken = default)
     {
         QuestPDF.Settings.License = LicenseType.Community;
@@ -16,12 +21,12 @@ public sealed class QuestPdfService : IPdfService
             document.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(36);
-                page.DefaultTextStyle(text => text.FontFamily("Arial").FontSize(10).LineHeight(1.25f));
+                page.Margin(34);
+                page.DefaultTextStyle(text => text.FontFamily("Arial").FontSize(9.5f).LineHeight(1.28f));
 
                 page.Content().Column(column =>
                 {
-                    column.Spacing(12);
+                    column.Spacing(11);
                     ComposeHeader(column, resume);
                     ComposeSummary(column, resume);
                     ComposeExperiences(column, resume.Experiences);
@@ -43,18 +48,44 @@ public sealed class QuestPdfService : IPdfService
 
     private static void ComposeHeader(ColumnDescriptor column, PdfResumeModel resume)
     {
-        column.Item().Text(resume.FullName).FontSize(22).Bold().FontColor(Colors.BlueGrey.Darken4);
-
-        if (!string.IsNullOrWhiteSpace(resume.Title))
+        column.Item().Row(row =>
         {
-            column.Item().Text(resume.Title).FontSize(12).SemiBold();
-        }
+            row.RelativeItem().Column(left =>
+            {
+                left.Spacing(4);
+                left.Item().Text(resume.FullName).FontSize(24).Bold().FontColor(HeadingColor);
 
-        var contact = JoinNonEmpty(" | ", resume.Location, resume.Website, FormatSocialLinks(resume.SocialLinks));
-        if (!string.IsNullOrWhiteSpace(contact))
-        {
-            column.Item().Text(contact).FontSize(9).FontColor(Colors.Grey.Darken2);
-        }
+                if (!string.IsNullOrWhiteSpace(resume.Title))
+                {
+                    left.Item().Text(resume.Title).FontSize(12).SemiBold().FontColor(Colors.BlueGrey.Darken2);
+                }
+
+                if (!string.IsNullOrWhiteSpace(resume.Location))
+                {
+                    left.Item().Text(text =>
+                    {
+                        text.Span("Joylashuv: ").SemiBold().FontColor(MutedColor);
+                        text.Span(resume.Location).FontColor(MutedColor);
+                    });
+                }
+            });
+
+            if (resume.SocialLinks.Count > 0)
+            {
+                row.ConstantItem(190).Column(right =>
+                {
+                    right.Spacing(3);
+                    right.Item().Text("Ijtimoiy havolalar").FontSize(8).Bold().FontColor(HeadingColor);
+
+                    foreach (var link in resume.SocialLinks)
+                    {
+                        AddLinkLine(right, link.Platform, link.Url, 8);
+                    }
+                });
+            }
+        });
+
+        column.Item().BorderBottom(1).BorderColor(RuleColor).PaddingTop(2);
     }
 
     private static void ComposeSummary(ColumnDescriptor column, PdfResumeModel resume)
@@ -64,9 +95,9 @@ public sealed class QuestPdfService : IPdfService
             return;
         }
 
-        ComposeSection(column, "Summary", section =>
+        ComposeSection(column, "Qisqa ma'lumot", section =>
         {
-            section.Item().Text(resume.Summary).FontSize(10);
+            section.Item().Text(resume.Summary).FontSize(9.5f).FontColor(Colors.BlueGrey.Darken3);
         });
     }
 
@@ -77,18 +108,20 @@ public sealed class QuestPdfService : IPdfService
             return;
         }
 
-        ComposeSection(column, "Experience", section =>
+        ComposeSection(column, "Ish tajribasi", section =>
         {
             foreach (var item in experiences)
             {
-                section.Item().Column(entry =>
+                section.Item().PaddingBottom(5).Column(entry =>
                 {
-                    entry.Spacing(2);
+                    entry.Spacing(3);
                     entry.Item().Row(row =>
                     {
-                        row.RelativeItem().Text($"{item.Position} - {item.Company}").SemiBold();
-                        row.ConstantItem(130).AlignRight().Text(FormatDateRange(item.StartDate, item.EndDate, item.IsCurrent)).FontSize(9);
+                        row.RelativeItem().Text(item.Position).SemiBold().FontColor(HeadingColor);
+                        row.ConstantItem(120).AlignRight().Text(FormatDateRange(item.StartDate, item.EndDate, item.IsCurrent)).FontSize(8).FontColor(MutedColor);
                     });
+
+                    entry.Item().Text(JoinNonEmpty(" • ", item.Company, FormatExperienceType(item.ExperienceType))).FontSize(8.5f).FontColor(MutedColor);
 
                     if (!string.IsNullOrWhiteSpace(item.Description))
                     {
@@ -106,14 +139,19 @@ public sealed class QuestPdfService : IPdfService
             return;
         }
 
-        ComposeSection(column, "Education", section =>
+        ComposeSection(column, "Ta'lim", section =>
         {
             foreach (var item in educations)
             {
-                section.Item().Row(row =>
+                section.Item().PaddingBottom(4).Row(row =>
                 {
-                    row.RelativeItem().Text(JoinNonEmpty(", ", item.Institution, JoinNonEmpty(" - ", item.Degree, item.Field))).SemiBold();
-                    row.ConstantItem(130).AlignRight().Text(FormatDateRange(item.StartDate, item.EndDate)).FontSize(9);
+                    row.RelativeItem().Column(entry =>
+                    {
+                        entry.Spacing(2);
+                        entry.Item().Text(item.Institution).SemiBold().FontColor(HeadingColor);
+                        entry.Item().Text(JoinNonEmpty(" • ", FormatEducationType(item.EducationType), item.Degree, item.Field)).FontSize(8.5f).FontColor(MutedColor);
+                    });
+                    row.ConstantItem(120).AlignRight().Text(FormatDateRange(item.StartDate, item.EndDate)).FontSize(8).FontColor(MutedColor);
                 });
             }
         });
@@ -126,14 +164,20 @@ public sealed class QuestPdfService : IPdfService
             return;
         }
 
-        ComposeSection(column, "Skills", section =>
+        ComposeSection(column, "Ko'nikmalar", section =>
         {
-            var skillText = string.Join(", ", skills.Select(skill =>
-                skill.Level.HasValue
-                    ? $"{skill.Name} ({skill.Level}/5)"
-                    : skill.Name));
+            var groups = skills
+                .GroupBy(skill => string.IsNullOrWhiteSpace(skill.Category) ? "Umumiy" : skill.Category!.Trim())
+                .OrderBy(group => group.Key);
 
-            section.Item().Text(skillText).FontSize(10);
+            foreach (var group in groups)
+            {
+                section.Item().PaddingBottom(2).Text(text =>
+                {
+                    text.Span($"{group.Key}: ").SemiBold().FontColor(HeadingColor);
+                    text.Span(string.Join(", ", group.Select(FormatSkill))).FontColor(Colors.BlueGrey.Darken3);
+                });
+            }
         });
     }
 
@@ -144,24 +188,36 @@ public sealed class QuestPdfService : IPdfService
             return;
         }
 
-        ComposeSection(column, "Projects", section =>
+        ComposeSection(column, "Loyihalar", section =>
         {
             foreach (var item in projects)
             {
-                section.Item().Column(entry =>
+                section.Item().PaddingBottom(7).Column(entry =>
                 {
-                    entry.Spacing(2);
-                    entry.Item().Text(item.Name).SemiBold();
+                    entry.Spacing(3);
+                    entry.Item().Text(item.Name).SemiBold().FontColor(HeadingColor);
 
                     if (!string.IsNullOrWhiteSpace(item.Description))
                     {
                         entry.Item().Text(item.Description).FontSize(9);
                     }
 
-                    var links = JoinNonEmpty(" | ", item.GithubUrl, item.LiveUrl);
-                    if (!string.IsNullOrWhiteSpace(links))
+                    if (!string.IsNullOrWhiteSpace(item.LiveUrl))
                     {
-                        entry.Item().Text(links).FontSize(8).FontColor(Colors.Grey.Darken2);
+                        AddLinkLine(entry, "Live link", item.LiveUrl, 8);
+                    }
+
+                    if (item.IsRepositoryPrivate)
+                    {
+                        entry.Item().Text(text =>
+                        {
+                            text.Span("GitHub: ").SemiBold().FontColor(MutedColor);
+                            text.Span("Yopiq repository").FontColor(MutedColor);
+                        });
+                    }
+                    else if (!string.IsNullOrWhiteSpace(item.GithubUrl))
+                    {
+                        AddLinkLine(entry, "GitHub", item.GithubUrl, 8);
                     }
                 });
             }
@@ -175,11 +231,26 @@ public sealed class QuestPdfService : IPdfService
             return;
         }
 
-        ComposeSection(column, "Certificates", section =>
+        ComposeSection(column, "Sertifikatlar", section =>
         {
             foreach (var item in certificates)
             {
-                section.Item().Text(JoinNonEmpty(" | ", item.Name, item.Issuer, FormatDate(item.IssuedOn), item.Url));
+                section.Item().PaddingBottom(5).Column(entry =>
+                {
+                    entry.Spacing(2);
+                    entry.Item().Text(item.Name).SemiBold().FontColor(HeadingColor);
+
+                    var meta = JoinNonEmpty(" • ", item.Issuer, FormatDate(item.IssuedOn));
+                    if (!string.IsNullOrWhiteSpace(meta))
+                    {
+                        entry.Item().Text(meta).FontSize(8.5f).FontColor(MutedColor);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(item.Url))
+                    {
+                        AddLinkLine(entry, "Sertifikat", item.Url, 8);
+                    }
+                });
             }
         });
     }
@@ -190,13 +261,13 @@ public sealed class QuestPdfService : IPdfService
         {
             section.Spacing(5);
             section.Item().BorderBottom(1).BorderColor(Colors.Grey.Lighten1).PaddingBottom(3)
-                .Text(title.ToUpperInvariant()).FontSize(10).Bold().FontColor(Colors.BlueGrey.Darken4);
+                .Text(title).FontSize(10).Bold().FontColor(HeadingColor);
             content(section);
         });
     }
 
     private static string FormatDateRange(DateOnly startDate, DateOnly? endDate, bool isCurrent) =>
-        $"{FormatDate(startDate)} - {(isCurrent ? "Present" : FormatDate(endDate))}";
+        $"{FormatDate(startDate)} - {(isCurrent ? "Hozir" : FormatDate(endDate))}";
 
     private static string FormatDateRange(DateOnly? startDate, DateOnly? endDate)
     {
@@ -210,10 +281,59 @@ public sealed class QuestPdfService : IPdfService
 
     private static string FormatDate(DateOnly? date) => date.HasValue ? FormatDate(date.Value) : string.Empty;
 
-    private static string FormatDate(DateOnly date) => date.ToString("MMM yyyy", System.Globalization.CultureInfo.InvariantCulture);
+    private static string FormatDate(DateOnly date) => date.ToString("yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
 
-    private static string FormatSocialLinks(IReadOnlyCollection<PdfSocialLinkModel> links) =>
-        string.Join(" | ", links.Select(link => $"{link.Platform}: {link.Url}"));
+    private static string FormatSkill(PdfSkillModel skill) =>
+        skill.Level.HasValue ? $"{skill.Name} ({skill.Level}/5)" : skill.Name;
+
+    private static string FormatEducationType(string type) =>
+        type switch
+        {
+            "course" => "Kurs / bootcamp",
+            "self" => "Shaxsiy o'rganish",
+            "mentor" => "Mentor / ustoz",
+            "online" => "Onlayn kurs",
+            "formal" => "Universitet / kollej",
+            _ => string.Empty,
+        };
+
+    private static string FormatExperienceType(string type) =>
+        type switch
+        {
+            "freelance" => "Freelance",
+            "project" => "Shaxsiy loyiha",
+            "internship" => "Amaliyot",
+            "volunteer" => "Volunteer",
+            "work" => "Ish joyi",
+            _ => string.Empty,
+        };
+
+    private static void AddLinkLine(ColumnDescriptor column, string label, string value, float fontSize)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        column.Item().Text(text =>
+        {
+            text.DefaultTextStyle(style => style.FontSize(fontSize));
+            text.Span($"{label}: ").SemiBold().FontColor(MutedColor);
+
+            if (IsHttpUrl(value))
+            {
+                text.Hyperlink(value, value).FontColor(LinkColor).Underline();
+            }
+            else
+            {
+                text.Span(value).FontColor(MutedColor);
+            }
+        });
+    }
+
+    private static bool IsHttpUrl(string? value) =>
+        Uri.TryCreate(value, UriKind.Absolute, out var uri)
+        && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
 
     private static string JoinNonEmpty(string separator, params string?[] values) =>
         string.Join(separator, values.Where(value => !string.IsNullOrWhiteSpace(value)));

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Input, Space, Typography, Spin } from "antd";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@procraft/hooks";
+import { getErrorMessage } from "@procraft/i18n";
 import { Logo } from "@procraft/ui";
 
 export default function Login() {
@@ -25,11 +26,7 @@ export default function Login() {
       await login(values);
       navigate(searchParams.get("returnTo") || "/dashboard", { replace: true });
     } catch (err) {
-      if (!err.response) {
-        setError("Login request failed. Check API CORS/origin configuration.");
-      } else {
-        setError(err.response?.data?.message || "Login failed.");
-      }
+      setError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -65,28 +62,28 @@ export default function Login() {
             level={3}
             style={{ marginTop: 24, marginBottom: 4 }}
           >
-            Welcome back
+            Xush kelibsiz
           </Typography.Title>
           <Typography.Text type="secondary">
-            Sign in to continue to Procraft.
+            Procraft hisobingizga kiring.
           </Typography.Text>
         </div>
 
         <Form layout="vertical" requiredMark={false} onFinish={handleFinish}>
           <Form.Item
-            label="Email or username"
+            label="Elektron pochta yoki foydalanuvchi nomi"
             name="emailOrUsername"
             rules={[
-              { required: true, message: "Enter your email or username." },
+              { required: true, message: "Elektron pochta yoki foydalanuvchi nomini kiriting." },
             ]}
           >
             <Input autoComplete="username" size="large" />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label="Parol"
             name="password"
-            rules={[{ required: true, message: "Enter your password." }]}
+            rules={[{ required: true, message: "Parolni kiriting." }]}
           >
             <Input.Password autoComplete="current-password" size="large" />
           </Form.Item>
@@ -104,12 +101,12 @@ export default function Login() {
             block
             loading={isSubmitting}
           >
-            Log in
+            Kirish
           </Button>
         </Form>
 
         <Typography.Text type="secondary" style={{ textAlign: "center" }}>
-          New to Procraft? <Link to="/register">Create an account</Link>
+          Procraftda yangimisiz? <Link to="/register">Ro'yxatdan o'ting</Link>
         </Typography.Text>
       </Space>
     </main>

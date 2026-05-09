@@ -5,6 +5,7 @@ export * from './analytics.service.js';
 export * from './pdf.service.js';
 export * from './subscription.service.js';
 export * as skillsService from './skills.service.js';
+export * as skillCategoriesService from './skill-categories.service.js';
 export * as projectsService from './projects.service.js';
 export * as experiencesService from './experiences.service.js';
 export * as educationService from './education.service.js';
@@ -17,6 +18,12 @@ export {
   updateSkill,
   deleteSkill,
 } from './skills.service.js';
+export {
+  listSkillCategories,
+  createSkillCategory,
+  updateSkillCategory,
+  deleteSkillCategory,
+} from './skill-categories.service.js';
 export {
   listProjects,
   createProject,
@@ -41,6 +48,7 @@ export {
   createCertificate,
   updateCertificate,
   deleteCertificate,
+  uploadCertificateFile,
 } from './certificates.service.js';
 export {
   listSocialLinks,

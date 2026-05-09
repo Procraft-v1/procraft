@@ -13,6 +13,8 @@ public interface IApplicationDbContext
 
     DbSet<Skill> Skills { get; }
 
+    DbSet<SkillCategory> SkillCategories { get; }
+
     DbSet<Project> Projects { get; }
 
     DbSet<WorkExperience> WorkExperiences { get; }

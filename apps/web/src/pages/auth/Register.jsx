@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Input, Space, Typography, Spin } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@procraft/hooks";
+import { getErrorMessage } from "@procraft/i18n";
 import { Logo } from "@procraft/ui";
 
 export default function Register() {
@@ -24,7 +25,7 @@ export default function Register() {
       await register(values);
       navigate("/dashboard", { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed.");
+      setError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -60,22 +61,22 @@ export default function Register() {
             level={3}
             style={{ marginTop: 24, marginBottom: 4 }}
           >
-            Create account
+            Ro'yxatdan o'tish
           </Typography.Title>
           <Typography.Text type="secondary">
-            Start building your Procraft workspace.
+            Procraft ish maydoningizni yarating.
           </Typography.Text>
         </div>
 
         <Form layout="vertical" requiredMark={false} onFinish={handleFinish}>
           <Form.Item
-            label="Email"
+            label="Elektron pochta"
             name="email"
             rules={[
               {
                 required: true,
                 type: "email",
-                message: "Enter a valid email.",
+                message: "To'g'ri elektron pochta manzilini kiriting.",
               },
             ]}
           >
@@ -83,30 +84,30 @@ export default function Register() {
           </Form.Item>
 
           <Form.Item
-            label="Full name"
+            label="To'liq ism"
             name="fullname"
-            rules={[{ required: true, message: "CEnter your full name." }]}
+            rules={[{ required: true, message: "To'liq ismingizni kiriting." }]}
           >
             <Input autoComplete="name" size="large" />
           </Form.Item>
 
           <Form.Item
-            label="Username"
+            label="Foydalanuvchi nomi"
             name="username"
             rules={[
-              { required: true, message: "Choose a username." },
-              { min: 3, max: 30, message: "Username must be 3-30 characters." },
+              { required: true, message: "Foydalanuvchi nomini tanlang." },
+              { min: 3, max: 30, message: "Foydalanuvchi nomi 3-30 ta belgidan iborat bo'lishi kerak." },
             ]}
           >
             <Input autoComplete="username" size="large" />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label="Parol"
             name="password"
             rules={[
-              { required: true, message: "Create a password." },
-              { min: 8, message: "Password must be at least 8 characters." },
+              { required: true, message: "Parol yarating." },
+              { min: 8, message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak." },
             ]}
           >
             <Input.Password autoComplete="new-password" size="large" />
@@ -125,12 +126,12 @@ export default function Register() {
             block
             loading={isSubmitting}
           >
-            Create account
+            Ro'yxatdan o'tish
           </Button>
         </Form>
 
         <Typography.Text type="secondary" style={{ textAlign: "center" }}>
-          Already have an account? <Link to="/login">Log in</Link>
+          Hisobingiz bormi? <Link to="/login">Kirish</Link>
         </Typography.Text>
       </Space>
     </main>

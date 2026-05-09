@@ -13,6 +13,7 @@ public sealed class WorkExperienceConfiguration : IEntityTypeConfiguration<WorkE
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Company).IsRequired().HasMaxLength(200);
+        builder.Property(x => x.ExperienceType).IsRequired().HasMaxLength(30);
         builder.Property(x => x.Position).IsRequired().HasMaxLength(200);
         builder.Property(x => x.Description).HasMaxLength(1000);
         builder.Property(x => x.StartDate).IsRequired();

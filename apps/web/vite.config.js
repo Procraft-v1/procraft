@@ -1,24 +1,26 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  envDir: '../..',
+  envDir: "../..",
   server: {
     port: 5174,
     proxy: {
-      '/api': {
-        target: 'http://localhost:5080',
+      "/api": {
+        target: "https://api.procraft.uz",
         changeOrigin: true,
+        secure: true,
       },
-      '/uploads': {
-        target: 'http://localhost:5080',
+      "/uploads": {
+        target: "https://api.procraft.uz",
         changeOrigin: true,
+        secure: true,
       },
     },
   },
   build: {
     sourcemap: true,
-    outDir: 'dist',
+    outDir: "dist",
   },
 });

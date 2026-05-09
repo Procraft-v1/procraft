@@ -18,11 +18,11 @@ public sealed class Profile : BaseEntity
 
     public string? Location { get; set; }
 
-    public string? Website { get; set; }
-
     public string? AvatarUrl { get; set; }
 
     public ICollection<Skill> Skills { get; set; } = new List<Skill>();
+
+    public ICollection<SkillCategory> SkillCategories { get; set; } = new List<SkillCategory>();
 
     public ICollection<Project> Projects { get; set; } = new List<Project>();
 

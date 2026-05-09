@@ -1,18 +1,18 @@
 import { Card, Col, Row, Typography } from 'antd';
 
 const cards = [
-  ['Profile', 'Keep your public story current and ready to share.'],
-  ['Templates', 'Switch between Minimal, Modern, and Classic presentations.'],
-  ['Publishing', 'Your public profile app renders from the selected template.'],
+  ['Profil', "Ommaviy profilingizni doim tayyor va yangilangan holda saqlang."],
+  ['Shablonlar', 'Minimal, Modern va Classic ko\'rinishlar orasidan tanlang.'],
+  ['Nashr qilish', "Ommaviy profil tanlangan shablon asosida ko'rinadi."],
 ];
 
 export default function DashboardHomePage() {
   return (
     <section className="dashboard-page">
       <div className="dashboard-page__header">
-        <Typography.Title level={2}>Your Procraft workspace</Typography.Title>
+        <Typography.Title level={2}>Procraft ish maydoningiz</Typography.Title>
         <Typography.Paragraph type="secondary">
-          Edit profile details, choose a template, and keep your public presence tidy from one place.
+          Profil ma'lumotlarini tahrirlang, shablon tanlang va ommaviy sahifangizni bir joydan boshqaring.
         </Typography.Paragraph>
       </div>
 

@@ -32,7 +32,6 @@ public sealed class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileC
         profile.Title = Normalize(request.Title);
         profile.Bio = Normalize(request.Bio);
         profile.Location = Normalize(request.Location);
-        profile.Website = Normalize(request.Website);
         profile.AvatarUrl = Normalize(request.AvatarUrl);
         profile.UpdatedAt = DateTimeOffset.UtcNow;
 

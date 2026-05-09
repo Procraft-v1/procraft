@@ -15,6 +15,7 @@ public sealed class ProjectConfiguration : IEntityTypeConfiguration<ProjectEntit
         builder.Property(x => x.Name).IsRequired().HasMaxLength(200);
         builder.Property(x => x.Description).HasMaxLength(1000);
         builder.Property(x => x.GithubUrl).HasMaxLength(255);
+        builder.Property(x => x.IsRepositoryPrivate).IsRequired();
         builder.Property(x => x.LiveUrl).HasMaxLength(255);
         builder.Property(x => x.SortOrder).IsRequired();
         builder.Property(x => x.CreatedAt).IsRequired();

@@ -1,6 +1,6 @@
-import ClassicTemplate from './ClassicTemplate.jsx';
-import MinimalTemplate from './MinimalTemplate.jsx';
-import ModernTemplate from './ModernTemplate.jsx';
+import ClassicTemplate from './classic/ClassicTemplate.jsx';
+import MinimalTemplate from './minimal/MinimalTemplate.jsx';
+import ModernTemplate from './modern/ModernTemplate.jsx';
 
 const templates = {
   classic: ClassicTemplate,

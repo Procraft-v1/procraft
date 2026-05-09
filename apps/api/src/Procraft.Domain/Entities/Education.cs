@@ -8,6 +8,8 @@ public sealed class Education : BaseEntity
 
     public string Institution { get; set; } = string.Empty;
 
+    public string EducationType { get; set; } = "formal";
+
     public string? Degree { get; set; }
 
     public string? Field { get; set; }

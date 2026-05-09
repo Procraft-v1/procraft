@@ -40,7 +40,6 @@ public sealed class ProfileController : ControllerBase
                 request.Title,
                 request.Bio,
                 request.Location,
-                request.Website,
                 request.AvatarUrl),
             cancellationToken);
 
@@ -57,7 +56,6 @@ public sealed class ProfileController : ControllerBase
                 request.Title,
                 request.Bio,
                 request.Location,
-                request.Website,
                 request.AvatarUrl),
             cancellationToken);
 
@@ -111,7 +109,6 @@ public sealed record ProfileApiRequest(
     string? Title,
     string? Bio,
     string? Location,
-    string? Website,
     string? AvatarUrl);
 
 public sealed class UploadAvatarApiRequest

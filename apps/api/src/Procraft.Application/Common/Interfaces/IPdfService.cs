@@ -10,7 +10,6 @@ public sealed record PdfResumeModel(
     string? Title,
     string? Summary,
     string? Location,
-    string? Website,
     IReadOnlyCollection<PdfSkillModel> Skills,
     IReadOnlyCollection<PdfProjectModel> Projects,
     IReadOnlyCollection<PdfExperienceModel> Experiences,
@@ -21,10 +20,11 @@ public sealed record PdfResumeModel(
 
 public sealed record PdfSkillModel(string Name, byte? Level, string? Category);
 
-public sealed record PdfProjectModel(string Name, string? Description, string? GithubUrl, string? LiveUrl);
+public sealed record PdfProjectModel(string Name, string? Description, string? GithubUrl, bool IsRepositoryPrivate, string? LiveUrl);
 
 public sealed record PdfExperienceModel(
     string Company,
+    string ExperienceType,
     string Position,
     string? Description,
     DateOnly StartDate,
@@ -33,6 +33,7 @@ public sealed record PdfExperienceModel(
 
 public sealed record PdfEducationModel(
     string Institution,
+    string EducationType,
     string? Degree,
     string? Field,
     DateOnly? StartDate,

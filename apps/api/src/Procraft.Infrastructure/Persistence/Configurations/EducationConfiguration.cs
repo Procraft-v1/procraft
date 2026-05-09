@@ -13,6 +13,7 @@ public sealed class EducationConfiguration : IEntityTypeConfiguration<Education>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Institution).IsRequired().HasMaxLength(200);
+        builder.Property(x => x.EducationType).IsRequired().HasMaxLength(30);
         builder.Property(x => x.Degree).HasMaxLength(100);
         builder.Property(x => x.Field).HasMaxLength(100);
         builder.Property(x => x.StartDate);

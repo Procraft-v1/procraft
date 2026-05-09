@@ -31,3 +31,4 @@ export async function configureI18n(options = {}) {
 }
 
 export { i18next };
+export { getErrorMessage } from './error-message.js';

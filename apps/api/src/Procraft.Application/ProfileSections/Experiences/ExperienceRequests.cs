@@ -8,22 +8,31 @@ using Procraft.Domain.Entities;
 
 namespace Procraft.Application.ProfileSections.Experiences;
 
-public sealed record ExperienceDto(Guid Id, string Company, string Position, string? Description, DateOnly StartDate, DateOnly? EndDate, bool IsCurrent, int SortOrder, DateTimeOffset CreatedAt, DateTimeOffset? UpdatedAt)
+public sealed record ExperienceDto(Guid Id, string Company, string ExperienceType, string Position, string? Description, DateOnly StartDate, DateOnly? EndDate, bool IsCurrent, int SortOrder, DateTimeOffset CreatedAt, DateTimeOffset? UpdatedAt)
 {
     public static ExperienceDto FromEntity(WorkExperience item) =>
-        new(item.Id, item.Company, item.Position, item.Description, item.StartDate, item.EndDate, item.IsCurrent, item.SortOrder, item.CreatedAt, item.UpdatedAt);
+        new(item.Id, item.Company, item.ExperienceType, item.Position, item.Description, item.StartDate, item.EndDate, item.IsCurrent, item.SortOrder, item.CreatedAt, item.UpdatedAt);
 }
 
 public sealed record GetExperiencesQuery : IRequest<IReadOnlyCollection<ExperienceDto>>;
-public sealed record CreateExperienceCommand(string Company, string Position, string? Description, DateOnly StartDate, DateOnly? EndDate, bool IsCurrent, int? SortOrder) : IRequest<ExperienceDto>;
-public sealed record UpdateExperienceCommand(Guid Id, string Company, string Position, string? Description, DateOnly StartDate, DateOnly? EndDate, bool IsCurrent, int? SortOrder) : IRequest<ExperienceDto>;
+public sealed record CreateExperienceCommand(string Company, string ExperienceType, string Position, string? Description, DateOnly StartDate, DateOnly? EndDate, bool IsCurrent, int? SortOrder) : IRequest<ExperienceDto>;
+public sealed record UpdateExperienceCommand(Guid Id, string Company, string ExperienceType, string Position, string? Description, DateOnly StartDate, DateOnly? EndDate, bool IsCurrent, int? SortOrder) : IRequest<ExperienceDto>;
 public sealed record DeleteExperienceCommand(Guid Id) : IRequest<ExperienceDto>;
+
+internal static class ExperienceTypes
+{
+    public static readonly string[] Allowed = ["work", "freelance", "project", "internship", "volunteer"];
+
+    public static string Normalize(string? value) =>
+        Allowed.Contains(value?.Trim().ToLowerInvariant()) ? value!.Trim().ToLowerInvariant() : "work";
+}
 
 public sealed class CreateExperienceCommandValidator : AbstractValidator<CreateExperienceCommand>
 {
     public CreateExperienceCommandValidator()
     {
         RuleFor(x => x.Company).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.ExperienceType).Must(value => ExperienceTypes.Allowed.Contains(value?.Trim().ToLowerInvariant()));
         RuleFor(x => x.Position).NotEmpty().MaximumLength(200);
         RuleFor(x => x.StartDate).NotEmpty();
         RuleFor(x => x.Description).MaximumLength(1000);
@@ -39,6 +48,7 @@ public sealed class UpdateExperienceCommandValidator : AbstractValidator<UpdateE
     {
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.Company).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.ExperienceType).Must(value => ExperienceTypes.Allowed.Contains(value?.Trim().ToLowerInvariant()));
         RuleFor(x => x.Position).NotEmpty().MaximumLength(200);
         RuleFor(x => x.StartDate).NotEmpty();
         RuleFor(x => x.Description).MaximumLength(1000);
@@ -95,6 +105,7 @@ public sealed class CreateExperienceCommandHandler : IRequestHandler<CreateExper
             Id = Guid.NewGuid(),
             ProfileId = profileId,
             Company = request.Company.Trim(),
+            ExperienceType = ExperienceTypes.Normalize(request.ExperienceType),
             Position = request.Position.Trim(),
             Description = Normalize(request.Description),
             StartDate = request.StartDate,
@@ -128,6 +139,7 @@ public sealed class UpdateExperienceCommandHandler : IRequestHandler<UpdateExper
         var item = await _db.WorkExperiences.FirstOrDefaultAsync(x => x.Id == request.Id && x.ProfileId == profileId, cancellationToken)
             ?? throw new NotFoundException("Experience not found.");
         item.Company = request.Company.Trim();
+        item.ExperienceType = ExperienceTypes.Normalize(request.ExperienceType);
         item.Position = request.Position.Trim();
         item.Description = Normalize(request.Description);
         item.StartDate = request.StartDate;

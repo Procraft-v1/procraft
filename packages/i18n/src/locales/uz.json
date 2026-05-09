@@ -1,4 +1,16 @@
 {
   "app.name": "Procraft",
-  "nav.dashboard": "Bosh panel"
+  "nav.dashboard": "Bosh panel",
+  "errors.generic": "Xatolik yuz berdi. Qayta urinib ko'ring.",
+  "errors.network": "Serverga ulanishda muammo bor. CORS yoki internet aloqasini tekshiring.",
+  "errors.invalidCredentials": "Email, username yoki parol noto'g'ri.",
+  "errors.notAuthenticated": "Sessiya topilmadi. Iltimos, qayta kiring.",
+  "errors.profileNotFound": "Profil topilmadi.",
+  "errors.csrf": "Xavfsizlik tokeni mos kelmadi. Sahifani yangilab qayta urinib ko'ring.",
+  "errors.unexpected": "Kutilmagan xatolik yuz berdi.",
+  "errors.validation": "Kiritilgan ma'lumotlarni tekshiring.",
+  "errors.forbidden": "Bu amal uchun ruxsat yo'q.",
+  "errors.notFound": "Ma'lumot topilmadi.",
+  "errors.conflict": "Bu ma'lumot allaqachon mavjud.",
+  "errors.server": "Serverda xatolik yuz berdi. Keyinroq qayta urinib ko'ring."
 }

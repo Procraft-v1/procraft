@@ -1,11 +1,16 @@
 import { Button, Card, Col, Row, Spin, Tag, Typography, message } from 'antd';
 import { useProfile, useSelectTemplate, useTemplates } from '@procraft/hooks';
+import { getErrorMessage } from '@procraft/i18n';
 
 const templateCopy = {
-  minimal: 'Clean white resume style for direct, readable profiles.',
-  modern: 'Structured cards with blue and cyan accents for a sharper digital look.',
-  classic: 'Formal centered presentation with a traditional professional tone.',
+  minimal: "Oddiy, oq va o'qilishi qulay resume ko'rinishi.",
+  modern: "Moviy va cyan urg'ular bilan zamonaviy kartali ko'rinish.",
+  classic: "Rasmiy, markazlangan va klassik professional ko'rinish.",
 };
+
+function getTemplatePreviewUrl(template) {
+  return template.previewUrl || `/templates/${template.slug}.jpg`;
+}
 
 export default function TemplatesPage() {
   const { data: templates = [], isLoading } = useTemplates();
@@ -13,7 +18,10 @@ export default function TemplatesPage() {
   const selectTemplate = useSelectTemplate({
     onSuccess: async () => {
       await fetchMyProfile();
-      message.success('Template selected');
+      message.success('Shablon tanlandi');
+    },
+    onError: (error) => {
+      message.error(getErrorMessage(error));
     },
   });
 
@@ -24,9 +32,9 @@ export default function TemplatesPage() {
   return (
     <section className="dashboard-page">
       <div className="dashboard-page__header">
-        <Typography.Title level={2}>Templates</Typography.Title>
+        <Typography.Title level={2}>Shablonlar</Typography.Title>
         <Typography.Paragraph type="secondary">
-          Select how your public profile should be presented. Content stays reusable across every design.
+          Ommaviy profilingiz qanday ko'rinishda chiqishini tanlang.
         </Typography.Paragraph>
       </div>
 
@@ -39,17 +47,14 @@ export default function TemplatesPage() {
             <Col key={template.id} xs={24} md={12} xl={8}>
               <Card
                 className={`template-card template-card--${template.slug}`}
-                extra={isSelected ? <Tag color="blue">Selected</Tag> : null}
+                extra={isSelected ? <Tag color="blue">Tanlangan</Tag> : null}
               >
                 <div className="template-card__preview">
-                  <span />
-                  <strong>{template.name}</strong>
-                  <i />
-                  <i />
+                  <img src={getTemplatePreviewUrl(template)} alt={`${template.name} preview`} />
                 </div>
                 <Typography.Title level={4}>{template.name}</Typography.Title>
                 <Typography.Paragraph type="secondary">
-                  {templateCopy[template.slug] || 'A clean public profile template.'}
+                  {templateCopy[template.slug] || "Toza ommaviy profil shabloni."}
                 </Typography.Paragraph>
                 <Button
                   type={isSelected ? 'default' : 'primary'}
@@ -58,7 +63,7 @@ export default function TemplatesPage() {
                   onClick={() => selectTemplate.mutate(template.id)}
                   block
                 >
-                  {isSelected ? 'Selected' : 'Select template'}
+                  {isSelected ? 'Tanlangan' : 'Shablonni tanlash'}
                 </Button>
               </Card>
             </Col>

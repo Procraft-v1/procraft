@@ -20,15 +20,15 @@ public sealed class ProjectsController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult> CreateAsync([FromBody] ProjectApiRequest request, CancellationToken cancellationToken) =>
-        Ok(await _mediator.Send(new CreateProjectCommand(request.Name, request.Description, request.GithubUrl, request.LiveUrl, request.SortOrder), cancellationToken));
+        Ok(await _mediator.Send(new CreateProjectCommand(request.Name, request.Description, request.GithubUrl, request.IsRepositoryPrivate, request.LiveUrl, request.SortOrder), cancellationToken));
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] ProjectApiRequest request, CancellationToken cancellationToken) =>
-        Ok(await _mediator.Send(new UpdateProjectCommand(id, request.Name, request.Description, request.GithubUrl, request.LiveUrl, request.SortOrder), cancellationToken));
+        Ok(await _mediator.Send(new UpdateProjectCommand(id, request.Name, request.Description, request.GithubUrl, request.IsRepositoryPrivate, request.LiveUrl, request.SortOrder), cancellationToken));
 
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeleteAsync([FromRoute] Guid id, CancellationToken cancellationToken) =>
         Ok(await _mediator.Send(new DeleteProjectCommand(id), cancellationToken));
 }
 
-public sealed record ProjectApiRequest(string Name, string? Description, string? GithubUrl, string? LiveUrl, int? SortOrder);
+public sealed record ProjectApiRequest(string Name, string? Description, string? GithubUrl, bool IsRepositoryPrivate, string? LiveUrl, int? SortOrder);

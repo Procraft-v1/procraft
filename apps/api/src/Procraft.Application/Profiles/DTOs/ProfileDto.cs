@@ -12,7 +12,6 @@ public sealed class ProfileDto
     public string? Title { get; init; }
     public string? Bio { get; init; }
     public string? Location { get; init; }
-    public string? Website { get; init; }
     public string? AvatarUrl { get; init; }
     public string TemplateSlug { get; init; } = "minimal";
     public DateTimeOffset CreatedAt { get; init; }
@@ -36,23 +35,22 @@ public sealed class ProfileDto
             Title = profile.Title,
             Bio = profile.Bio,
             Location = profile.Location,
-            Website = profile.Website,
             AvatarUrl = profile.AvatarUrl,
             TemplateSlug = profile.Template?.Slug ?? "minimal",
             CreatedAt = profile.CreatedAt,
             UpdatedAt = profile.UpdatedAt,
             Skills = profile.Skills.Select(s => new ProfileSkillDto(s.Id, s.Name, s.Level, s.Category)).ToList(),
-            Projects = profile.Projects.Select(p => new ProfileProjectDto(p.Id, p.Name, p.Description, p.GithubUrl, p.LiveUrl)).ToList(),
-            WorkExperiences = profile.WorkExperiences.Select(e => new ProfileExperienceDto(e.Id, e.Company, e.Position, e.Description, e.StartDate, e.EndDate, e.IsCurrent)).ToList(),
-            Educations = profile.Educations.Select(e => new ProfileEducationDto(e.Id, e.Institution, e.Degree, e.Field, e.StartDate, e.EndDate)).ToList(),
+            Projects = profile.Projects.Select(p => new ProfileProjectDto(p.Id, p.Name, p.Description, p.GithubUrl, p.IsRepositoryPrivate, p.LiveUrl)).ToList(),
+            WorkExperiences = profile.WorkExperiences.Select(e => new ProfileExperienceDto(e.Id, e.Company, e.ExperienceType, e.Position, e.Description, e.StartDate, e.EndDate, e.IsCurrent)).ToList(),
+            Educations = profile.Educations.Select(e => new ProfileEducationDto(e.Id, e.Institution, e.EducationType, e.Degree, e.Field, e.StartDate, e.EndDate)).ToList(),
             Certificates = profile.Certificates.Select(c => new ProfileCertificateDto(c.Id, c.Name, c.Issuer, c.IssuedOn, c.Url)).ToList(),
             SocialLinks = profile.SocialLinks.Select(s => new ProfileSocialLinkDto(s.Id, s.Platform, s.Url)).ToList(),
         };
 }
 
 public sealed record ProfileSkillDto(Guid Id, string Name, byte? Level, string? Category);
-public sealed record ProfileProjectDto(Guid Id, string Name, string? Description, string? GithubUrl, string? LiveUrl);
-public sealed record ProfileExperienceDto(Guid Id, string Company, string Position, string? Description, DateOnly? StartDate, DateOnly? EndDate, bool IsCurrent);
-public sealed record ProfileEducationDto(Guid Id, string Institution, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate);
+public sealed record ProfileProjectDto(Guid Id, string Name, string? Description, string? GithubUrl, bool IsRepositoryPrivate, string? LiveUrl);
+public sealed record ProfileExperienceDto(Guid Id, string Company, string ExperienceType, string Position, string? Description, DateOnly? StartDate, DateOnly? EndDate, bool IsCurrent);
+public sealed record ProfileEducationDto(Guid Id, string Institution, string EducationType, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate);
 public sealed record ProfileCertificateDto(Guid Id, string Name, string? Issuer, DateOnly? IssuedOn, string? Url);
 public sealed record ProfileSocialLinkDto(Guid Id, string Platform, string Url);

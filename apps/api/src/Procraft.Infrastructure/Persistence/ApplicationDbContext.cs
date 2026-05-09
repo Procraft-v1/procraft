@@ -19,6 +19,8 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Skill> Skills => Set<Skill>();
 
+    public DbSet<SkillCategory> SkillCategories => Set<SkillCategory>();
+
     public DbSet<Project> Projects => Set<Project>();
 
     public DbSet<WorkExperience> WorkExperiences => Set<WorkExperience>();

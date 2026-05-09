@@ -8,22 +8,31 @@ using Procraft.Domain.Entities;
 
 namespace Procraft.Application.ProfileSections.Educations;
 
-public sealed record EducationDto(Guid Id, string Institution, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate, int SortOrder, DateTimeOffset CreatedAt, DateTimeOffset? UpdatedAt)
+public sealed record EducationDto(Guid Id, string Institution, string EducationType, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate, int SortOrder, DateTimeOffset CreatedAt, DateTimeOffset? UpdatedAt)
 {
     public static EducationDto FromEntity(Education item) =>
-        new(item.Id, item.Institution, item.Degree, item.Field, item.StartDate, item.EndDate, item.SortOrder, item.CreatedAt, item.UpdatedAt);
+        new(item.Id, item.Institution, item.EducationType, item.Degree, item.Field, item.StartDate, item.EndDate, item.SortOrder, item.CreatedAt, item.UpdatedAt);
 }
 
 public sealed record GetEducationsQuery : IRequest<IReadOnlyCollection<EducationDto>>;
-public sealed record CreateEducationCommand(string Institution, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate, int? SortOrder) : IRequest<EducationDto>;
-public sealed record UpdateEducationCommand(Guid Id, string Institution, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate, int? SortOrder) : IRequest<EducationDto>;
+public sealed record CreateEducationCommand(string Institution, string EducationType, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate, int? SortOrder) : IRequest<EducationDto>;
+public sealed record UpdateEducationCommand(Guid Id, string Institution, string EducationType, string? Degree, string? Field, DateOnly? StartDate, DateOnly? EndDate, int? SortOrder) : IRequest<EducationDto>;
 public sealed record DeleteEducationCommand(Guid Id) : IRequest<EducationDto>;
+
+internal static class EducationTypes
+{
+    public static readonly string[] Allowed = ["formal", "course", "self", "mentor", "online"];
+
+    public static string Normalize(string? value) =>
+        Allowed.Contains(value?.Trim().ToLowerInvariant()) ? value!.Trim().ToLowerInvariant() : "formal";
+}
 
 public sealed class CreateEducationCommandValidator : AbstractValidator<CreateEducationCommand>
 {
     public CreateEducationCommandValidator()
     {
         RuleFor(x => x.Institution).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.EducationType).Must(value => EducationTypes.Allowed.Contains(value?.Trim().ToLowerInvariant()));
         RuleFor(x => x.Degree).MaximumLength(100);
         RuleFor(x => x.Field).MaximumLength(100);
         RuleFor(x => x.EndDate)
@@ -38,6 +47,7 @@ public sealed class UpdateEducationCommandValidator : AbstractValidator<UpdateEd
     {
         RuleFor(x => x.Id).NotEmpty();
         RuleFor(x => x.Institution).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.EducationType).Must(value => EducationTypes.Allowed.Contains(value?.Trim().ToLowerInvariant()));
         RuleFor(x => x.Degree).MaximumLength(100);
         RuleFor(x => x.Field).MaximumLength(100);
         RuleFor(x => x.EndDate)
@@ -93,6 +103,7 @@ public sealed class CreateEducationCommandHandler : IRequestHandler<CreateEducat
             Id = Guid.NewGuid(),
             ProfileId = profileId,
             Institution = request.Institution.Trim(),
+            EducationType = EducationTypes.Normalize(request.EducationType),
             Degree = Normalize(request.Degree),
             Field = Normalize(request.Field),
             StartDate = request.StartDate,
@@ -125,6 +136,7 @@ public sealed class UpdateEducationCommandHandler : IRequestHandler<UpdateEducat
         var item = await _db.Educations.FirstOrDefaultAsync(x => x.Id == request.Id && x.ProfileId == profileId, cancellationToken)
             ?? throw new NotFoundException("Education not found.");
         item.Institution = request.Institution.Trim();
+        item.EducationType = EducationTypes.Normalize(request.EducationType);
         item.Degree = Normalize(request.Degree);
         item.Field = Normalize(request.Field);
         item.StartDate = request.StartDate;

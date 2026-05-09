@@ -18,7 +18,6 @@ public sealed class ProfileConfiguration : IEntityTypeConfiguration<Profile>
         builder.Property(x => x.Title).HasMaxLength(100);
         builder.Property(x => x.Bio).HasMaxLength(1000);
         builder.Property(x => x.Location).HasMaxLength(160);
-        builder.Property(x => x.Website).HasMaxLength(2048);
         builder.Property(x => x.AvatarUrl).HasMaxLength(2048);
 
         builder.Property(x => x.CreatedAt).IsRequired();
