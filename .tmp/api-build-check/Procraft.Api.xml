@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Procraft.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Procraft.Api.Controllers.HealthController.Get">
+            <summary>Operational health reachable through the /api prefix for gateway routing symmetry.</summary>
+        </member>
+        <member name="M:Procraft.Api.Extensions.CookieExtensions.IssueCsrfTokenCookie(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Issues a readable CSRF token cookie intended for SPA double-submit parity (non-HttpOnly).
+            </summary>
+        </member>
+        <member name="M:Procraft.Api.Extensions.JwtAuthenticationExtensions.AddProcraftJwtCookieAuthentication(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>Registers JWT Bearer auth; access token is read from the configured HttpOnly cookie.</summary>
+        </member>
+        <member name="M:Procraft.Api.Extensions.WebApplicationExtensions.WireJwtSecretsFromEnvironment(Microsoft.AspNetCore.Builder.WebApplicationBuilder)">
+            <summary>Binds Jwt and cookie options from Jwt_*/JWT_* environment variables.</summary>
+        </member>
+        <member name="T:Procraft.Api.Middleware.CsrfMiddleware">
+            <summary>
+            CSRF guard scaffold — compares header token with readable cookie once dual-submit policy is finalized.
+            </summary>
+        </member>
+    </members>
+</doc>

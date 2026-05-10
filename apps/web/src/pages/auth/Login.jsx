@@ -8,10 +8,11 @@ import { Logo } from "@procraft/ui";
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { login, verifyLogin, isAuthenticated, isLoading } = useAuth();
 
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [challenge, setChallenge] = useState(null);
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
@@ -23,8 +24,17 @@ export default function Login() {
     setError("");
     setIsSubmitting(true);
     try {
-      await login(values);
-      navigate(searchParams.get("returnTo") || "/dashboard", { replace: true });
+      if (challenge) {
+        await verifyLogin({
+          verificationId: challenge.verificationId,
+          code: values.code,
+        });
+        navigate(searchParams.get("returnTo") || "/dashboard", { replace: true });
+        return;
+      }
+
+      const result = await login(values);
+      setChallenge(result);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -65,28 +75,50 @@ export default function Login() {
             Xush kelibsiz
           </Typography.Title>
           <Typography.Text type="secondary">
-            Procraft hisobingizga kiring.
+            {challenge
+              ? `${challenge.maskedEmail} manziliga yuborilgan kodni kiriting.`
+              : "Procraft hisobingizga kiring."}
           </Typography.Text>
         </div>
 
         <Form layout="vertical" requiredMark={false} onFinish={handleFinish}>
-          <Form.Item
-            label="Elektron pochta yoki foydalanuvchi nomi"
-            name="emailOrUsername"
-            rules={[
-              { required: true, message: "Elektron pochta yoki foydalanuvchi nomini kiriting." },
-            ]}
-          >
-            <Input autoComplete="username" size="large" />
-          </Form.Item>
+          {challenge ? (
+            <Form.Item
+              label="Tasdiqlash kodi"
+              name="code"
+              rules={[
+                { required: true, message: "4 xonali kodni kiriting." },
+                { pattern: /^\d{4}$/, message: "Kod 4 ta raqamdan iborat bo'lishi kerak." },
+              ]}
+            >
+              <Input
+                autoComplete="one-time-code"
+                inputMode="numeric"
+                maxLength={4}
+                size="large"
+              />
+            </Form.Item>
+          ) : (
+            <>
+              <Form.Item
+                label="Elektron pochta yoki foydalanuvchi nomi"
+                name="emailOrUsername"
+                rules={[
+                  { required: true, message: "Elektron pochta yoki foydalanuvchi nomini kiriting." },
+                ]}
+              >
+                <Input autoComplete="username" size="large" />
+              </Form.Item>
 
-          <Form.Item
-            label="Parol"
-            name="password"
-            rules={[{ required: true, message: "Parolni kiriting." }]}
-          >
-            <Input.Password autoComplete="current-password" size="large" />
-          </Form.Item>
+              <Form.Item
+                label="Parol"
+                name="password"
+                rules={[{ required: true, message: "Parolni kiriting." }]}
+              >
+                <Input.Password autoComplete="current-password" size="large" />
+              </Form.Item>
+            </>
+          )}
 
           {error ? (
             <Typography.Paragraph type="danger" style={{ marginTop: -4 }}>
@@ -101,9 +133,29 @@ export default function Login() {
             block
             loading={isSubmitting}
           >
-            Kirish
+            {challenge ? "Tasdiqlash" : "Kirish"}
           </Button>
+
+          {challenge ? (
+            <Button
+              type="link"
+              block
+              onClick={() => {
+                setChallenge(null);
+                setError("");
+              }}
+              style={{ marginTop: 8 }}
+            >
+              Email yoki parolni o'zgartirish
+            </Button>
+          ) : null}
         </Form>
+
+        {!challenge ? (
+          <Typography.Text type="secondary" style={{ textAlign: "center" }}>
+            <Link to="/reset-password">Parolni unutdingizmi?</Link>
+          </Typography.Text>
+        ) : null}
 
         <Typography.Text type="secondary" style={{ textAlign: "center" }}>
           Procraftda yangimisiz? <Link to="/register">Ro'yxatdan o'ting</Link>

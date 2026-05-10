@@ -5,6 +5,7 @@ import AuthGuard from '../shared/guards/AuthGuard.jsx';
 
 import Login from '../pages/auth/Login.jsx';
 import Register from '../pages/auth/Register.jsx';
+import ResetPassword from '../pages/auth/ResetPassword.jsx';
 import DashboardHomePage from '../pages/dashboard/DashboardHomePage.jsx';
 import ProfilePage from '../pages/profile/ProfilePage.jsx';
 import AnalyticsPage from '../pages/analytics/AnalyticsPage.jsx';
@@ -25,6 +26,10 @@ const router = createBrowserRouter(
     {
       path: '/register',
       element: <Register />,
+    },
+    {
+      path: '/reset-password',
+      element: <ResetPassword />,
     },
     {
       path: '/dashboard',

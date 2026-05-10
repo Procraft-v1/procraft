@@ -1,41 +1,43 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Procraft.Application.Auth.DTOs;
 using Procraft.Application.Common.Configuration;
 using Procraft.Application.Common.Exceptions;
 using Procraft.Application.Common.Interfaces;
 using Procraft.Domain.Entities;
-using Microsoft.Extensions.Options;
-using RefreshTokenEntity = Procraft.Domain.Entities.RefreshToken;
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Procraft.Application.Auth.Commands.Login;
 
-public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResultDto>
+public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginChallengeDto>
 {
+    private const int CodeLength = 4;
+    private const int CodeExpiresInMinutes = 5;
+
     private readonly IApplicationDbContext _db;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly ITokenService _tokenService;
-    private readonly ICookieService _cookies;
+    private readonly IEmailService _email;
     private readonly IRequestContext _request;
     private readonly JwtOptions _jwt;
 
     public LoginCommandHandler(
         IApplicationDbContext db,
         IPasswordHasher passwordHasher,
-        ITokenService tokenService,
-        ICookieService cookies,
+        IEmailService email,
         IRequestContext request,
         IOptions<JwtOptions> jwt)
     {
         _db = db;
         _passwordHasher = passwordHasher;
-        _tokenService = tokenService;
-        _cookies = cookies;
+        _email = email;
         _request = request;
         _jwt = jwt.Value;
     }
 
-    public async Task<AuthResultDto> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<LoginChallengeDto> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var key = request.EmailOrUsername.Trim().ToLowerInvariant();
 
@@ -50,32 +52,74 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResu
         }
 
         var now = DateTimeOffset.UtcNow;
-        var refreshPlain = _tokenService.GenerateRefreshPlaintext();
-        var refreshHash = _tokenService.HashRefreshToken(refreshPlain);
 
-        var refreshRow = new RefreshTokenEntity
+        var activeCodes = await _db.LoginVerificationCodes
+            .Where(x => x.UserId == user.Id && x.ConsumedAt == null && x.ExpiresAt > now)
+            .ToListAsync(cancellationToken);
+
+        foreach (var activeCode in activeCodes)
         {
-            Id = Guid.NewGuid(),
+            activeCode.ConsumedAt = now;
+            activeCode.UpdatedAt = now;
+        }
+
+        var verificationId = Guid.NewGuid();
+        var code = RandomNumberGenerator.GetInt32(0, 10_000).ToString("D4", CultureInfo.InvariantCulture);
+        var expiresAt = now.AddMinutes(CodeExpiresInMinutes);
+
+        var verification = new LoginVerificationCode
+        {
+            Id = verificationId,
             UserId = user.Id,
             User = user,
-            TokenHash = refreshHash,
-            ExpiresAt = now.AddDays(_jwt.RefreshTokenDays),
+            CodeHash = HashVerificationCode(verificationId, code, _jwt.Secret),
+            ExpiresAt = expiresAt,
             CreatedByIp = _request.IpAddress,
             UserAgent = _request.UserAgent,
             CreatedAt = now,
         };
 
-        await _db.RefreshTokens.AddAsync(refreshRow, cancellationToken);
+        await _db.LoginVerificationCodes.AddAsync(verification, cancellationToken);
         await _db.SaveChangesAsync(cancellationToken);
 
-        var access = _tokenService.CreateAccessToken(user);
-        _cookies.AppendAccessToken(access);
-        _cookies.AppendRefreshToken(refreshPlain);
+        await _email.SendAsync(
+            user.Email,
+            "Procraft login kodi",
+            $"Procraft hisobingizga kirish kodi: {code}\nKod {CodeExpiresInMinutes} daqiqa amal qiladi.",
+            cancellationToken);
 
-        return new AuthResultDto
+        return new LoginChallengeDto
         {
-            User = AuthUserDto.FromUser(user),
+            VerificationId = verificationId,
+            MaskedEmail = MaskEmail(user.Email),
+            ExpiresAt = expiresAt,
+            CodeLength = CodeLength,
         };
     }
 
+    private static string HashVerificationCode(Guid verificationId, string code, string secret)
+    {
+        if (string.IsNullOrWhiteSpace(secret))
+        {
+            throw new InvalidOperationException("JWT signing secret is not configured (Jwt:Secret or JWT_SECRET).");
+        }
+
+        var key = Encoding.UTF8.GetBytes(secret);
+        var payload = Encoding.UTF8.GetBytes($"{verificationId:N}:{code}");
+        using var hmac = new HMACSHA256(key);
+        return Convert.ToHexString(hmac.ComputeHash(payload));
+    }
+
+    private static string MaskEmail(string email)
+    {
+        var at = email.IndexOf('@');
+        if (at <= 1)
+        {
+            return email;
+        }
+
+        var name = email[..at];
+        var domain = email[at..];
+        return $"{name[0]}***{domain}";
+    }
 }

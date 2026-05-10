@@ -17,6 +17,10 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
+    public DbSet<LoginVerificationCode> LoginVerificationCodes => Set<LoginVerificationCode>();
+
+    public DbSet<PasswordResetCode> PasswordResetCodes => Set<PasswordResetCode>();
+
     public DbSet<Skill> Skills => Set<Skill>();
 
     public DbSet<SkillCategory> SkillCategories => Set<SkillCategory>();

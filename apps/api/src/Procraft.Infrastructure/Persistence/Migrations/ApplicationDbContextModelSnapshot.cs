@@ -109,6 +109,98 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.ToTable("refresh_tokens");
         });
 
+        modelBuilder.Entity("Procraft.Domain.Entities.LoginVerificationCode", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uuid");
+
+            b.Property<int>("AttemptCount")
+                .HasColumnType("integer");
+
+            b.Property<string>("CodeHash")
+                .IsRequired()
+                .HasMaxLength(64)
+                .HasColumnType("character varying(64)");
+
+            b.Property<DateTimeOffset?>("ConsumedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<DateTimeOffset>("CreatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("CreatedByIp")
+                .HasMaxLength(64)
+                .HasColumnType("character varying(64)");
+
+            b.Property<DateTimeOffset>("ExpiresAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<DateTimeOffset?>("UpdatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<Guid>("UserId")
+                .HasColumnType("uuid");
+
+            b.Property<string>("UserAgent")
+                .HasMaxLength(512)
+                .HasColumnType("character varying(512)");
+
+            b.HasKey("Id");
+
+            b.HasIndex("UserId");
+
+            b.HasIndex("UserId", "ExpiresAt");
+
+            b.ToTable("login_verification_codes");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.PasswordResetCode", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uuid");
+
+            b.Property<int>("AttemptCount")
+                .HasColumnType("integer");
+
+            b.Property<string>("CodeHash")
+                .IsRequired()
+                .HasMaxLength(64)
+                .HasColumnType("character varying(64)");
+
+            b.Property<DateTimeOffset?>("ConsumedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<DateTimeOffset>("CreatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("CreatedByIp")
+                .HasMaxLength(64)
+                .HasColumnType("character varying(64)");
+
+            b.Property<DateTimeOffset>("ExpiresAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<DateTimeOffset?>("UpdatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<Guid>("UserId")
+                .HasColumnType("uuid");
+
+            b.Property<string>("UserAgent")
+                .HasMaxLength(512)
+                .HasColumnType("character varying(512)");
+
+            b.HasKey("Id");
+
+            b.HasIndex("UserId");
+
+            b.HasIndex("UserId", "ExpiresAt");
+
+            b.ToTable("password_reset_codes");
+        });
+
         modelBuilder.Entity("Procraft.Domain.Entities.Profile", b =>
         {
             b.Property<Guid>("Id")
@@ -706,6 +798,28 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.Navigation("User");
         });
 
+        modelBuilder.Entity("Procraft.Domain.Entities.LoginVerificationCode", b =>
+        {
+            b.HasOne("Procraft.Domain.Entities.User", "User")
+                .WithMany("LoginVerificationCodes")
+                .HasForeignKey("UserId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("User");
+        });
+
+        modelBuilder.Entity("Procraft.Domain.Entities.PasswordResetCode", b =>
+        {
+            b.HasOne("Procraft.Domain.Entities.User", "User")
+                .WithMany("PasswordResetCodes")
+                .HasForeignKey("UserId")
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            b.Navigation("User");
+        });
+
         modelBuilder.Entity("Procraft.Domain.Entities.Profile", b =>
         {
             b.HasOne("Procraft.Domain.Entities.Template", "Template")
@@ -885,6 +999,10 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("Procraft.Domain.Entities.User", b =>
         {
+            b.Navigation("LoginVerificationCodes");
+
+            b.Navigation("PasswordResetCodes");
+
             b.Navigation("Profile");
 
             b.Navigation("RefreshTokens");

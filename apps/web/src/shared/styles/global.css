@@ -45,6 +45,13 @@ body,
   border-right: 1px solid rgb(255 255 255 / 8%);
 }
 
+.dashboard-sidebar .ant-layout-sider-children {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 0;
+}
+
 .dashboard-sidebar__brand {
   display: flex;
   align-items: center;

@@ -17,6 +17,21 @@ export async function login(payload) {
   return axiosClient.post('/auth/login', payload);
 }
 
+export async function verifyLogin(payload) {
+  await getCsrf();
+  return axiosClient.post('/auth/login/verify', payload);
+}
+
+export async function forgotPassword(payload) {
+  await getCsrf();
+  return axiosClient.post('/auth/password/forgot', payload);
+}
+
+export async function resetPassword(payload) {
+  await getCsrf();
+  return axiosClient.post('/auth/password/reset', payload);
+}
+
 export function getMe(config) {
   return axiosClient.get('/auth/me', config);
 }

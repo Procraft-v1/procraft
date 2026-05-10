@@ -32,7 +32,7 @@ public sealed class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileC
         profile.Title = Normalize(request.Title);
         profile.Bio = Normalize(request.Bio);
         profile.Location = Normalize(request.Location);
-        profile.AvatarUrl = Normalize(request.AvatarUrl);
+        profile.AvatarUrl = Normalize(request.AvatarUrl) ?? profile.AvatarUrl;
         profile.UpdatedAt = DateTimeOffset.UtcNow;
 
         await _db.SaveChangesAsync(cancellationToken);

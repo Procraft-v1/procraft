@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { login } from '@procraft/services';
+import { login, verifyLogin } from '@procraft/services';
 
 export function useLogin() {
   return useMutation({
@@ -7,6 +7,16 @@ export function useLogin() {
     meta: {
       domain: 'auth',
       action: 'login',
+    },
+  });
+}
+
+export function useVerifyLogin() {
+  return useMutation({
+    mutationFn: (payload) => verifyLogin(payload).then((res) => res.data),
+    meta: {
+      domain: 'auth',
+      action: 'verifyLogin',
     },
   });
 }

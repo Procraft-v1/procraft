@@ -10,6 +10,7 @@ import {
   login as loginRequest,
   logout as logoutRequest,
   register as registerRequest,
+  verifyLogin as verifyLoginRequest,
 } from "@procraft/services";
 
 const AuthContext = createContext(null);
@@ -33,7 +34,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const path = typeof window !== "undefined" ? window.location.pathname : "";
-    const isAuthPage = path === "/login" || path === "/register";
+    const isAuthPage = path === "/login" || path === "/register" || path === "/reset-password";
 
     if (isAuthPage) {
       setIsLoading(false);
@@ -60,6 +61,11 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (data) => {
     const res = await loginRequest(data);
+    return res?.data ?? res;
+  }, []);
+
+  const verifyLogin = useCallback(async (data) => {
+    const res = await verifyLoginRequest(data);
     const nextUser = readUser(res);
     setUser(nextUser);
     return nextUser;
@@ -87,6 +93,7 @@ export function AuthProvider({ children }) {
         isLoading,
         isAuthenticated: Boolean(user),
         login,
+        verifyLogin,
         register,
         logout,
         refetchMe,

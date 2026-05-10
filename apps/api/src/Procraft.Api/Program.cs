@@ -11,6 +11,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
+LoadEnvironmentFile();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, loggerConfiguration) =>
@@ -163,6 +165,45 @@ try
 finally
 {
     Log.CloseAndFlush();
+}
+
+static void LoadEnvironmentFile()
+{
+    var directory = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+    while (directory is not null)
+    {
+        var envPath = Path.Combine(directory.FullName, ".env");
+        if (File.Exists(envPath))
+        {
+            foreach (var rawLine in File.ReadAllLines(envPath))
+            {
+                var line = rawLine.Trim();
+                if (line.Length == 0 || line.StartsWith('#'))
+                {
+                    continue;
+                }
+
+                var separator = line.IndexOf('=');
+                if (separator <= 0)
+                {
+                    continue;
+                }
+
+                var key = line[..separator].Trim();
+                var value = line[(separator + 1)..].Trim().Trim('"');
+
+                if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(key)))
+                {
+                    Environment.SetEnvironmentVariable(key, value);
+                }
+            }
+
+            return;
+        }
+
+        directory = directory.Parent;
+    }
 }
 
 public partial class Program;

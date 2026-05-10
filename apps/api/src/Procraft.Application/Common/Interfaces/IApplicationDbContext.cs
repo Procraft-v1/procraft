@@ -11,6 +11,10 @@ public interface IApplicationDbContext
 
     DbSet<RefreshToken> RefreshTokens { get; }
 
+    DbSet<LoginVerificationCode> LoginVerificationCodes { get; }
+
+    DbSet<PasswordResetCode> PasswordResetCodes { get; }
+
     DbSet<Skill> Skills { get; }
 
     DbSet<SkillCategory> SkillCategories { get; }

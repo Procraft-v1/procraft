@@ -6,6 +6,7 @@ const templateCopy = {
   minimal: "Oddiy, oq va o'qilishi qulay resume ko'rinishi.",
   modern: "Moviy va cyan urg'ular bilan zamonaviy kartali ko'rinish.",
   classic: "Rasmiy, markazlangan va klassik professional ko'rinish.",
+  editorial: "Katta tipografiya va jurnal uslubidagi premium portfolio.",
 };
 
 function getTemplatePreviewUrl(template) {

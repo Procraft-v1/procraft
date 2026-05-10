@@ -5,6 +5,9 @@ using Procraft.Application.Auth.Commands.Login;
 using Procraft.Application.Auth.Commands.Logout;
 using Procraft.Application.Auth.Commands.RefreshToken;
 using Procraft.Application.Auth.Commands.Register;
+using Procraft.Application.Auth.Commands.RequestPasswordReset;
+using Procraft.Application.Auth.Commands.ResetPassword;
+using Procraft.Application.Auth.Commands.VerifyLogin;
 using Procraft.Application.Auth.Queries.Me;
 
 namespace Procraft.Api.Controllers;
@@ -41,7 +44,44 @@ public sealed class AuthController : ControllerBase
     public async Task<ActionResult> LoginAsync([FromBody] LoginApiRequest request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new LoginCommand(request.EmailOrUsername, request.Password), cancellationToken);
+        return Ok(new
+        {
+            requiresVerification = true,
+            verificationId = result.VerificationId,
+            maskedEmail = result.MaskedEmail,
+            expiresAt = result.ExpiresAt,
+            codeLength = result.CodeLength,
+        });
+    }
+
+    [HttpPost("login/verify")]
+    [AllowAnonymous]
+    public async Task<ActionResult> VerifyLoginAsync([FromBody] VerifyLoginApiRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new VerifyLoginCommand(request.VerificationId, request.Code), cancellationToken);
         return Ok(new { user = result.User });
+    }
+
+    [HttpPost("password/forgot")]
+    [AllowAnonymous]
+    public async Task<ActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordApiRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new RequestPasswordResetCommand(request.Email), cancellationToken);
+        return Ok(new
+        {
+            resetId = result.ResetId,
+            maskedEmail = result.MaskedEmail,
+            expiresAt = result.ExpiresAt,
+            codeLength = result.CodeLength,
+        });
+    }
+
+    [HttpPost("password/reset")]
+    [AllowAnonymous]
+    public async Task<ActionResult> ResetPasswordAsync([FromBody] ResetPasswordApiRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new ResetPasswordCommand(request.ResetId, request.Code, request.NewPassword), cancellationToken);
+        return Ok(new { message = result.Message });
     }
 
     [HttpGet("me")]
@@ -72,3 +112,9 @@ public sealed class AuthController : ControllerBase
 public sealed record RegisterApiRequest(string Email, string Username, string Password);
 
 public sealed record LoginApiRequest(string EmailOrUsername, string Password);
+
+public sealed record VerifyLoginApiRequest(Guid VerificationId, string Code);
+
+public sealed record ForgotPasswordApiRequest(string Email);
+
+public sealed record ResetPasswordApiRequest(Guid ResetId, string Code, string NewPassword);

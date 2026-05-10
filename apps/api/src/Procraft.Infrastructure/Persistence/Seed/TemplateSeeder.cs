@@ -7,47 +7,46 @@ public static class TemplateSeeder
 {
     public static async Task SeedAsync(ApplicationDbContext db, CancellationToken cancellationToken = default)
     {
-        if (await db.Templates.AnyAsync(cancellationToken))
-        {
-            return;
-        }
-
         var now = DateTimeOffset.UtcNow;
-        db.Templates.AddRange(
-            new Template
+        var templates = new[]
+        {
+            new TemplateSeed("Minimal", "minimal", "Clean typography-forward layout.", null),
+            new TemplateSeed("Modern", "modern", "Card-based modern layout.", null),
+            new TemplateSeed("Classic", "classic", "Traditional chronological resume.", null),
+            new TemplateSeed("Editorial", "editorial", "Magazine-style editorial portfolio.", "/templates/editorial.svg"),
+        };
+
+        foreach (var seed in templates)
+        {
+            var template = await db.Templates
+                .FirstOrDefaultAsync(x => x.Slug == seed.Slug, cancellationToken);
+
+            if (template is null)
             {
-                Id = Guid.NewGuid(),
-                Name = "Minimal",
-                Slug = "minimal",
-                Description = "Clean typography-forward layout.",
-                PreviewUrl = null,
-                IsActive = true,
-                IsPremium = false,
-                CreatedAt = now,
-            },
-            new Template
-            {
-                Id = Guid.NewGuid(),
-                Name = "Modern",
-                Slug = "modern",
-                Description = "Card-based modern layout.",
-                PreviewUrl = null,
-                IsActive = true,
-                IsPremium = false,
-                CreatedAt = now,
-            },
-            new Template
-            {
-                Id = Guid.NewGuid(),
-                Name = "Classic",
-                Slug = "classic",
-                Description = "Traditional chronological resume.",
-                PreviewUrl = null,
-                IsActive = true,
-                IsPremium = false,
-                CreatedAt = now,
-            });
+                db.Templates.Add(new Template
+                {
+                    Id = Guid.NewGuid(),
+                    Name = seed.Name,
+                    Slug = seed.Slug,
+                    Description = seed.Description,
+                    PreviewUrl = seed.PreviewUrl,
+                    IsActive = true,
+                    IsPremium = false,
+                    CreatedAt = now,
+                });
+
+                continue;
+            }
+
+            template.Name = seed.Name;
+            template.Description = seed.Description;
+            template.PreviewUrl = seed.PreviewUrl;
+            template.IsActive = true;
+            template.UpdatedAt = now;
+        }
 
         await db.SaveChangesAsync(cancellationToken);
     }
+
+    private sealed record TemplateSeed(string Name, string Slug, string Description, string? PreviewUrl);
 }

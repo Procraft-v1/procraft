@@ -3,6 +3,7 @@ export * from "./auth/useLogout.js";
 export * from "./auth/useMe.js";
 export * from "./auth/useRefreshSession.js";
 export * from "./auth/useRegister.js";
+export * from "./auth/usePasswordReset.js";
 export * from "./profile/useProfile.js";
 export * from "./public-profile/usePublicProfile.js";
 export * from "./skills/useSkills.js";

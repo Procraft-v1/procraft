@@ -11,4 +11,8 @@ public sealed class SmtpOptions
     public string Password { get; init; } = string.Empty;
 
     public string FromAddress { get; init; } = "noreply@procraft.uz";
+
+    public string FromName { get; init; } = "Procraft";
+
+    public bool EnableSsl { get; init; } = true;
 }
