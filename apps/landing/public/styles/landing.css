@@ -594,6 +594,8 @@ body::after {
   font-size: clamp(16px, 1.8vw, 18px);
   color: var(--pc-muted);
   max-width: 540px;
+
+  margin: 0 auto;
   line-height: 1.72;
 }
 
