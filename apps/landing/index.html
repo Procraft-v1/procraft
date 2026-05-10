@@ -4,254 +4,710 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index,follow,max-image-preview:large" />
-    <meta name="theme-color" content="#0D1B2A" />
+    <meta name="theme-color" content="#ffffff" />
 
-    <title>Procraft - Portfolio sayt va resume yaratish platformasi</title>
+    <title>Procraft — Portfolio & Resume Platformasi</title>
     <meta
       name="description"
-      content="Procraft orqali professional portfolio sayt yarating, shablon tanlang, resume tayyorlang va public profilingizni tez ulashing."
-    />
-    <meta
-      name="keywords"
-      content="portfolio yaratish, resume yaratish, CV builder, portfolio website, Procraft, Uzbekistan portfolio, public profile"
+      content="Professional portfolio sayt, resume va public profile yaratish uchun yagona platforma. Shablon tanlang, profil yarating va ulashing."
     />
     <link rel="canonical" href="https://procraft.uz/" />
-    <link rel="alternate" hreflang="uz" href="https://procraft.uz/" />
 
-    <link rel="icon" type="image/png" href="/brand/procraft-app-icon-rounded.png" />
-    <link rel="apple-touch-icon" href="/brand/procraft-app-icon-rounded.png" />
-    <link rel="preload" as="image" href="/templates/classic.jpg" />
-    <link rel="stylesheet" href="/styles/landing.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Procraft" />
-    <meta property="og:title" content="Procraft - Portfolio sayt va resume yaratish platformasi" />
-    <meta
-      property="og:description"
-      content="Professional portfolio sayt yarating, shablon tanlang va profilingizni mijozlar yoki ish beruvchilar bilan ulashing."
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="./brand/procraft-app-icon-rounded.png"
     />
-    <meta property="og:url" content="https://procraft.uz/" />
-    <meta property="og:image" content="https://procraft.uz/templates/modern.jpg" />
-    <meta property="og:locale" content="uz_UZ" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Procraft - Portfolio sayt yaratish" />
-    <meta
-      name="twitter:description"
-      content="Portfolio, resume va public profile uchun sodda platforma."
-    />
-    <meta name="twitter:image" content="https://procraft.uz/templates/modern.jpg" />
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "Procraft",
-        "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web",
-        "url": "https://procraft.uz/",
-        "image": "https://procraft.uz/templates/modern.jpg",
-        "description": "Professional portfolio sayt va resume yaratish platformasi.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        }
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Procraft nima uchun kerak?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Procraft mutaxassislar uchun portfolio sayt, resume va public profile yaratishga yordam beradi."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Dashboard qayerda joylashgan?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Portfolio yaratish ilovasi dashboard.procraft.uz manzilida ishlaydi."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Template keyin almashtiriladimi?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Ha. Profil ma'lumotlari saqlanadi, faqat public ko'rinish tanlangan template bo'yicha o'zgaradi."
-            }
-          }
-        ]
-      }
-    </script>
+    <link rel="stylesheet" href="styles/landing.css" />
   </head>
   <body>
-    <header class="site-header">
-      <a class="brand" href="/" aria-label="Procraft bosh sahifa">
-        <img src="/brand/procraft-logo-mark-transparent.png" width="34" height="34" alt="" />
-        <span>Procraft</span>
+    <div id="cursor-glow"></div>
+
+    <header class="header" id="header">
+      <a class="logo" href="/" aria-label="Procraft bosh sahifa">
+        <div class="logo-mark" aria-hidden="true">
+          <img src="./brand/procraft-app-icon-rounded.png" alt="Procraft" />
+        </div>
+        Procraft
       </a>
-      <nav class="site-nav" aria-label="Asosiy navigatsiya">
-        <a href="#features">Imkoniyatlar</a>
-        <a href="#templates">Shablonlar</a>
-        <a href="/portfolio-yaratish/">Portfolio</a>
-        <a href="/resume-yaratish/">Resume</a>
-        <a href="#how">Jarayon</a>
-        <a href="#faq">FAQ</a>
-        <a class="nav-action" href="https://dashboard.procraft.uz/">Dashboard</a>
+
+      <nav class="desktop-nav" aria-label="Asosiy navigatsiya">
+        <a class="nav-link" href="#features">Imkoniyatlar</a>
+        <a class="nav-link" href="#templates">Shablonlar</a>
+        <a class="nav-link" href="/portfolio-yaratish/">Portfolio</a>
+        <a class="nav-link" href="/resume-yaratish/">Resume</a>
+        <a class="nav-link" href="#how">Jarayon</a>
+        <a class="nav-link" href="#faq">FAQ</a>
+        <a class="nav-cta" href="https://dashboard.procraft.uz/register">
+          Dashboard
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 7h8M8 4l3 3-3 3"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
       </nav>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Menyuni ochish">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </header>
+
+    <div class="menu-overlay" id="menuOverlay">
+      <nav class="overlay-nav">
+        <a href="#features" class="overlay-link">Imkoniyatlar</a>
+        <a href="#templates" class="overlay-link">Shablonlar</a>
+        <a href="/portfolio-yaratish/" class="overlay-link">Portfolio</a>
+        <a href="/resume-yaratish/" class="overlay-link">Resume</a>
+        <a href="#how" class="overlay-link">Jarayon</a>
+        <a href="#faq" class="overlay-link">FAQ</a>
+        <a
+          class="nav-cta"
+          href="https://dashboard.procraft.uz/register"
+          style="margin-top: 24px"
+        >
+          Dashboard'ga o'tish
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 7h8M8 4l3 3-3 3"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </nav>
+    </div>
 
     <main>
       <section class="hero" aria-labelledby="hero-title">
-        <div class="hero__content">
-          <p class="eyebrow">Portfolio sayt yaratish platformasi</p>
-          <h1 id="hero-title">Procraft</h1>
-          <p class="hero__lead">
-            Professional public profile, portfolio sayt va resume uchun bitta joy. Ma'lumotlarni kiriting,
-            shablon tanlang va profilingizni ulashing.
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="orb orb-1" aria-hidden="true"></div>
+        <div class="orb orb-2" aria-hidden="true"></div>
+        <div class="orb orb-3" aria-hidden="true"></div>
+
+        <div class="hero-content">
+          <div class="hero-badge" aria-hidden="true">
+            <span class="badge-dot"></span>
+            Portfolio yaratish platformasi
+          </div>
+
+          <h1 class="hero-title" id="hero-title">
+            <span class="line"><span>Professional</span></span>
+            <span class="line"
+              ><span><em>portfolio</em></span></span
+            >
+            <span class="line"><span>yaratish.</span></span>
+          </h1>
+
+          <p class="hero-sub">
+            Public profile, portfolio sayt va resume — hammasi bitta joyda.
+            Ma'lumotlarni kiriting, shablon tanlang, profilingizni ulashing.
           </p>
-          <div class="hero__actions">
-            <a class="button button--primary" href="https://dashboard.procraft.uz/register">Bepul boshlash</a>
-            <a class="button button--secondary" href="#templates">Shablonlarni ko'rish</a>
+
+          <div class="hero-actions">
+            <a
+              class="btn-primary"
+              href="https://dashboard.procraft.uz/register"
+            >
+              Bepul boshlash
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3 8h10M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+            <a class="btn-ghost" href="#templates">Shablonlarni ko'rish</a>
+          </div>
+        </div>
+
+        <div class="scroll-hint" aria-hidden="true">
+          <div class="scroll-line"></div>
+          Pastga
+        </div>
+      </section>
+
+      <div class="stats reveal" aria-label="Procraft statistikasi">
+        <div class="stat-item">
+          <div class="stat-num" aria-label="3 tayyor portfolio shabloni">3</div>
+          <div class="stat-label">Tayyor portfolio shabloni</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">1</div>
+          <div class="stat-label">Public profile link</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">PDF</div>
+          <div class="stat-label">Resume eksport moduli</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">0</div>
+          <div class="stat-label">Boshlash uchun to'lov</div>
+        </div>
+      </div>
+
+      <section class="section" id="features" aria-labelledby="features-title">
+        <div class="reveal">
+          <div class="label">Imkoniyatlar</div>
+          <h2 class="section-title" id="features-title">
+            Portfolio profilingiz<br /><em>ishga tayyor</em> ko'rinadi.
+          </h2>
+          <p class="section-sub">
+            Procraft mutaxassislar uchun yaratilgan — texnik bilim emas, mazmun
+            muhim.
+          </p>
+        </div>
+
+        <div class="features-layout reveal reveal-d1">
+          <div class="feature feature--hero">
+            <div>
+              <div class="feature-num">01</div>
+              <div class="feature-icon" aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <circle
+                    cx="11"
+                    cy="8.5"
+                    r="3.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path
+                    d="M3 20c0-4 3.6-7 8-7s8 3 8 7"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <h3 class="feature-title">Public profile</h3>
+              <p class="feature-text">
+                Username asosida esda qoladigan
+                <strong style="color: var(--pc-navy); font-weight: 600"
+                  >procraft.uz/username</strong
+                >
+                public link hosil bo'ladi. Mijozlar va HR uchun tayyor — bir
+                zumda ulashing.
+              </p>
+            </div>
+            <div class="feature-visual" aria-hidden="true">
+              <div class="feature-visual-inner">
+                <div class="mock-avatar"></div>
+                <div class="mock-bar blue" style="width: 55%"></div>
+                <div class="mock-bar w85"></div>
+                <div class="mock-bar w65"></div>
+                <div class="mock-bar w45"></div>
+                <div class="mock-btns">
+                  <div class="mock-btn blue"></div>
+                  <div class="mock-btn"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-num">02</div>
+            <div class="feature-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <rect
+                  x="3"
+                  y="3"
+                  width="16"
+                  height="16"
+                  rx="3"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M7 8.5h8M7 12.5h5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+            <h3 class="feature-title">Resume ma'lumotlari</h3>
+            <p class="feature-text">
+              Tajriba, ta'lim, ko'nikma, loyiha va sertifikatlarni tartibli
+              saqlang. PDF eksport — bir tugmada.
+            </p>
+          </div>
+
+          <div class="feature">
+            <div class="feature-num">03</div>
+            <div class="feature-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                <rect
+                  x="3"
+                  y="3"
+                  width="7"
+                  height="7"
+                  rx="1.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <rect
+                  x="12"
+                  y="3"
+                  width="7"
+                  height="7"
+                  rx="1.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <rect
+                  x="3"
+                  y="12"
+                  width="7"
+                  height="7"
+                  rx="1.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <rect
+                  x="12"
+                  y="12"
+                  width="7"
+                  height="7"
+                  rx="1.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </div>
+            <h3 class="feature-title">CV va shablon nazorati</h3>
+            <p class="feature-text">
+              Minimal, Modern yoki Classic ko'rinishlar orasidan tanlang. Profil
+              ma'lumotlari saqlanadi — faqat ko'rinish o'zgaradi.
+            </p>
           </div>
         </div>
       </section>
 
-      <section class="proof-band" aria-label="Procraft qisqa statistikasi">
-        <div>
-          <strong>3</strong>
-          <span>tayyor portfolio shabloni</span>
-        </div>
-        <div>
-          <strong>1</strong>
-          <span>public profile link</span>
-        </div>
-        <div>
-          <strong>PDF</strong>
-          <span>resume eksport moduli</span>
-        </div>
-      </section>
+      <div class="section-full-bg" id="templates">
+        <div class="section">
+          <div class="reveal">
+            <div class="label">Shablonlar</div>
+            <h2 class="section-title" id="templates-title">
+              Bitta profil,<br /><em>uch xil</em> professional ko'rinish.
+            </h2>
+            <p class="section-sub">
+              Profil ma'lumotlari saqlanadi. Istalgan vaqtda shablonni
+              almashtirish mumkin.
+            </p>
+          </div>
 
-      <section class="section" id="features" aria-labelledby="features-title">
-        <div class="section__header">
-          <p class="eyebrow">Imkoniyatlar</p>
-          <h2 id="features-title">Portfolio profilingiz ishga tayyor ko'rinadi.</h2>
-        </div>
-        <div class="feature-grid">
-          <article class="feature-card">
-            <h3><a href="/portfolio-yaratish/">Public profile</a></h3>
-            <p>Username asosida esda qoladigan procraft.uz public link hosil bo'ladi.</p>
-          </article>
-          <article class="feature-card">
-            <h3><a href="/resume-yaratish/">Resume ma'lumotlari</a></h3>
-            <p>Tajriba, ta'lim, ko'nikma, loyiha va sertifikatlarni tartibli saqlang.</p>
-          </article>
-          <article class="feature-card">
-            <h3><a href="/cv-yaratish/">CV va shablon nazorati</a></h3>
-            <p>Minimal, Modern yoki Classic ko'rinishlar orasidan o'zingizga mosini tanlang.</p>
-          </article>
-        </div>
-      </section>
+          <div class="templates-grid">
+            <article class="template-card reveal reveal-d1">
+              <div class="template-thumb">
+                <img
+                  src="/templates/minimal.jpg"
+                  alt="Minimal portfolio shabloni preview"
+                  loading="lazy"
+                />
+                <div class="template-overlay">
+                  <div class="template-pill">Ko'rish →</div>
+                </div>
+              </div>
+              <div class="template-info">
+                <div class="template-tag">Minimal</div>
+                <h3 class="template-name">Minimal</h3>
+                <p class="template-desc">
+                  Oq, tinch va resume uslubiga yaqin ko'rinish.
+                </p>
+              </div>
+            </article>
 
-      <section class="section section--muted" id="templates" aria-labelledby="templates-title">
-        <div class="section__header">
-          <p class="eyebrow">Shablonlar</p>
-          <h2 id="templates-title">Bitta profil, uch xil professional ko'rinish.</h2>
+            <article class="template-card reveal reveal-d2">
+              <div class="template-thumb">
+                <img
+                  src="/templates/modern.jpg"
+                  alt="Modern portfolio shabloni preview"
+                  loading="lazy"
+                />
+                <div class="template-overlay">
+                  <div class="template-pill">Ko'rish →</div>
+                </div>
+              </div>
+              <div class="template-info">
+                <div class="template-tag">Modern</div>
+                <h3 class="template-name">Modern</h3>
+                <p class="template-desc">
+                  Karta va accent ranglar bilan zamonaviy public profile.
+                </p>
+              </div>
+            </article>
+
+            <article class="template-card reveal reveal-d3">
+              <div class="template-thumb">
+                <img
+                  src="/templates/classic.jpg"
+                  alt="Classic portfolio shabloni preview"
+                  loading="lazy"
+                />
+                <div class="template-overlay">
+                  <div class="template-pill">Ko'rish →</div>
+                </div>
+              </div>
+              <div class="template-info">
+                <div class="template-tag">Classic</div>
+                <h3 class="template-name">Classic</h3>
+                <p class="template-desc">
+                  Rasmiy, tartibli va klassik portfolio taqdimoti.
+                </p>
+              </div>
+            </article>
+          </div>
         </div>
-        <div class="template-grid">
-          <article class="template-card">
-            <img src="/templates/minimal.jpg" width="640" height="400" loading="lazy" alt="Minimal portfolio shabloni" />
-            <h3>Minimal</h3>
-            <p>Oq, tinch va resume uslubiga yaqin ko'rinish.</p>
-          </article>
-          <article class="template-card">
-            <img src="/templates/modern.jpg" width="640" height="400" loading="lazy" alt="Modern portfolio shabloni" />
-            <h3>Modern</h3>
-            <p>Karta va accent ranglar bilan zamonaviy public profile.</p>
-          </article>
-          <article class="template-card">
-            <img src="/templates/classic.jpg" width="640" height="400" loading="lazy" alt="Classic portfolio shabloni" />
-            <h3>Classic</h3>
-            <p>Rasmiy, tartibli va klassik portfolio taqdimoti.</p>
-          </article>
-        </div>
-      </section>
+      </div>
 
       <section class="section" id="how" aria-labelledby="how-title">
-        <div class="section__header">
-          <p class="eyebrow">Jarayon</p>
-          <h2 id="how-title">Profil yaratish sodda.</h2>
+        <div class="reveal">
+          <div class="label">Jarayon</div>
+          <h2 class="section-title" id="how-title">
+            3 qadamda<br /><em>tayyor</em> profil.
+          </h2>
+          <p class="section-sub">
+            Hech qanday texnik bilim kerak emas. Faqat o'zingiz haqingizda
+            yozing.
+          </p>
         </div>
-        <ol class="steps">
-          <li>
-            <span>1</span>
-            <div>
-              <h3>Ro'yxatdan o'ting</h3>
-              <p>Dashboard orqali account yarating va asosiy profil ma'lumotlarini kiriting.</p>
+
+        <div class="process-grid reveal reveal-d1">
+          <div class="process-step">
+            <div class="step-big-num" aria-hidden="true">01</div>
+            <div class="step-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle
+                  cx="10"
+                  cy="7"
+                  r="3.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                />
+                <path
+                  d="M2 17c0-3.5 3.5-6 8-6s8 2.5 8 6"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </svg>
             </div>
-          </li>
-          <li>
-            <span>2</span>
-            <div>
-              <h3>Kontentni to'ldiring</h3>
-              <p>Loyihalar, tajriba, ta'lim, ko'nikmalar va sertifikatlarni qo'shing.</p>
+            <h3 class="step-title">Ro'yxatdan o'ting</h3>
+            <p class="step-text">
+              Dashboard orqali account yarating va asosiy profil ma'lumotlarini
+              kiriting. Atigi 2 daqiqa.
+            </p>
+          </div>
+
+          <div class="process-step">
+            <div class="step-big-num" aria-hidden="true">02</div>
+            <div class="step-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M3 5h14M3 10h10M3 15h6"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </svg>
             </div>
-          </li>
-          <li>
-            <span>3</span>
-            <div>
-              <h3>Public linkni ulashing</h3>
-              <p>Profil tayyor bo'lgach public linkni mijozlar, HR yoki hamkorlarga yuboring.</p>
+            <h3 class="step-title">Kontentni to'ldiring</h3>
+            <p class="step-text">
+              Loyihalar, tajriba, ta'lim, ko'nikmalar va sertifikatlarni
+              qo'shing. Keyincha tahrirlash mumkin.
+            </p>
+          </div>
+
+          <div class="process-step">
+            <div class="step-big-num" aria-hidden="true">03</div>
+            <div class="step-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path
+                  d="M7 3H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M11 9l6-6M17 3h-4m4 0v4"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </div>
-          </li>
-        </ol>
+            <h3 class="step-title">Public linkni ulashing</h3>
+            <p class="step-text">
+              Profil tayyor bo'lgach public linkni mijozlar, HR yoki hamkorlarga
+              yuboring. Hammasi shunday.
+            </p>
+          </div>
+        </div>
       </section>
 
-      <section class="cta-section" aria-labelledby="cta-title">
-        <div>
-          <p class="eyebrow">Dashboard</p>
-          <h2 id="cta-title">Portfolio yaratishni boshlang.</h2>
-          <p>Asosiy sayt procraft.uz, ilova esa dashboard.procraft.uz manzilida ishlaydi.</p>
+      <div class="cta-wrap">
+        <div class="cta-inner reveal">
+          <div class="cta-text">
+            <div class="label">Dashboard</div>
+            <h2 class="cta-title">
+              Portfolio yaratishni<br /><em>hozir boshlang.</em>
+            </h2>
+            <p class="cta-sub">
+              Asosiy sayt procraft.uz, ilova esa dashboard.procraft.uz manzilida
+              ishlaydi. Bepul boshlash mumkin.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a
+              class="btn-primary"
+              href="https://dashboard.procraft.uz/register"
+            >
+              Bepul boshlash
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3 8h10M9 4l4 4-4 4"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+            <a class="btn-ghost" href="https://dashboard.procraft.uz/"
+              >Dashboard →</a
+            >
+          </div>
         </div>
-        <a class="button button--primary" href="https://dashboard.procraft.uz/register">Dashboardga o'tish</a>
-      </section>
+      </div>
 
       <section class="section" id="faq" aria-labelledby="faq-title">
-        <div class="section__header">
-          <p class="eyebrow">FAQ</p>
-          <h2 id="faq-title">Tez-tez so'raladigan savollar.</h2>
+        <div class="reveal">
+          <div class="label">FAQ</div>
+          <h2 class="section-title" id="faq-title">
+            Tez-tez<br /><em>so'raladigan</em> savollar.
+          </h2>
         </div>
-        <div class="faq-list">
-          <details>
-            <summary>Procraft bepulmi?</summary>
-            <p>Profil yaratish va asosiy shablonlar bilan boshlash bepul.</p>
-          </details>
-          <details>
-            <summary>Dashboard qayerda?</summary>
-            <p>Portfolio yaratish ilovasi dashboard.procraft.uz manzilida joylashadi.</p>
-          </details>
-          <details>
-            <summary>Template keyin almashtiriladimi?</summary>
-            <p>Ha. Kontent saqlanadi, faqat public sahifa ko'rinishi o'zgaradi.</p>
-          </details>
+
+        <div class="faq-list reveal reveal-d1">
+          <div class="faq-item">
+            <details>
+              <summary>
+                Procraft bepulmi?
+                <span class="faq-plus" aria-hidden="true">+</span>
+              </summary>
+              <p class="faq-answer">
+                Ha, profil yaratish va barcha asosiy shablonlar bilan boshlash
+                mutlaqo bepul. Qo'shimcha premium imkoniyatlar keyinchalik
+                qo'shiladi.
+              </p>
+            </details>
+          </div>
+          <div class="faq-item">
+            <details>
+              <summary>
+                Dashboard qayerda joylashgan?
+                <span class="faq-plus" aria-hidden="true">+</span>
+              </summary>
+              <p class="faq-answer">
+                Portfolio yaratish ilovasi
+                <strong style="color: var(--pc-navy)"
+                  >dashboard.procraft.uz</strong
+                >
+                manzilida ishlaydi. U yerda barcha sozlamalar, shablonlar va PDF
+                eksport imkoniyatlari mavjud.
+              </p>
+            </details>
+          </div>
+          <div class="faq-item">
+            <details>
+              <summary>
+                Template keyin almashtiriladimi?
+                <span class="faq-plus" aria-hidden="true">+</span>
+              </summary>
+              <p class="faq-answer">
+                Ha, albatta. Barcha kontent saqlanadi, faqat public sahifaning
+                ko'rinishi o'zgaradi. Istalgan vaqtda shablonni qayta
+                tanlashingiz mumkin.
+              </p>
+            </details>
+          </div>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <a class="brand brand--footer" href="/" aria-label="Procraft bosh sahifa">
-        <img src="/brand/procraft-logo-mark-transparent.png" width="30" height="30" alt="" />
-        <span>Procraft</span>
+    <footer class="footer">
+      <a class="logo" href="/" aria-label="Procraft bosh sahifa">
+        <div class="logo-mark" aria-hidden="true">
+          <img src="./brand/procraft-app-icon-rounded.png" alt="Procraft" />
+        </div>
+        Procraft
       </a>
-      <p>Portfolio sayt, resume va public profile yaratish uchun platforma.</p>
+      <p class="footer-copy">
+        Portfolio sayt, resume va public profile uchun platforma. © 2025
+        Procraft
+      </p>
+      <div class="footer-links">
+        <a class="footer-link" href="/portfolio-yaratish/">Portfolio</a>
+        <a class="footer-link" href="/resume-yaratish/">Resume</a>
+        <a class="footer-link" href="https://dashboard.procraft.uz/"
+          >Dashboard</a
+        >
+      </div>
     </footer>
+
+    <script>
+      const glow = document.getElementById("cursor-glow");
+      let gx = window.innerWidth / 2,
+        gy = window.innerHeight / 2,
+        mx = gx,
+        my = gy,
+        rafId;
+      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+        document.addEventListener("mousemove", (e) => {
+          mx = e.clientX;
+          my = e.clientY;
+        });
+        (function lerp() {
+          gx += (mx - gx) * 0.07;
+          gy += (my - gy) * 0.07;
+          glow.style.left = gx + "px";
+          glow.style.top = gy + "px";
+          rafId = requestAnimationFrame(lerp);
+        })();
+      } else {
+        glow.style.display = "none";
+      }
+
+      const revealEls = document.querySelectorAll(".reveal");
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -48px 0px" },
+      );
+      revealEls.forEach((el) => revealObserver.observe(el));
+
+      const magnetBtns = document.querySelectorAll(".btn-primary, .nav-cta");
+      magnetBtns.forEach((btn) => {
+        btn.addEventListener("mousemove", (e) => {
+          const r = btn.getBoundingClientRect();
+          const dx = (e.clientX - r.left - r.width / 2) * 0.18;
+          const dy = (e.clientY - r.top - r.height / 2) * 0.18;
+          btn.style.transform = `translate(${dx}px, ${dy}px)`;
+        });
+        btn.addEventListener("mouseleave", () => {
+          btn.style.transform = "";
+        });
+      });
+
+      const header = document.getElementById("header");
+      let lastScroll = 0;
+      window.addEventListener(
+        "scroll",
+        () => {
+          const s = window.scrollY;
+          header.style.height = s > 60 ? "60px" : "70px";
+          lastScroll = s;
+        },
+        { passive: true },
+      );
+
+      const statNums = document.querySelectorAll(".stat-num");
+      const countObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const el = entry.target;
+              const num = parseFloat(el.textContent.trim());
+              if (!isNaN(num) && num > 1) {
+                const dur = 1400,
+                  startTime = performance.now();
+                const tick = (now) => {
+                  const progress = Math.min((now - startTime) / dur, 1);
+                  const eased = 1 - Math.pow(1 - progress, 4);
+                  el.textContent = Math.round(eased * num);
+                  if (progress < 1) requestAnimationFrame(tick);
+                };
+                requestAnimationFrame(tick);
+              }
+              countObserver.unobserve(el);
+            }
+          });
+        },
+        { threshold: 0.5 },
+      );
+      statNums.forEach((el) => countObserver.observe(el));
+
+      /* ============================
+   HAMBURGER MENU LOGIC
+============================ */
+      const menuToggle = document.getElementById("menuToggle");
+      const menuOverlay = document.getElementById("menuOverlay");
+      const overlayLinks = document.querySelectorAll(".overlay-link, .nav-cta");
+
+      if (menuToggle && menuOverlay) {
+        function toggleMenu() {
+          menuToggle.classList.toggle("is-active");
+          menuOverlay.classList.toggle("is-active");
+
+          if (menuOverlay.classList.contains("is-active")) {
+            document.body.style.overflow = "hidden"; // Orqa fon skroll bo'lmaydi
+          } else {
+            document.body.style.overflow = "";
+          }
+        }
+
+        menuToggle.addEventListener("click", toggleMenu);
+
+        overlayLinks.forEach((link) => {
+          link.addEventListener("click", toggleMenu);
+        });
+      }
+    </script>
   </body>
 </html>

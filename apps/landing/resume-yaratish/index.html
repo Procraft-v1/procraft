@@ -4,25 +4,42 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="index,follow,max-image-preview:large" />
-    <meta name="theme-color" content="#0D1B2A" />
+    <meta name="theme-color" content="#ffffff" />
     <title>Resume yaratish - online resume va portfolio | Procraft</title>
     <meta
       name="description"
       content="Resume yaratish uchun Procraft: tajriba, ta'lim, ko'nikma va loyihalarni tartibli joylang, public profile va PDF resume tayyorlang."
     />
     <link rel="canonical" href="https://procraft.uz/resume-yaratish/" />
-    <link rel="icon" type="image/png" href="/brand/procraft-app-icon-rounded.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="/brand/procraft-app-icon-rounded.png"
+    />
     <link rel="apple-touch-icon" href="/brand/procraft-app-icon-rounded.png" />
-    <link rel="stylesheet" href="/styles/landing.css" />
+
+    <link rel="stylesheet" href="../styles/landing.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="Procraft" />
-    <meta property="og:title" content="Resume yaratish - online resume va portfolio" />
+    <meta
+      property="og:title"
+      content="Resume yaratish - online resume va portfolio"
+    />
     <meta
       property="og:description"
       content="Resume ma'lumotlarini tartibli saqlang, portfolio bilan birga taqdim qiling."
     />
     <meta property="og:url" content="https://procraft.uz/resume-yaratish/" />
-    <meta property="og:image" content="https://procraft.uz/templates/minimal.jpg" />
+    <meta
+      property="og:image"
+      content="https://procraft.uz/templates/minimal.jpg"
+    />
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -63,59 +80,125 @@
     </script>
   </head>
   <body>
-    <header class="site-header">
-      <a class="brand" href="/" aria-label="Procraft bosh sahifa">
-        <img src="/brand/procraft-logo-mark-transparent.png" width="34" height="34" alt="" />
-        <span>Procraft</span>
+    <div id="cursor-glow"></div>
+
+    <header class="header" id="header">
+      <a class="logo" href="/" aria-label="Procraft bosh sahifa">
+        <div class="logo-mark" aria-hidden="true">
+          <img src="/brand/procraft-app-icon-rounded.png" alt="" />
+        </div>
+        Procraft
       </a>
-      <nav class="site-nav" aria-label="Asosiy navigatsiya">
-        <a href="/">Bosh sahifa</a>
-        <a href="/portfolio-yaratish/">Portfolio</a>
-        <a href="/cv-yaratish/">CV</a>
-        <a class="nav-action" href="https://dashboard.procraft.uz/register">Boshlash</a>
+
+      <nav class="desktop-nav" aria-label="Asosiy navigatsiya">
+        <a class="nav-link" href="/">Bosh sahifa</a>
+        <a class="nav-link" href="/portfolio-yaratish/">Portfolio</a>
+        <a class="nav-link" href="/cv-yaratish/">CV</a>
+        <a class="nav-cta" href="https://dashboard.procraft.uz/register">
+          Boshlash
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 7h8M8 4l3 3-3 3"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
       </nav>
+
+      <button class="menu-toggle" id="menuToggle" aria-label="Menyuni ochish">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
     </header>
 
+    <div class="menu-overlay" id="menuOverlay">
+      <nav class="overlay-nav">
+        <a href="/" class="overlay-link">Bosh sahifa</a>
+        <a href="/portfolio-yaratish/" class="overlay-link">Portfolio</a>
+        <a href="/cv-yaratish/" class="overlay-link">CV</a>
+        <a
+          class="nav-cta"
+          href="https://dashboard.procraft.uz/register"
+          style="margin-top: 24px"
+        >
+          Dashboard'ga o'tish
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 7h8M8 4l3 3-3 3"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </nav>
+    </div>
+
     <main>
-      <section class="article-hero">
+      <section class="article-hero reveal">
         <div class="article-hero__inner">
-          <p class="eyebrow">Resume yaratish</p>
-          <h1>Online resume yaratish va public profile tayyorlash</h1>
-          <p>
-            Resume ish beruvchiga kimligingizni tez tushuntiradi. Procraft resume ma'lumotlarini portfolio bilan
-            bog'lab, professional public profile ko'rinishida taqdim etadi.
+          <div class="label">Resume yaratish</div>
+          <h1 class="section-title">
+            Online resume yaratish va public profile tayyorlash
+          </h1>
+          <p class="section-sub">
+            Resume ish beruvchiga kimligingizni tez tushuntiradi. Procraft
+            resume ma'lumotlarini portfolio bilan bog'lab, professional public
+            profile ko'rinishida taqdim etadi.
           </p>
         </div>
       </section>
 
-      <div class="article-layout">
+      <div class="article-layout reveal reveal-d1">
         <article class="article-content">
           <h2>Yaxshi resume qanday bo'ladi?</h2>
           <p>
-            Yaxshi resume qisqa, aniq va natijaga yo'naltirilgan bo'ladi. Unda ish tajribasi, ta'lim, ko'nikmalar,
-            loyihalar va aloqa ma'lumotlari tartibli ko'rinishi kerak.
+            Yaxshi resume qisqa, aniq va natijaga yo'naltirilgan bo'ladi. Unda
+            ish tajribasi, ta'lim, ko'nikmalar, loyihalar va aloqa ma'lumotlari
+            tartibli ko'rinishi kerak.
           </p>
 
           <h2>Resume yaratishda Procraft qanday yordam beradi?</h2>
           <ul>
             <li>Profil ma'lumotlarini bitta dashboardda saqlaydi.</li>
             <li>Tajriba, loyiha, ta'lim va skill bloklarini tartiblaydi.</li>
-            <li>Portfolio link orqali resume ma'lumotlarini kengroq ko'rsatadi.</li>
+            <li>
+              Portfolio link orqali resume ma'lumotlarini kengroq ko'rsatadi.
+            </li>
             <li>PDF resume eksporti uchun tayyor struktura beradi.</li>
           </ul>
 
           <h2>Resume ichida portfolio link nima uchun kerak?</h2>
           <p>
-            Resume ko'pincha qisqa bo'ladi. Portfolio link esa ish beruvchiga loyihalar, sertifikatlar va real
-            tajribani ko'proq ko'rish imkonini beradi. Shu sababli online resume va portfolio birga ishlaganda
+            Resume ko'pincha qisqa bo'ladi. Portfolio link esa ish beruvchiga
+            loyihalar, sertifikatlar va real tajribani ko'proq ko'rish imkonini
+            beradi. Shu sababli online resume va portfolio birga ishlaganda
             kuchliroq natija beradi.
           </p>
 
           <h2>Kimlar foydalanishi mumkin?</h2>
           <p>
-            Ish qidirayotgan mutaxassislar, talabalar, junior dasturchilar, dizaynerlar, freelancerlar va o'zini
-            professional ko'rsatmoqchi bo'lgan har qanday foydalanuvchi resume yaratish uchun Procraftdan foydalanishi
-            mumkin.
+            Ish qidirayotgan mutaxassislar, talabalar, junior dasturchilar,
+            dizaynerlar, freelancerlar va o'zini professional ko'rsatmoqchi
+            bo'lgan har qanday foydalanuvchi resume yaratish uchun Procraftdan
+            foydalanishi mumkin.
           </p>
         </article>
 
@@ -128,18 +211,74 @@
           </nav>
           <div class="article-cta">
             <p>Resume ma'lumotlarini tartiblang.</p>
-            <a class="button button--primary" href="https://dashboard.procraft.uz/register">Bepul boshlash</a>
+            <a
+              class="btn-primary"
+              href="https://dashboard.procraft.uz/register"
+              style="padding: 12px 20px; font-size: 14px; margin-top: 12px"
+              >Bepul boshlash</a
+            >
           </div>
         </aside>
       </div>
     </main>
 
-    <footer class="site-footer">
-      <a class="brand brand--footer" href="/" aria-label="Procraft bosh sahifa">
-        <img src="/brand/procraft-logo-mark-transparent.png" width="30" height="30" alt="" />
-        <span>Procraft</span>
+    <footer class="footer">
+      <a class="logo" href="/" aria-label="Procraft bosh sahifa">
+        <div class="logo-mark" aria-hidden="true">
+          <img src="/brand/procraft-app-icon-rounded.png" alt="" />
+        </div>
+        Procraft
       </a>
-      <p>Portfolio sayt, resume va public profile yaratish uchun platforma.</p>
+      <p class="footer-copy">
+        Portfolio sayt, resume va public profile yaratish uchun platforma. ©
+        2025 Procraft
+      </p>
+      <div class="footer-links">
+        <a class="footer-link" href="/portfolio-yaratish/">Portfolio</a>
+        <a class="footer-link" href="/resume-yaratish/">Resume</a>
+        <a class="footer-link" href="https://dashboard.procraft.uz/"
+          >Dashboard</a
+        >
+      </div>
     </footer>
+
+    <script>
+      // 1. Reveal Animation (Elementlarning pastdan chiroyli chiqib kelishi)
+      const revealEls = document.querySelectorAll(".reveal");
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08, rootMargin: "0px 0px -48px 0px" },
+      );
+      revealEls.forEach((el) => revealObserver.observe(el));
+
+      // 2. Hamburger Menu Logic
+      const menuToggle = document.getElementById("menuToggle");
+      const menuOverlay = document.getElementById("menuOverlay");
+      const overlayLinks = document.querySelectorAll(".overlay-link, .nav-cta");
+
+      if (menuToggle && menuOverlay) {
+        function toggleMenu() {
+          menuToggle.classList.toggle("is-active");
+          menuOverlay.classList.toggle("is-active");
+          // Menyu ochiq turganda orqa fon skroll bo'lishini to'xtatish
+          document.body.style.overflow = menuOverlay.classList.contains(
+            "is-active",
+          )
+            ? "hidden"
+            : "";
+        }
+        menuToggle.addEventListener("click", toggleMenu);
+        overlayLinks.forEach((link) => {
+          link.addEventListener("click", toggleMenu);
+        });
+      }
+    </script>
   </body>
 </html>
