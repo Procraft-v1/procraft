@@ -8,14 +8,14 @@ export default defineConfig({
     port: 5174,
     proxy: {
       "/api": {
-        target: "http://localhost:5080",
+        target: "https://api.procraft.uz",
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
       "/uploads": {
-        target: "http://localhost:5080",
+        target: "https://api.procraft.uz",
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },
