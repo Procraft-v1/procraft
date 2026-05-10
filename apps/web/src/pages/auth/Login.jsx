@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, Space, Typography, Spin } from "antd";
+import { ExportOutlined } from "@ant-design/icons";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@procraft/hooks";
 import { getErrorMessage } from "@procraft/i18n";
@@ -13,10 +14,16 @@ export default function Login() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [challenge, setChallenge] = useState(null);
+  const getReturnTo = () => {
+    const value = searchParams.get("returnTo");
+    return value && value.startsWith("/") && !value.includes("[object Object]") && !value.startsWith("/login")
+      ? value
+      : "/";
+  };
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      navigate(searchParams.get("returnTo") || "/dashboard", { replace: true });
+      navigate(getReturnTo(), { replace: true });
     }
   }, [isAuthenticated, isLoading]);
 
@@ -29,7 +36,7 @@ export default function Login() {
           verificationId: challenge.verificationId,
           code: values.code,
         });
-        navigate(searchParams.get("returnTo") || "/dashboard", { replace: true });
+        navigate(getReturnTo(), { replace: true });
         return;
       }
 
@@ -83,21 +90,34 @@ export default function Login() {
 
         <Form layout="vertical" requiredMark={false} onFinish={handleFinish}>
           {challenge ? (
-            <Form.Item
-              label="Tasdiqlash kodi"
-              name="code"
-              rules={[
-                { required: true, message: "4 xonali kodni kiriting." },
-                { pattern: /^\d{4}$/, message: "Kod 4 ta raqamdan iborat bo'lishi kerak." },
-              ]}
-            >
-              <Input
-                autoComplete="one-time-code"
-                inputMode="numeric"
-                maxLength={4}
-                size="large"
-              />
-            </Form.Item>
+            <>
+              <Button
+                block
+                href="https://mail.google.com/mail/u/0/#inbox"
+                icon={<ExportOutlined />}
+                rel="noreferrer"
+                target="_blank"
+                style={{ marginBottom: 16 }}
+              >
+                Pochtani tekshirish
+              </Button>
+
+              <Form.Item
+                label="Tasdiqlash kodi"
+                name="code"
+                rules={[
+                  { required: true, message: "4 xonali kodni kiriting." },
+                  { pattern: /^\d{4}$/, message: "Kod 4 ta raqamdan iborat bo'lishi kerak." },
+                ]}
+              >
+                <Input
+                  autoComplete="one-time-code"
+                  inputMode="numeric"
+                  maxLength={4}
+                  size="large"
+                />
+              </Form.Item>
+            </>
           ) : (
             <>
               <Form.Item

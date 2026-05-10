@@ -7,7 +7,8 @@ import {
   uploadAvatar as uploadAvatarRequest,
 } from '@procraft/services';
 
-export function useProfile() {
+export function useProfile(options = {}) {
+  const isEnabled = options.enabled ?? true;
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -15,7 +16,7 @@ export function useProfile() {
     setIsLoading(true);
 
     try {
-      const response = await getMyProfile();
+      const response = await getMyProfile({ skipAuthRedirect: true, skipAuthRefresh: true });
       setProfile(response.data);
       return response.data;
     } catch (error) {
@@ -49,8 +50,14 @@ export function useProfile() {
   }, []);
 
   useEffect(() => {
+    if (!isEnabled) {
+      setProfile(null);
+      setIsLoading(false);
+      return;
+    }
+
     fetchMyProfile();
-  }, [fetchMyProfile]);
+  }, [fetchMyProfile, isEnabled]);
 
   return {
     profile,

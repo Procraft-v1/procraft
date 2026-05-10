@@ -8,9 +8,9 @@ export default defineConfig({
     port: 5176,
     proxy: {
       "/api": {
-        target: "https://api.procraft.uz",
+        target: "http://localhost:5080",
         changeOrigin: true,
-        secure: true,
+        secure: false,
       },
     },
   },

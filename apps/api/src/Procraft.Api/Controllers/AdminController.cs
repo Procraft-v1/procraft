@@ -123,6 +123,27 @@ public sealed class AdminController : ControllerBase
                     item.item.Views))
             .ToListAsync(cancellationToken);
 
+        var portfolioCreators = await _db.Profiles
+            .AsNoTracking()
+            .OrderByDescending(profile => profile.UpdatedAt ?? profile.CreatedAt)
+            .Select(profile => new AdminPortfolioCreatorDto(
+                profile.Id,
+                profile.UserId,
+                profile.User.Email,
+                profile.User.Username,
+                profile.User.IsEmailConfirmed,
+                profile.FullName,
+                profile.Title,
+                profile.Template == null ? null : profile.Template.Name,
+                profile.Template == null ? null : profile.Template.Slug,
+                profile.CreatedAt,
+                profile.UpdatedAt,
+                profile.Skills.Count,
+                profile.Projects.Count,
+                profile.WorkExperiences.Count,
+                profile.AnalyticsEvents.Count(item => item.EventType == AnalyticsEventType.PageView)))
+            .ToListAsync(cancellationToken);
+
         return Ok(new AdminStatsResponse(
             totalUsers,
             totalProfiles,
@@ -132,7 +153,8 @@ public sealed class AdminController : ControllerBase
             profileViewsLast7Days,
             profilesWithoutTemplate,
             templateUsage,
-            topProfiles));
+            topProfiles,
+            portfolioCreators));
     }
 
     private bool IsAdminAuthenticated()
@@ -206,8 +228,26 @@ public sealed record AdminStatsResponse(
     int ProfileViewsLast7Days,
     int ProfilesWithoutTemplate,
     IReadOnlyCollection<AdminTemplateUsageDto> TemplateUsage,
-    IReadOnlyCollection<AdminTopProfileDto> TopProfiles);
+    IReadOnlyCollection<AdminTopProfileDto> TopProfiles,
+    IReadOnlyCollection<AdminPortfolioCreatorDto> PortfolioCreators);
 
 public sealed record AdminTemplateUsageDto(Guid TemplateId, string Name, string Slug, int Users);
 
 public sealed record AdminTopProfileDto(Guid ProfileId, string FullName, string Username, int Views);
+
+public sealed record AdminPortfolioCreatorDto(
+    Guid ProfileId,
+    Guid UserId,
+    string Email,
+    string Username,
+    bool IsEmailConfirmed,
+    string FullName,
+    string? Title,
+    string? TemplateName,
+    string? TemplateSlug,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? UpdatedAt,
+    int SkillsCount,
+    int ProjectsCount,
+    int ExperiencesCount,
+    int Views);

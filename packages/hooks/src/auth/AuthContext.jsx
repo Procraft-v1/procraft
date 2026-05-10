@@ -14,6 +14,7 @@ import {
 } from "@procraft/services";
 
 const AuthContext = createContext(null);
+const AUTH_SESSION_HINT_KEY = "procraft.authSessionHint";
 
 function readUser(response) {
   const payload = response?.data ?? response;
@@ -35,8 +36,11 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const path = typeof window !== "undefined" ? window.location.pathname : "";
     const isAuthPage = path === "/login" || path === "/register" || path === "/reset-password";
+    const shouldCheckSession =
+      typeof window !== "undefined" &&
+      window.sessionStorage.getItem(AUTH_SESSION_HINT_KEY) === "1";
 
-    if (isAuthPage) {
+    if (isAuthPage || !shouldCheckSession) {
       setIsLoading(false);
       return;
     }
@@ -52,6 +56,9 @@ export function AuthProvider({ children }) {
       const res = await getMe({ skipAuthRedirect: true, skipAuthRefresh: true });
       const nextUser = readUser(res);
       setUser(nextUser);
+      if (nextUser && typeof window !== "undefined") {
+        window.sessionStorage.setItem(AUTH_SESSION_HINT_KEY, "1");
+      }
       return nextUser;
     } catch (error) {
       setUser(null);
@@ -68,6 +75,9 @@ export function AuthProvider({ children }) {
     const res = await verifyLoginRequest(data);
     const nextUser = readUser(res);
     setUser(nextUser);
+    if (nextUser && typeof window !== "undefined") {
+      window.sessionStorage.setItem(AUTH_SESSION_HINT_KEY, "1");
+    }
     return nextUser;
   }, []);
 
@@ -75,6 +85,9 @@ export function AuthProvider({ children }) {
     const res = await registerRequest(data);
     const nextUser = readUser(res);
     setUser(nextUser);
+    if (nextUser && typeof window !== "undefined") {
+      window.sessionStorage.setItem(AUTH_SESSION_HINT_KEY, "1");
+    }
     return nextUser;
   }, []);
 
@@ -83,6 +96,9 @@ export function AuthProvider({ children }) {
       await logoutRequest();
     } finally {
       setUser(null);
+      if (typeof window !== "undefined") {
+        window.sessionStorage.removeItem(AUTH_SESSION_HINT_KEY);
+      }
     }
   }, []);
 

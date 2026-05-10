@@ -1,1 +1,4 @@
-export { useDownloadResume as usePdfExport } from './usePdf.js';
+export {
+  useDownloadResume as usePdfExport,
+  usePreviewResume,
+} from './usePdf.js';

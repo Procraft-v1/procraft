@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Avatar, Button, Drawer, Layout, Menu, Space, Typography } from "antd";
+import { useEffect, useState } from "react";
+import { Avatar, Button, Drawer, Layout, Menu, Modal, Space, Typography } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import {
@@ -8,6 +8,7 @@ import {
   FilePdfOutlined,
   IdcardOutlined,
   LayoutOutlined,
+  LoginOutlined,
   LinkOutlined,
   LogoutOutlined,
   MenuOutlined,
@@ -41,30 +42,9 @@ const menuItems = [
   {
     key: routes.dashboardSettings,
     icon: <IdcardOutlined />,
-    label: "Profile",
+    label: "Sozlamalar",
   },
 ];
-
-const pageTitles = {
-  [routes.dashboard]: "Bosh panel",
-  [routes.dashboardProfile]: "Profil",
-  [routes.dashboardTemplates]: "Shablonlar",
-  [routes.dashboardAnalytics]: "Analitika",
-  [routes.dashboardPdf]: "PDF",
-  [routes.dashboardSubscription]: "Obuna",
-  [routes.dashboardSettings]: "Profile",
-};
-
-const pageDescriptions = {
-  [routes.dashboard]: "Profilingiz holati va tezkor amallar.",
-  [routes.dashboardProfile]:
-    "Portfolio ma'lumotlarini to'ldiring va tartiblang.",
-  [routes.dashboardTemplates]: "Public profilingiz uchun ko'rinish tanlang.",
-  [routes.dashboardAnalytics]: "Profil ko'rishlari va faollik statistikasi.",
-  [routes.dashboardPdf]: "Resume faylingizni PDF formatida yuklab oling.",
-  [routes.dashboardSubscription]: "Tarif va imkoniyatlarni boshqaring.",
-  [routes.dashboardSettings]: "Account va public link ma'lumotlari.",
-};
 
 function getInitials(user) {
   const source = user?.fullName || user?.username || user?.email || "P";
@@ -84,23 +64,74 @@ function getPortfolioUrl(user) {
 export default function DashboardLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [authPrompt, setAuthPrompt] = useState(null);
+  const [isHeaderShrunk, setIsHeaderShrunk] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
-  const { profile, isLoading: isProfileLoading } = useProfile();
-  const title = pageTitles[location.pathname] || "Bosh panel";
-  const description =
-    pageDescriptions[location.pathname] || "Procraft ish maydoni.";
+  const { user, logout, isAuthenticated } = useAuth();
+  const { profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated });
   const userLabel = user?.username || user?.email || "Account";
   const portfolioUrl = profile ? getPortfolioUrl(user) : "";
   const selectedKeys = [location.pathname];
+
+  useEffect(() => {
+    const handleAuthRequired = (event) => {
+      setAuthPrompt({
+        returnTo: event.detail?.returnTo || `${location.pathname}${location.search}`,
+      });
+    };
+
+    window.addEventListener("procraft:auth-required", handleAuthRequired);
+    return () => window.removeEventListener("procraft:auth-required", handleAuthRequired);
+  }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    window.__procraftRequireAuth = (returnTo) => {
+      setAuthPrompt({
+        returnTo: returnTo || `${window.location.pathname}${window.location.search}`,
+      });
+    };
+
+    return () => {
+      delete window.__procraftRequireAuth;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsHeaderShrunk(window.scrollY > 24);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleMenuClick = ({ key }) => {
     navigate(key);
     setIsMobileMenuOpen(false);
   };
 
+  const getReturnTo = (nextReturnTo) =>
+    typeof nextReturnTo === "string" ? nextReturnTo : `${location.pathname}${location.search}`;
+
+  const goToLogin = (nextReturnTo) => {
+    const returnTo = getReturnTo(nextReturnTo);
+    navigate(`${routes.login}?returnTo=${encodeURIComponent(returnTo)}`);
+  };
+
+  const goToRegister = (nextReturnTo) => {
+    const returnTo = getReturnTo(nextReturnTo);
+    navigate(`${routes.register}?returnTo=${encodeURIComponent(returnTo)}`);
+  };
+
   const handleLogout = async () => {
+    if (!user) {
+      setIsMobileMenuOpen(false);
+      goToLogin();
+      return;
+    }
+
     setIsLoggingOut(true);
     setIsMobileMenuOpen(false);
 
@@ -114,9 +145,9 @@ export default function DashboardLayout() {
 
   const logoutMenuItems = [
     {
-      key: "logout",
-      icon: <LogoutOutlined />,
-      label: isLoggingOut ? "Chiqilmoqda..." : "Chiqish",
+      key: user ? "logout" : "login",
+      icon: user ? <LogoutOutlined /> : <LoginOutlined />,
+      label: user ? (isLoggingOut ? "Chiqilmoqda..." : "Chiqish") : "Kirish",
       disabled: isLoggingOut,
     },
   ];
@@ -130,9 +161,13 @@ export default function DashboardLayout() {
         className="dashboard-sidebar"
         style={{ background: "#0D1B2A" }}
       >
-        <div className="dashboard-sidebar__brand">
+        <button
+          type="button"
+          className="dashboard-sidebar__brand dashboard-sidebar__brand-button"
+          onClick={() => navigate(routes.dashboard)}
+        >
           <Logo size={36} textColor="#FFFFFF" />
-        </div>
+        </button>
         <Menu
           theme="dark"
           selectedKeys={selectedKeys}
@@ -165,9 +200,16 @@ export default function DashboardLayout() {
           content: { background: "#0D1B2A" },
         }}
       >
-        <div className="dashboard-sidebar__brand">
+        <button
+          type="button"
+          className="dashboard-sidebar__brand dashboard-sidebar__brand-button"
+          onClick={() => {
+            navigate(routes.dashboard);
+            setIsMobileMenuOpen(false);
+          }}
+        >
           <Logo size={36} textColor="#FFFFFF" />
-        </div>
+        </button>
         <Menu
           theme="dark"
           selectedKeys={selectedKeys}
@@ -189,7 +231,7 @@ export default function DashboardLayout() {
       </Drawer>
 
       <Layout className="dashboard-main">
-        <header className="dashboard-topbar">
+        <header className={`dashboard-topbar${isHeaderShrunk ? " dashboard-topbar--shrunk" : ""}`}>
           <div className="dashboard-topbar__left">
             <Button
               className="dashboard-menu-button"
@@ -197,12 +239,14 @@ export default function DashboardLayout() {
               onClick={() => setIsMobileMenuOpen(true)}
               aria-label="Menyuni ochish"
             />
-            <div className="dashboard-topbar__heading">
-              <Typography.Title level={4} style={{ marginTop: "0" }}>
-                {title}
-              </Typography.Title>
-              <Typography.Text type="secondary">{description}</Typography.Text>
-            </div>
+            <button
+              type="button"
+              className="dashboard-topbar__mobile-brand"
+              onClick={() => navigate(routes.dashboard)}
+              aria-label="Bosh sahifaga qaytish"
+            >
+              <Logo size={30} showText={false} />
+            </button>
           </div>
 
           <div className="dashboard-topbar__actions">
@@ -224,20 +268,56 @@ export default function DashboardLayout() {
                 Profil
               </Button>
             )}
-            <Space className="dashboard-topbar__account" size={10}>
-              <Avatar size={36} style={{ background: "#2563EB" }}>
-                {getInitials(user)}
-              </Avatar>
-              <div>
-                <Typography.Text strong>{userLabel}</Typography.Text>
-              </div>
-            </Space>
+            {user ? (
+              <Space className="dashboard-topbar__account" size={10}>
+                <Avatar size={36} style={{ background: "#2563EB" }}>
+                  {getInitials(user)}
+                </Avatar>
+                <div>
+                  <Typography.Text strong>{userLabel}</Typography.Text>
+                </div>
+              </Space>
+            ) : (
+              <Button icon={<LoginOutlined />} type="primary" onClick={() => goToLogin()}>
+                Kirish
+              </Button>
+            )}
           </div>
         </header>
         <Layout.Content className="dashboard-content">
           <Outlet />
         </Layout.Content>
       </Layout>
+
+      <Modal
+        open={Boolean(authPrompt)}
+        title="Ro'yxatdan o'tish"
+        footer={[
+          <Button key="later" onClick={() => setAuthPrompt(null)}>
+            Hozir emas
+          </Button>,
+          <Button key="login" onClick={() => {
+            const returnTo = authPrompt?.returnTo || `${location.pathname}${location.search}`;
+            setAuthPrompt(null);
+            goToLogin(returnTo);
+          }}>
+            Kirish
+          </Button>,
+          <Button key="register" type="primary" onClick={() => {
+            const returnTo = authPrompt?.returnTo || `${location.pathname}${location.search}`;
+            setAuthPrompt(null);
+            goToRegister(returnTo);
+          }}>
+            Ro'yxatdan o'tish
+          </Button>,
+        ]}
+        centered
+        onCancel={() => setAuthPrompt(null)}
+      >
+        <Typography.Paragraph style={{ marginBottom: 0 }}>
+          Bu amalni bajarish va ma'lumotlarni saqlash uchun Procraft hisob yarating.
+        </Typography.Paragraph>
+      </Modal>
     </Layout>
   );
 }

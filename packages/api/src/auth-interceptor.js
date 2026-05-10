@@ -49,7 +49,11 @@ function redirectToLogin() {
   }
 
   const current = `${window.location.pathname}${window.location.search}`;
-  if (window.location.pathname !== '/login') {
-    window.location.assign(`/login?returnTo=${encodeURIComponent(current)}`);
+  if (window.location.pathname === '/login') {
+    return;
   }
+
+  window.dispatchEvent(new CustomEvent('procraft:auth-required', {
+    detail: { returnTo: current },
+  }));
 }

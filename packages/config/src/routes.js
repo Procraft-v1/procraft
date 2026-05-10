@@ -2,11 +2,11 @@
 export const routes = {
   login: '/login',
   register: '/register',
-  dashboard: '/dashboard',
-  dashboardProfile: '/dashboard/profile',
-  dashboardTemplates: '/dashboard/templates',
-  dashboardAnalytics: '/dashboard/analytics',
-  dashboardPdf: '/dashboard/pdf',
-  dashboardSubscription: '/dashboard/subscription',
-  dashboardSettings: '/dashboard/settings',
+  dashboard: '/',
+  dashboardProfile: '/profile',
+  dashboardTemplates: '/templates',
+  dashboardAnalytics: '/analytics',
+  dashboardPdf: '/pdf',
+  dashboardSubscription: '/subscription',
+  dashboardSettings: '/settings',
 };

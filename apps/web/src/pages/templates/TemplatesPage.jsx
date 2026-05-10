@@ -1,5 +1,6 @@
-import { Button, Card, Col, Image, Row, Spin, Tag, Typography, message } from 'antd';
-import { useProfile, useSelectTemplate, useTemplates } from '@procraft/hooks';
+import { Button, Card, Col, Image, Row, Space, Spin, Tag, Typography, message } from 'antd';
+import { CheckCircleOutlined } from '@ant-design/icons';
+import { useAuth, useProfile, useSelectTemplate, useTemplates } from '@procraft/hooks';
 import { getErrorMessage } from '@procraft/i18n';
 
 const templateCopy = {
@@ -15,7 +16,8 @@ function getTemplatePreviewUrl(template) {
 
 export default function TemplatesPage() {
   const { data: templates = [], isLoading } = useTemplates();
-  const { profile, fetchMyProfile } = useProfile();
+  const { isAuthenticated } = useAuth();
+  const { profile, fetchMyProfile } = useProfile({ enabled: isAuthenticated });
   const selectTemplate = useSelectTemplate({
     onSuccess: async () => {
       await fetchMyProfile();
@@ -46,10 +48,7 @@ export default function TemplatesPage() {
 
           return (
             <Col key={template.id} xs={24} md={12} xl={8}>
-              <Card
-                className={`template-card template-card--${template.slug}`}
-                extra={isSelected ? <Tag color="blue">Tanlangan</Tag> : null}
-              >
+              <Card className={`template-card template-card--${template.slug}`}>
                 <div className="template-card__preview">
                   <Image
                     src={getTemplatePreviewUrl(template)}
@@ -57,13 +56,18 @@ export default function TemplatesPage() {
                     preview={{ mask: "Kattaroq ko'rish" }}
                   />
                 </div>
-                <Typography.Title level={4}>{template.name}</Typography.Title>
+                <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+                  <Typography.Title level={4} style={{ marginBottom: 0 }}>{template.name}</Typography.Title>
+                  {isSelected ? <Tag color="blue" style={{ marginInlineEnd: 0 }}>Tanlangan</Tag> : null}
+                </Space>
                 <Typography.Paragraph type="secondary">
                   {templateCopy[template.slug] || "Toza ommaviy profil shabloni."}
                 </Typography.Paragraph>
                 <Button
                   type={isSelected ? 'default' : 'primary'}
+                  className={isSelected ? 'template-card__selected-button' : undefined}
                   disabled={isSelected}
+                  icon={isSelected ? <CheckCircleOutlined /> : null}
                   loading={selectTemplate.isPending}
                   onClick={() => selectTemplate.mutate(template.id)}
                   block

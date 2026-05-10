@@ -31,6 +31,7 @@ import {
   useSkillCategories,
   useSkills,
   useSocialLinks,
+  useAuth,
 } from "@procraft/hooks";
 
 const levelOptions = [1, 2, 3, 4, 5].map((level) => ({
@@ -671,7 +672,8 @@ function SectionCard({
 
 export default function ProfilePage() {
   const [form] = Form.useForm();
-  const { profile, isLoading, updateProfile, uploadAvatar, deleteAvatar } = useProfile();
+  const { isAuthenticated } = useAuth();
+  const { profile, isLoading, updateProfile, uploadAvatar, deleteAvatar } = useProfile({ enabled: isAuthenticated });
   const sectionQueryOptions = { query: { enabled: Boolean(profile) } };
   const skills = useSkills(sectionQueryOptions);
   const skillCategories = useSkillCategories(sectionQueryOptions);
@@ -892,6 +894,11 @@ export default function ProfilePage() {
   }, [form, profile]);
 
   const handleFinish = async (values) => {
+    if (!isAuthenticated) {
+      window.__procraftRequireAuth?.(`${window.location.pathname}${window.location.search}`);
+      return;
+    }
+
     try {
       await updateProfile(values);
       message.success("Profil saqlandi");

@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { routes } from '@procraft/config';
 
 import DashboardLayout from '../shared/layouts/DashboardLayout.jsx';
-import AuthGuard from '../shared/guards/AuthGuard.jsx';
 
 import Login from '../pages/auth/Login.jsx';
 import Register from '../pages/auth/Register.jsx';
@@ -14,11 +14,10 @@ import PdfPage from '../pages/pdf/PdfPage.jsx';
 import SettingsPage from '../pages/settings/SettingsPage.jsx';
 import NotFoundPage from '../pages/not-found/NotFoundPage.jsx';
 
-/** Base path aligns with infra/nginx mounts under `/dashboard` in production builds. */
+/** The dashboard subdomain is the app shell; routes stay root-relative. */
 
 const router = createBrowserRouter(
   [
-    { path: '/', element: <Navigate to="/dashboard" replace /> },
     {
       path: '/login',
       element: <Login />,
@@ -32,19 +31,15 @@ const router = createBrowserRouter(
       element: <ResetPassword />,
     },
     {
-      path: '/dashboard',
-      element: (
-        <AuthGuard>
-          <DashboardLayout />
-        </AuthGuard>
-      ),
+      path: '/',
+      element: <DashboardLayout />,
       children: [
         { index: true, element: <DashboardHomePage /> },
         { path: 'profile', element: <ProfilePage /> },
         { path: 'templates', element: <TemplatesPage /> },
         { path: 'analytics', element: <AnalyticsPage /> },
         { path: 'pdf', element: <PdfPage /> },
-        { path: 'subscription', element: <Navigate to="/dashboard" replace /> },
+        { path: 'subscription', element: <Navigate to={routes.dashboard} replace /> },
         { path: 'settings', element: <SettingsPage /> },
       ],
     },

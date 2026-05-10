@@ -1,30 +1,37 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, Space, Typography, Spin } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@procraft/hooks";
 import { getErrorFieldMessages, getErrorMessage } from "@procraft/i18n";
 import { Logo } from "@procraft/ui";
 
 export default function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { register, isAuthenticated, isLoading } = useAuth();
   const [form] = Form.useForm();
 
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const getReturnTo = () => {
+    const value = searchParams.get("returnTo");
+    return value && value.startsWith("/") && !value.includes("[object Object]") && !value.startsWith("/register")
+      ? value
+      : "/";
+  };
 
   useEffect(() => {
     if (!isLoading && isAuthenticated) {
-      navigate("/dashboard", { replace: true });
+      navigate(getReturnTo(), { replace: true });
     }
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isLoading, navigate, searchParams]);
 
   async function handleFinish(values) {
     setError("");
     setIsSubmitting(true);
     try {
       await register(values);
-      navigate("/dashboard", { replace: true });
+      navigate(getReturnTo(), { replace: true });
     } catch (err) {
       const fieldMessages = getErrorFieldMessages(err);
 

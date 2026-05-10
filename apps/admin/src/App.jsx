@@ -11,11 +11,13 @@ import {
   Spin,
   Statistic,
   Table,
+  Tag,
   Typography,
   message,
 } from "antd";
 import {
   EyeOutlined,
+  LinkOutlined,
   LogoutOutlined,
   ReloadOutlined,
   RiseOutlined,
@@ -37,6 +39,24 @@ const api = axios.create({
 
 function getErrorText(error) {
   return error?.response?.data?.message || "Xatolik yuz berdi. Qayta urinib ko'ring.";
+}
+
+function formatDate(value) {
+  if (!value) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat("uz-UZ", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function getPortfolioUrl(username) {
+  return `https://${username}.procraft.uz/`;
 }
 
 export default function App() {
@@ -178,6 +198,100 @@ export default function App() {
           <Statistic title="Template tanlamagan profillar" value={stats?.profilesWithoutTemplate ?? 0} />
         </Card>
       </section>
+
+      <Card
+        className="admin-table-card"
+        title="Portfolio yaratganlar"
+        extra={<Typography.Text type="secondary">{stats?.portfolioCreators?.length ?? 0} ta profil</Typography.Text>}
+      >
+        {stats?.portfolioCreators?.length ? (
+          <Table
+            rowKey="profileId"
+            dataSource={stats.portfolioCreators}
+            scroll={{ x: 980 }}
+            pagination={{ pageSize: 8, showSizeChanger: false }}
+            columns={[
+              {
+                title: "Profil egasi",
+                dataIndex: "fullName",
+                width: 240,
+                render: (fullName, item) => (
+                  <div>
+                    <Typography.Text strong>{fullName || item.username}</Typography.Text>
+                    <Typography.Text type="secondary" className="admin-template-slug">
+                      @{item.username}
+                    </Typography.Text>
+                  </div>
+                ),
+              },
+              {
+                title: "Email",
+                dataIndex: "email",
+                width: 260,
+                render: (email, item) => (
+                  <Space direction="vertical" size={4}>
+                    <Typography.Text copyable>{email}</Typography.Text>
+                    <Tag color={item.isEmailConfirmed ? "green" : "gold"}>
+                      {item.isEmailConfirmed ? "Tasdiqlangan" : "Tasdiqlanmagan"}
+                    </Tag>
+                  </Space>
+                ),
+              },
+              {
+                title: "Kasb / template",
+                dataIndex: "title",
+                width: 220,
+                render: (title, item) => (
+                  <div>
+                    <Typography.Text>{title || "-"}</Typography.Text>
+                    <Typography.Text type="secondary" className="admin-template-slug">
+                      {item.templateName || item.templateSlug || "Template yo'q"}
+                    </Typography.Text>
+                  </div>
+                ),
+              },
+              {
+                title: "Kontent",
+                width: 170,
+                render: (_, item) => (
+                  <Typography.Text>
+                    {item.skillsCount} skill, {item.projectsCount} loyiha, {item.experiencesCount} ish
+                  </Typography.Text>
+                ),
+              },
+              {
+                title: "Ko'rish",
+                dataIndex: "views",
+                width: 100,
+                render: (views) => <Typography.Text strong>{views}</Typography.Text>,
+              },
+              {
+                title: "Yaratilgan",
+                dataIndex: "createdAt",
+                width: 170,
+                render: formatDate,
+              },
+              {
+                title: "Link",
+                dataIndex: "username",
+                width: 120,
+                render: (username) => (
+                  <Button
+                    icon={<LinkOutlined />}
+                    href={getPortfolioUrl(username)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Ochish
+                  </Button>
+                ),
+              },
+            ]}
+          />
+        ) : (
+          <Alert type="info" message="Hali portfolio yaratgan foydalanuvchilar yo'q." />
+        )}
+      </Card>
 
       <Card
         className="admin-table-card"

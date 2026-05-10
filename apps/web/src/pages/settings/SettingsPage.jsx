@@ -31,8 +31,8 @@ function getPortfolioUrl(user) {
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { profile, isLoading: isProfileLoading } = useProfile();
+  const { user, isAuthenticated } = useAuth();
+  const { profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated });
   const email = read(user, 'email', 'Email', '-');
   const username = read(user, 'username', 'Username', '-');
   const isEmailConfirmed = Boolean(read(user, 'isEmailConfirmed', 'IsEmailConfirmed', false));
@@ -51,7 +51,7 @@ export default function SettingsPage() {
   return (
     <section className="dashboard-page">
       <div className="dashboard-page__header">
-        <Typography.Title level={2}>Profile</Typography.Title>
+        <Typography.Title level={2}>Sozlamalar</Typography.Title>
         <Typography.Paragraph type="secondary">
           Account va public link ma'lumotlari.
         </Typography.Paragraph>
