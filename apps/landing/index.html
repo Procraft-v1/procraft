@@ -616,8 +616,8 @@
         (function lerp() {
           gx += (mx - gx) * 0.07;
           gy += (my - gy) * 0.07;
-          glow.style.left = gx + "px";
-          glow.style.top = gy + "px";
+         glow.style.transform =
+            `translate3d(${gx}px, ${gy}px, 0)`;
           rafId = requestAnimationFrame(lerp);
         })();
       } else {
