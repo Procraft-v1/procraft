@@ -66,6 +66,7 @@ body {
 img {
   display: block;
   max-width: 100%;
+  height: auto;
 }
 a {
   color: inherit;
@@ -153,6 +154,11 @@ body::after {
   place-items: center;
   flex-shrink: 0;
   transition: transform 0.4s var(--ease-back);
+}
+.logo-mark svg {
+  display: block;
+  width: 32px;
+  height: 32px;
 }
 .logo:hover .logo-mark {
   transform: rotate(-12deg) scale(1.08);
