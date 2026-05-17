@@ -14,52 +14,18 @@ public sealed record UploadCertificateFileCommand(
 
 public sealed class UploadCertificateFileCommandValidator : AbstractValidator<UploadCertificateFileCommand>
 {
-    private const long MaxCertificateSizeBytes = 10 * 1024 * 1024;
-
-    private static readonly string[] AllowedContentTypes =
-    {
-        "application/pdf",
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-    };
-
-    private static readonly string[] AllowedExtensions =
-    {
-        ".pdf",
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".webp",
-    };
-
     public UploadCertificateFileCommandValidator()
     {
         RuleFor(x => x.FileStream).NotNull();
-        RuleFor(x => x.FileName).NotEmpty().Must(HaveAllowedExtension)
+        RuleFor(x => x.FileName).NotEmpty().Must(CertificateFileRules.HasAllowedExtension)
             .WithMessage("Certificate file must be a PDF, JPG, JPEG, PNG, or WEBP file.");
-        RuleFor(x => x.ContentType).NotEmpty().Must(HaveAllowedContentType)
+        RuleFor(x => x.ContentType).NotEmpty().Must(CertificateFileRules.HasAllowedContentType)
             .WithMessage("Certificate file must be a PDF, JPG, JPEG, PNG, or WEBP file.");
         RuleFor(x => x.FileSizeBytes)
             .GreaterThan(0)
-            .LessThanOrEqualTo(MaxCertificateSizeBytes)
+            .LessThanOrEqualTo(CertificateFileRules.MaxSizeBytes)
             .WithMessage("Certificate file must be 10MB or smaller.");
     }
-
-    private static bool HaveAllowedExtension(string? fileName)
-    {
-        if (string.IsNullOrWhiteSpace(fileName))
-        {
-            return false;
-        }
-
-        var extension = Path.GetExtension(fileName).ToLowerInvariant();
-        return AllowedExtensions.Contains(extension);
-    }
-
-    private static bool HaveAllowedContentType(string? contentType) =>
-        !string.IsNullOrWhiteSpace(contentType)
-        && AllowedContentTypes.Contains(contentType.ToLowerInvariant());
 }
 
 public sealed class UploadCertificateFileCommandHandler : IRequestHandler<UploadCertificateFileCommand, CertificateFileDto>

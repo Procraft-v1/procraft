@@ -246,9 +246,13 @@ const sectionFields = {
     { name: "issuer", label: "Beruvchi tashkilot" },
     {
       name: "url",
-      label: "Sertifikat linki yoki fayl URL",
-      type: "fileUrl",
+      label: "Sertifikat linki",
       placeholder: "https://coursera.org/... yoki serverdagi fayl linki",
+    },
+    {
+      name: "file",
+      label: "Sertifikat fayli",
+      type: "certificateFile",
     },
   ],
   socialLinks: [
@@ -324,21 +328,15 @@ function renderField(field, form) {
     return <Input type="date" />;
   }
 
-  if (field.type === "fileUrl") {
-    return <CertificateFileUrlField field={field} form={form} />;
+  if (field.type === "certificateFile") {
+    return <CertificateFileField />;
   }
 
   return <Input placeholder={field.placeholder} />;
 }
 
-function CertificateFileUrlField({ field, form, value, onChange }) {
-  const [isUploading, setIsUploading] = useState(false);
-
+function CertificateFileField({ value, onChange }) {
   const beforeUpload = async (file) => {
-    if (!field.uploadFile) {
-      return Upload.LIST_IGNORE;
-    }
-
     if (!isAllowedCertificateFile(file)) {
       message.error("Sertifikat fayli PDF, JPG, JPEG, PNG yoki WEBP formatida bo'lishi kerak");
       return Upload.LIST_IGNORE;
@@ -349,43 +347,26 @@ function CertificateFileUrlField({ field, form, value, onChange }) {
       return Upload.LIST_IGNORE;
     }
 
-    setIsUploading(true);
-
-    try {
-      const result = await field.uploadFile(file);
-      form.setFieldsValue({ [field.name]: result.url });
-      onChange?.(result.url);
-      message.success("Sertifikat fayli yuklandi");
-    } catch (error) {
-      message.error(getErrorMessage(error));
-    } finally {
-      setIsUploading(false);
-    }
-
-    return Upload.LIST_IGNORE;
+    onChange?.(file);
+    return false;
   };
 
   return (
     <Space direction="vertical" size={6} style={{ width: "100%" }}>
-      <Space.Compact style={{ width: "100%" }}>
-        <Input
-          value={value}
-          onChange={onChange}
-          placeholder={field.placeholder}
-        />
-        <Upload
-          accept=".pdf,.jpg,.jpeg,.png,.webp"
-          beforeUpload={beforeUpload}
-          maxCount={1}
-          showUploadList={false}
-        >
-          <Button icon={<UploadOutlined />} loading={isUploading}>
-            Fayl yuklash
-          </Button>
-        </Upload>
-      </Space.Compact>
+      <Upload
+        accept=".pdf,.jpg,.jpeg,.png,.webp"
+        beforeUpload={beforeUpload}
+        fileList={value ? [{ uid: "selected", name: value.name, status: "done" }] : []}
+        maxCount={1}
+        onRemove={() => {
+          onChange?.(undefined);
+          return true;
+        }}
+      >
+        <Button icon={<UploadOutlined />}>Fayl tanlash</Button>
+      </Upload>
       <Typography.Text type="secondary">
-        PDF, JPG, JPEG, PNG yoki WEBP. Maksimal hajm: {CERTIFICATE_MAX_SIZE_MB}MB.
+        Fayl Saqlash bosilganda sertifikat ma'lumotlari bilan birga yuklanadi. PDF, JPG, JPEG, PNG yoki WEBP. Maksimal hajm: {CERTIFICATE_MAX_SIZE_MB}MB.
       </Typography.Text>
     </Space>
   );
@@ -754,15 +735,6 @@ export default function ProfilePage() {
     return { ...values, category };
   }, [skillCategories]);
 
-  const certificateFields = useMemo(
-    () => sectionFields.certificates.map((field) =>
-      field.name === "url"
-        ? { ...field, uploadFile: certificates.uploadFile }
-        : field,
-    ),
-    [certificates],
-  );
-
   const sections = useMemo(
     () => [
       {
@@ -874,7 +846,7 @@ export default function ProfilePage() {
         title: "Sertifikatlar",
         hook: certificates,
         items: certificates.certificates,
-        fields: certificateFields,
+        fields: sectionFields.certificates,
         renderItem: (item) => (
           <List.Item.Meta
             title={item.name}
@@ -911,7 +883,7 @@ export default function ProfilePage() {
         ),
       },
     ],
-    [certificateFields, certificates, educations, ensureSkillCategory, experiences, projects, skills, skillCategoryFieldOptions, socialLinks],
+    [certificates, educations, ensureSkillCategory, experiences, projects, skills, skillCategoryFieldOptions, socialLinks],
   );
 
   useEffect(() => {
