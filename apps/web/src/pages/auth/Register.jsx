@@ -8,9 +8,10 @@ import { Logo } from "@procraft/ui";
 export default function Register() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { register, isAuthenticated, isLoading } = useAuth();
+  const { register, verifyRegister, isAuthenticated, isLoading } = useAuth();
   const [form] = Form.useForm();
 
+  const [challenge, setChallenge] = useState(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const getReturnTo = () => {
@@ -30,7 +31,17 @@ export default function Register() {
     setError("");
     setIsSubmitting(true);
     try {
-      await register(values);
+      if (!challenge) {
+        const nextChallenge = await register(values);
+        setChallenge(nextChallenge);
+        form.resetFields(["code"]);
+        return;
+      }
+
+      await verifyRegister({
+        verificationId: challenge.verificationId,
+        code: values.code,
+      });
       navigate(getReturnTo(), { replace: true });
     } catch (err) {
       const fieldMessages = getErrorFieldMessages(err);
@@ -79,7 +90,9 @@ export default function Register() {
             Ro'yxatdan o'tish
           </Typography.Title>
           <Typography.Text type="secondary">
-            Procraft ish maydoningizni yarating.
+            {challenge
+              ? `${challenge.maskedEmail} manziliga yuborilgan kodni kiriting.`
+              : "Procraft ish maydoningizni yarating."}
           </Typography.Text>
         </div>
 
@@ -90,49 +103,69 @@ export default function Register() {
           autoComplete="off"
           onFinish={handleFinish}
         >
-          <Form.Item
-            label="Elektron pochta"
-            name="email"
-            rules={[
-              {
-                required: true,
-                type: "email",
-                message: "To'g'ri elektron pochta manzilini kiriting.",
-              },
-            ]}
-          >
-            <Input autoComplete="email" size="large" />
-          </Form.Item>
+          {!challenge ? (
+            <>
+              <Form.Item
+                label="Elektron pochta"
+                name="email"
+                rules={[
+                  {
+                    required: true,
+                    type: "email",
+                    message: "To'g'ri elektron pochta manzilini kiriting.",
+                  },
+                ]}
+              >
+                <Input autoComplete="email" size="large" />
+              </Form.Item>
 
-          <Form.Item
-            label="To'liq ism"
-            name="fullname"
-            rules={[{ required: true, message: "To'liq ismingizni kiriting." }]}
-          >
-            <Input autoComplete="name" size="large" />
-          </Form.Item>
+              <Form.Item
+                label="To'liq ism"
+                name="fullname"
+                rules={[{ required: true, message: "To'liq ismingizni kiriting." }]}
+              >
+                <Input autoComplete="name" size="large" />
+              </Form.Item>
 
-          <Form.Item
-            label="Foydalanuvchi nomi"
-            name="username"
-            rules={[
-              { required: true, message: "Foydalanuvchi nomini tanlang." },
-              { min: 3, max: 30, message: "Foydalanuvchi nomi 3-30 ta belgidan iborat bo'lishi kerak." },
-            ]}
-          >
-            <Input autoComplete="off" spellCheck={false} size="large" />
-          </Form.Item>
+              <Form.Item
+                label="Foydalanuvchi nomi"
+                name="username"
+                rules={[
+                  { required: true, message: "Foydalanuvchi nomini tanlang." },
+                  { min: 3, max: 30, message: "Foydalanuvchi nomi 3-30 ta belgidan iborat bo'lishi kerak." },
+                ]}
+              >
+                <Input autoComplete="off" spellCheck={false} size="large" />
+              </Form.Item>
 
-          <Form.Item
-            label="Parol"
-            name="password"
-            rules={[
-              { required: true, message: "Parol yarating." },
-              { min: 8, message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak." },
-            ]}
-          >
-            <Input.Password autoComplete="new-password" size="large" />
-          </Form.Item>
+              <Form.Item
+                label="Parol"
+                name="password"
+                rules={[
+                  { required: true, message: "Parol yarating." },
+                  { min: 8, message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak." },
+                ]}
+              >
+                <Input.Password autoComplete="new-password" size="large" />
+              </Form.Item>
+            </>
+          ) : (
+            <Form.Item
+              label="Tasdiqlash kodi"
+              name="code"
+              rules={[
+                { required: true, message: "4 xonali kodni kiriting." },
+                { pattern: /^\d{4}$/, message: "Kod 4 ta raqamdan iborat bo'lishi kerak." },
+              ]}
+            >
+              <Input
+                autoComplete="one-time-code"
+                inputMode="numeric"
+                maxLength={4}
+                size="large"
+              />
+            </Form.Item>
+          )}
 
           {error ? (
             <Typography.Paragraph type="danger" style={{ marginTop: -4 }}>
@@ -147,8 +180,23 @@ export default function Register() {
             block
             loading={isSubmitting}
           >
-            Ro'yxatdan o'tish
+            {challenge ? "Tasdiqlash" : "Kod yuborish"}
           </Button>
+
+          {challenge ? (
+            <Button
+              type="link"
+              block
+              onClick={() => {
+                setChallenge(null);
+                setError("");
+                form.resetFields();
+              }}
+              style={{ marginTop: 8 }}
+            >
+              Emailni o'zgartirish
+            </Button>
+          ) : null}
         </Form>
 
         <Typography.Text type="secondary" style={{ textAlign: "center" }}>

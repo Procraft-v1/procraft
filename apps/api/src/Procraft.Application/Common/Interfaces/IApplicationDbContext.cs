@@ -15,6 +15,8 @@ public interface IApplicationDbContext
 
     DbSet<PasswordResetCode> PasswordResetCodes { get; }
 
+    DbSet<PendingRegistration> PendingRegistrations { get; }
+
     DbSet<Skill> Skills { get; }
 
     DbSet<SkillCategory> SkillCategories { get; }

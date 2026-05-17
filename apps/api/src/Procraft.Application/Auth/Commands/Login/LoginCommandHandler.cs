@@ -48,6 +48,11 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResu
             throw new UnauthorizedException("Invalid credentials.");
         }
 
+        if (!user.IsEmailConfirmed)
+        {
+            throw new UnauthorizedException("Email is not confirmed.");
+        }
+
         var now = DateTimeOffset.UtcNow;
         var refreshPlain = _tokenService.GenerateRefreshPlaintext();
         var refreshHash = _tokenService.HashRefreshToken(refreshPlain);

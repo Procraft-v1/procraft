@@ -9,6 +9,7 @@ using Procraft.Application.Auth.Commands.Register;
 using Procraft.Application.Auth.Commands.RequestPasswordReset;
 using Procraft.Application.Auth.Commands.ResetPassword;
 using Procraft.Application.Auth.Commands.VerifyLogin;
+using Procraft.Application.Auth.Commands.VerifyRegister;
 using Procraft.Application.Auth.Queries.Me;
 
 namespace Procraft.Api.Controllers;
@@ -37,6 +38,20 @@ public sealed class AuthController : ControllerBase
     public async Task<ActionResult> RegisterAsync([FromBody] RegisterApiRequest request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new RegisterCommand(request.Email, request.Username, request.Password), cancellationToken);
+        return Ok(new
+        {
+            verificationId = result.VerificationId,
+            maskedEmail = result.MaskedEmail,
+            expiresAt = result.ExpiresAt,
+            codeLength = result.CodeLength,
+        });
+    }
+
+    [HttpPost("register/verify")]
+    [AllowAnonymous]
+    public async Task<ActionResult> VerifyRegisterAsync([FromBody] VerifyRegisterApiRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new VerifyRegisterCommand(request.VerificationId, request.Code), cancellationToken);
         return Ok(new { user = result.User });
     }
 
@@ -112,6 +127,8 @@ public sealed class AuthController : ControllerBase
 }
 
 public sealed record RegisterApiRequest(string Email, string Username, string Password);
+
+public sealed record VerifyRegisterApiRequest(Guid VerificationId, string Code);
 
 public sealed record LoginApiRequest(string EmailOrUsername, string Password);
 

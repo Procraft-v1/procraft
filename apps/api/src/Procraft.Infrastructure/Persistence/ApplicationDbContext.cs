@@ -21,6 +21,8 @@ public sealed class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<PasswordResetCode> PasswordResetCodes => Set<PasswordResetCode>();
 
+    public DbSet<PendingRegistration> PendingRegistrations => Set<PendingRegistration>();
+
     public DbSet<Skill> Skills => Set<Skill>();
 
     public DbSet<SkillCategory> SkillCategories => Set<SkillCategory>();

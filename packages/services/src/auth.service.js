@@ -12,6 +12,11 @@ export async function register(payload) {
   return axiosClient.post('/auth/register', payload);
 }
 
+export async function verifyRegister(payload) {
+  await getCsrf();
+  return axiosClient.post('/auth/register/verify', payload);
+}
+
 export async function login(payload) {
   await getCsrf();
   return axiosClient.post('/auth/login', payload);

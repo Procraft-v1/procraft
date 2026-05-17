@@ -11,6 +11,7 @@ import {
   login as loginRequest,
   logout as logoutRequest,
   register as registerRequest,
+  verifyRegister as verifyRegisterRequest,
   verifyLogin as verifyLoginRequest,
 } from "@procraft/services";
 
@@ -90,6 +91,18 @@ export function AuthProvider({ children }) {
   const register = useCallback(async (data) => {
     const res = await registerRequest(data);
     const nextUser = readUser(res);
+    if (nextUser) {
+      setUser(nextUser);
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(AUTH_SESSION_HINT_KEY, "1");
+      }
+    }
+    return res?.data ?? res;
+  }, []);
+
+  const verifyRegister = useCallback(async (data) => {
+    const res = await verifyRegisterRequest(data);
+    const nextUser = readUser(res);
     setUser(nextUser);
     if (nextUser && typeof window !== "undefined") {
       window.sessionStorage.setItem(AUTH_SESSION_HINT_KEY, "1");
@@ -128,6 +141,7 @@ export function AuthProvider({ children }) {
         login,
         verifyLogin,
         register,
+        verifyRegister,
         logout,
         deleteAccount,
         refetchMe,

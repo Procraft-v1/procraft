@@ -201,6 +201,66 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
             b.ToTable("password_reset_codes");
         });
 
+        modelBuilder.Entity("Procraft.Domain.Entities.PendingRegistration", b =>
+        {
+            b.Property<Guid>("Id")
+                .ValueGeneratedOnAdd()
+                .HasColumnType("uuid");
+
+            b.Property<int>("AttemptCount")
+                .HasColumnType("integer");
+
+            b.Property<string>("CodeHash")
+                .IsRequired()
+                .HasMaxLength(64)
+                .HasColumnType("character varying(64)");
+
+            b.Property<DateTimeOffset?>("ConsumedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<DateTimeOffset>("CreatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("CreatedByIp")
+                .HasMaxLength(64)
+                .HasColumnType("character varying(64)");
+
+            b.Property<string>("Email")
+                .IsRequired()
+                .HasMaxLength(320)
+                .HasColumnType("character varying(320)");
+
+            b.Property<DateTimeOffset>("ExpiresAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("PasswordHash")
+                .IsRequired()
+                .HasMaxLength(512)
+                .HasColumnType("character varying(512)");
+
+            b.Property<DateTimeOffset?>("UpdatedAt")
+                .HasColumnType("timestamp with time zone");
+
+            b.Property<string>("UserAgent")
+                .HasMaxLength(512)
+                .HasColumnType("character varying(512)");
+
+            b.Property<string>("Username")
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasColumnType("character varying(30)");
+
+            b.HasKey("Id");
+
+            b.HasIndex("Email");
+
+            b.HasIndex("ExpiresAt");
+
+            b.HasIndex("Username");
+
+            b.ToTable("pending_registrations");
+        });
+
         modelBuilder.Entity("Procraft.Domain.Entities.Profile", b =>
         {
             b.Property<Guid>("Id")
