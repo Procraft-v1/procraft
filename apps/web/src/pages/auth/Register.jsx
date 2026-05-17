@@ -22,10 +22,10 @@ export default function Register() {
   };
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
+    if (!challenge && !isLoading && isAuthenticated) {
       navigate(getReturnTo(), { replace: true });
     }
-  }, [isAuthenticated, isLoading, navigate, searchParams]);
+  }, [challenge, isAuthenticated, isLoading, navigate, searchParams]);
 
   async function handleFinish(values) {
     setError("");
