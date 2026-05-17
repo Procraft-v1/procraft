@@ -1,16 +1,22 @@
+import { useMemo, useState } from 'react';
 import {
   Alert,
   Button,
   Card,
   Col,
   Descriptions,
+  Input,
+  Modal,
   Row,
   Select,
   Space,
   Tag,
   Typography,
+  message,
 } from 'antd';
 import {
+  DeleteOutlined,
+  ExclamationCircleOutlined,
   ExportOutlined,
   GlobalOutlined,
   LinkOutlined,
@@ -19,6 +25,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@procraft/config';
 import { useAuth, useProfile } from '@procraft/hooks';
+import { getErrorMessage } from '@procraft/i18n';
 
 function read(user, camelKey, pascalKey, fallback = '') {
   return user?.[camelKey] ?? user?.[pascalKey] ?? fallback;
@@ -31,12 +38,52 @@ function getPortfolioUrl(user) {
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, deleteAccount } = useAuth();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const { profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated });
   const email = read(user, 'email', 'Email', '-');
   const username = read(user, 'username', 'Username', '-');
   const isEmailConfirmed = Boolean(read(user, 'isEmailConfirmed', 'IsEmailConfirmed', false));
   const portfolioUrl = profile ? getPortfolioUrl(user) : '';
+  const deleteConfirmationText = useMemo(
+    () => `${username} akkauntimni o'chirish`,
+    [username],
+  );
+
+  const openDeletePrompt = () => {
+    Modal.confirm({
+      title: "Accountni o'chirishni xohlaysizmi?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Bu amal account, portfolio va profil ma'lumotlarini o'chiradi.",
+      okText: 'Ha, davom etish',
+      cancelText: 'Bekor qilish',
+      okButtonProps: { danger: true },
+      onOk: () => {
+        setDeleteConfirmText('');
+        setIsDeleteModalOpen(true);
+      },
+    });
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmText.trim() !== deleteConfirmationText) {
+      message.error("Tasdiqlash matni to'g'ri yozilmadi");
+      return;
+    }
+
+    setIsDeletingAccount(true);
+    try {
+      await deleteAccount();
+      message.success("Account o'chirildi");
+      navigate(routes.login, { replace: true });
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  };
 
   if (!user) {
     return (
@@ -133,7 +180,64 @@ export default function SettingsPage() {
             />
           </Card>
         </Col>
+
+        <Col xs={24}>
+          <Card
+            className="dashboard-card settings-danger-card"
+            title={(
+              <Space>
+                <DeleteOutlined />
+                <span>Accountni o'chirish</span>
+              </Space>
+            )}
+          >
+            <Space direction="vertical" size={14}>
+              <Typography.Paragraph type="secondary">
+                Account o'chirilsa, login sessiyasi tugaydi va profil ma'lumotlari qayta tiklanmaydi.
+              </Typography.Paragraph>
+              <Button danger icon={<DeleteOutlined />} onClick={openDeletePrompt}>
+                Accountni o'chirish
+              </Button>
+            </Space>
+          </Card>
+        </Col>
       </Row>
+
+      <Modal
+        title="Accountni o'chirishni tasdiqlang"
+        open={isDeleteModalOpen}
+        okText="O'chirish"
+        cancelText="Bekor qilish"
+        okButtonProps={{
+          danger: true,
+          disabled: deleteConfirmText.trim() !== deleteConfirmationText,
+          loading: isDeletingAccount,
+        }}
+        confirmLoading={isDeletingAccount}
+        onOk={handleDeleteAccount}
+        onCancel={() => {
+          if (!isDeletingAccount) {
+            setIsDeleteModalOpen(false);
+          }
+        }}
+      >
+        <Space direction="vertical" size={12} style={{ width: '100%' }}>
+          <Alert
+            type="warning"
+            showIcon
+            message="Bu amalni ortga qaytarib bo'lmaydi"
+            description="Davom etish uchun pastdagi matnni aynan yozing."
+          />
+          <Typography.Text code>{deleteConfirmationText}</Typography.Text>
+          <Input
+            autoFocus
+            value={deleteConfirmText}
+            placeholder={deleteConfirmationText}
+            disabled={isDeletingAccount}
+            onChange={(event) => setDeleteConfirmText(event.target.value)}
+          />
+        </Space>
+      </Modal>
     </section>
   );
 }

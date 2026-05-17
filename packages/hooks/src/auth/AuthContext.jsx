@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import {
+  deleteAccount as deleteAccountRequest,
   getMe,
   login as loginRequest,
   logout as logoutRequest,
@@ -107,6 +108,17 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const deleteAccount = useCallback(async () => {
+    try {
+      await deleteAccountRequest();
+    } finally {
+      setUser(null);
+      if (typeof window !== "undefined") {
+        window.sessionStorage.removeItem(AUTH_SESSION_HINT_KEY);
+      }
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -117,6 +129,7 @@ export function AuthProvider({ children }) {
         verifyLogin,
         register,
         logout,
+        deleteAccount,
         refetchMe,
       }}
     >

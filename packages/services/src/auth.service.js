@@ -43,3 +43,8 @@ export function refreshSession() {
 export function logout() {
   return axiosClient.post('/auth/logout');
 }
+
+export async function deleteAccount() {
+  await getCsrf();
+  return axiosClient.delete('/auth/account');
+}

@@ -297,6 +297,15 @@ body,
   min-height: 160px;
 }
 
+.settings-danger-card {
+  background: linear-gradient(180deg, #fff, #fff7f7);
+  border-color: rgb(239 68 68 / 24%);
+}
+
+.settings-danger-card:hover {
+  border-color: rgb(239 68 68 / 34%);
+}
+
 .dashboard-card .ant-card-body,
 .dashboard-form-card .ant-card-body,
 .dashboard-avatar-card .ant-card-body,

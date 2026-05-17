@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Procraft.Application.Auth.Commands.DeleteAccount;
 using Procraft.Application.Auth.Commands.Login;
 using Procraft.Application.Auth.Commands.Logout;
 using Procraft.Application.Auth.Commands.RefreshToken;
@@ -98,6 +99,14 @@ public sealed class AuthController : ControllerBase
     public async Task<ActionResult> LogoutAsync(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new LogoutCommand(), cancellationToken);
+        return Ok(new { message = result.Message });
+    }
+
+    [HttpDelete("account")]
+    [Authorize]
+    public async Task<ActionResult> DeleteAccountAsync(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new DeleteAccountCommand(), cancellationToken);
         return Ok(new { message = result.Message });
     }
 }
