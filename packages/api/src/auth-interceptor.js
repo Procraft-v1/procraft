@@ -40,7 +40,16 @@ export function attachAuthInterceptors(client) {
 }
 
 function isAuthMutation(url) {
-  return ['/auth/login', '/auth/register', '/auth/logout', '/auth/refresh'].some((path) => url.includes(path));
+  return [
+    '/auth/login',
+    '/auth/login/verify',
+    '/auth/register',
+    '/auth/register/verify',
+    '/auth/logout',
+    '/auth/refresh',
+    '/auth/password/forgot',
+    '/auth/password/reset',
+  ].some((path) => url.includes(path));
 }
 
 function redirectToLogin() {

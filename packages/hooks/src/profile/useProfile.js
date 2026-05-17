@@ -16,7 +16,7 @@ export function useProfile(options = {}) {
     setIsLoading(true);
 
     try {
-      const response = await getMyProfile({ skipAuthRedirect: true, skipAuthRefresh: true });
+      const response = await getMyProfile({ skipAuthRedirect: true });
       setProfile(response.data);
       return response.data;
     } catch (error) {

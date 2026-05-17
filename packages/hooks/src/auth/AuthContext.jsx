@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    getMe({ skipAuthRedirect: true, skipAuthRefresh: true })
+    getMe({ skipAuthRedirect: true })
       .then((res) => setUser(readUser(res)))
       .catch(() => setUser(null))
       .finally(() => setIsLoading(false));
@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
 
   const refetchMe = useCallback(async () => {
     try {
-      const res = await getMe({ skipAuthRedirect: true, skipAuthRefresh: true });
+      const res = await getMe({ skipAuthRedirect: true });
       const nextUser = readUser(res);
       setUser(nextUser);
       if (nextUser && typeof window !== "undefined") {
