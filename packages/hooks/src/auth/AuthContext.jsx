@@ -90,13 +90,6 @@ export function AuthProvider({ children }) {
 
   const register = useCallback(async (data) => {
     const res = await registerRequest(data);
-    const nextUser = readUser(res);
-    if (nextUser) {
-      setUser(nextUser);
-      if (typeof window !== "undefined") {
-        window.sessionStorage.setItem(AUTH_SESSION_HINT_KEY, "1");
-      }
-    }
     return res?.data ?? res;
   }, []);
 

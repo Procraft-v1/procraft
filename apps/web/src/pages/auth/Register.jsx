@@ -33,6 +33,11 @@ export default function Register() {
     try {
       if (!challenge) {
         const nextChallenge = await register(values);
+        if (!nextChallenge?.verificationId) {
+          setError("Ro'yxatdan o'tish kodi olinmadi. Backendni yangilab qayta urinib ko'ring.");
+          return;
+        }
+
         setChallenge(nextChallenge);
         form.resetFields(["code"]);
         return;

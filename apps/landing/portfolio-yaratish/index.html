@@ -198,21 +198,32 @@
       // 2. Hamburger Menu Logic
       const menuToggle = document.getElementById("menuToggle");
       const menuOverlay = document.getElementById("menuOverlay");
-      const overlayLinks = document.querySelectorAll(".overlay-link, .nav-cta");
+      const overlayLinks = menuOverlay
+        ? menuOverlay.querySelectorAll(".overlay-link, .nav-cta")
+        : [];
+      const mobileMenuQuery = window.matchMedia("(max-width: 992px)");
 
       if (menuToggle && menuOverlay) {
+        function closeMenu() {
+          menuToggle.classList.remove("is-active");
+          menuOverlay.classList.remove("is-active");
+          document.body.style.overflow = "";
+        }
+
         function toggleMenu() {
-          menuToggle.classList.toggle("is-active");
-          menuOverlay.classList.toggle("is-active");
-          document.body.style.overflow = menuOverlay.classList.contains(
-            "is-active",
-          )
-            ? "hidden"
-            : "";
+          if (!mobileMenuQuery.matches) {
+            closeMenu();
+            return;
+          }
+
+          const isOpen = menuOverlay.classList.toggle("is-active");
+          menuToggle.classList.toggle("is-active", isOpen);
+          document.body.style.overflow = isOpen ? "hidden" : "";
         }
         menuToggle.addEventListener("click", toggleMenu);
+        mobileMenuQuery.addEventListener("change", closeMenu);
         overlayLinks.forEach((link) => {
-          link.addEventListener("click", toggleMenu);
+          link.addEventListener("click", closeMenu);
         });
       }
     </script>

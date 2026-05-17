@@ -1319,6 +1319,12 @@ details[open] .faq-plus {
   }
 }
 
+@media (min-width: 993px) {
+  .menu-overlay {
+    display: none !important;
+  }
+}
+
 @media (max-width: 860px) {
   .article-layout {
     grid-template-columns: 1fr;
