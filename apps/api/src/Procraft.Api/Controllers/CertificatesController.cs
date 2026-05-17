@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Procraft.Application.ProfileSections.Certificates;
 
@@ -10,6 +11,8 @@ namespace Procraft.Api.Controllers;
 [Route("api/profile/certificates")]
 public sealed class CertificatesController : ControllerBase
 {
+    private const long CertificateUploadRequestLimitBytes = 11 * 1024 * 1024;
+
     private readonly IMediator _mediator;
 
     public CertificatesController(IMediator mediator) => _mediator = mediator;
@@ -24,7 +27,8 @@ public sealed class CertificatesController : ControllerBase
 
     [HttpPost("file")]
     [Consumes("multipart/form-data")]
-    [RequestSizeLimit(11 * 1024 * 1024)]
+    [RequestSizeLimit(CertificateUploadRequestLimitBytes)]
+    [RequestFormLimits(MultipartBodyLengthLimit = CertificateUploadRequestLimitBytes)]
     public async Task<ActionResult> UploadFileAsync([FromForm] UploadCertificateFileApiRequest request, CancellationToken cancellationToken) =>
         Ok(await _mediator.Send(
             new UploadCertificateFileCommand(

@@ -22,5 +22,6 @@
   "errors.forbidden": "Bu amal uchun ruxsat yo'q.",
   "errors.notFound": "Ma'lumot topilmadi.",
   "errors.conflict": "Bu ma'lumot allaqachon mavjud.",
+  "errors.fileTooLarge": "Fayl hajmi juda katta. Sertifikat uchun maksimal hajm 10MB.",
   "errors.server": "Serverda xatolik yuz berdi. Keyinroq qayta urinib ko'ring."
 }

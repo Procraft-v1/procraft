@@ -72,6 +72,23 @@ const educationTypeLabels = Object.fromEntries(
   educationTypeOptions.map((option) => [option.value, option.label]),
 );
 
+const CERTIFICATE_MAX_SIZE_MB = 10;
+const CERTIFICATE_MAX_SIZE_BYTES = CERTIFICATE_MAX_SIZE_MB * 1024 * 1024;
+const CERTIFICATE_ALLOWED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".webp"];
+const CERTIFICATE_ALLOWED_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+
+function getFileExtension(fileName = "") {
+  const dotIndex = fileName.lastIndexOf(".");
+  return dotIndex >= 0 ? fileName.slice(dotIndex).toLowerCase() : "";
+}
+
+function isAllowedCertificateFile(file) {
+  const extension = getFileExtension(file.name);
+  const hasAllowedExtension = CERTIFICATE_ALLOWED_EXTENSIONS.includes(extension);
+  const hasAllowedType = !file.type || CERTIFICATE_ALLOWED_TYPES.includes(file.type.toLowerCase());
+  return hasAllowedExtension && hasAllowedType;
+}
+
 function getProfileInitials(profile) {
   const source = profile?.fullName || profile?.username || "P";
   return source
@@ -322,6 +339,16 @@ function CertificateFileUrlField({ field, form, value, onChange }) {
       return Upload.LIST_IGNORE;
     }
 
+    if (!isAllowedCertificateFile(file)) {
+      message.error("Sertifikat fayli PDF, JPG, JPEG, PNG yoki WEBP formatida bo'lishi kerak");
+      return Upload.LIST_IGNORE;
+    }
+
+    if (file.size > CERTIFICATE_MAX_SIZE_BYTES) {
+      message.error(`Sertifikat fayli ${CERTIFICATE_MAX_SIZE_MB}MB dan kichik bo'lishi kerak`);
+      return Upload.LIST_IGNORE;
+    }
+
     setIsUploading(true);
 
     try {
@@ -339,23 +366,28 @@ function CertificateFileUrlField({ field, form, value, onChange }) {
   };
 
   return (
-    <Space.Compact style={{ width: "100%" }}>
-      <Input
-        value={value}
-        onChange={onChange}
-        placeholder={field.placeholder}
-      />
-      <Upload
-        accept=".pdf,.jpg,.jpeg,.png,.webp"
-        beforeUpload={beforeUpload}
-        maxCount={1}
-        showUploadList={false}
-      >
-        <Button icon={<UploadOutlined />} loading={isUploading}>
-          Fayl yuklash
-        </Button>
-      </Upload>
-    </Space.Compact>
+    <Space direction="vertical" size={6} style={{ width: "100%" }}>
+      <Space.Compact style={{ width: "100%" }}>
+        <Input
+          value={value}
+          onChange={onChange}
+          placeholder={field.placeholder}
+        />
+        <Upload
+          accept=".pdf,.jpg,.jpeg,.png,.webp"
+          beforeUpload={beforeUpload}
+          maxCount={1}
+          showUploadList={false}
+        >
+          <Button icon={<UploadOutlined />} loading={isUploading}>
+            Fayl yuklash
+          </Button>
+        </Upload>
+      </Space.Compact>
+      <Typography.Text type="secondary">
+        PDF, JPG, JPEG, PNG yoki WEBP. Maksimal hajm: {CERTIFICATE_MAX_SIZE_MB}MB.
+      </Typography.Text>
+    </Space>
   );
 }
 

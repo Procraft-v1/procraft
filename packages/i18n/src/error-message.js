@@ -25,6 +25,7 @@ const statusKeys = new Map([
   [403, 'errors.forbidden'],
   [404, 'errors.notFound'],
   [409, 'errors.conflict'],
+  [413, 'errors.fileTooLarge'],
   [500, 'errors.server'],
 ]);
 
