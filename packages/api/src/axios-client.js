@@ -10,7 +10,6 @@ const axiosClient = axios.create({
   withCredentials: true,
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json',
   },
 });
 
@@ -18,6 +17,12 @@ axiosClient.interceptors.request.use((config) => {
   const method = config.method?.toLowerCase();
 
   const needsCsrf = method === 'post' || method === 'put' || method === 'patch' || method === 'delete';
+  const hasJsonBody = needsCsrf && config.data && !(config.data instanceof FormData);
+
+  if (hasJsonBody && !config.headers?.['Content-Type']) {
+    config.headers ||= {};
+    config.headers['Content-Type'] = 'application/json';
+  }
 
   if (needsCsrf) {
     const token = getCsrfTokenFromCookie();
