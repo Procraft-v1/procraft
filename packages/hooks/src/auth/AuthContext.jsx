@@ -68,7 +68,12 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (data) => {
     const res = await loginRequest(data);
-    return res?.data ?? res;
+    const nextUser = readUser(res);
+    setUser(nextUser);
+    if (nextUser && typeof window !== "undefined") {
+      window.sessionStorage.setItem(AUTH_SESSION_HINT_KEY, "1");
+    }
+    return nextUser;
   }, []);
 
   const verifyLogin = useCallback(async (data) => {

@@ -153,6 +153,7 @@ export default function ClassicTemplate({ profile }) {
                   <article key={item.id || item.name}>
                     <strong>{item.name}</strong>
                     {item.issuer ? <p>{item.issuer}</p> : null}
+                    {item.issuedOn ? <p>{item.issuedOn}</p> : null}
                     {item.url ? <ExternalLink href={resolveAssetUrl(item.url)}>Sertifikatni ko'rish</ExternalLink> : null}
                   </article>
                 ))}

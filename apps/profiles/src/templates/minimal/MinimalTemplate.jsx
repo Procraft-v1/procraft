@@ -58,7 +58,8 @@ export default function MinimalTemplate({ profile }) {
           {hasItems(projects) ? <a href="#projects">Loyihalar</a> : null}
           {hasItems(experiences) ? <a href="#experience">Tajriba</a> : null}
           {hasItems(skills) ? <a href="#skills">Ko'nikmalar</a> : null}
-          {hasItems(certificates) || hasItems(socialLinks) ? <a href="#contact">Aloqa</a> : null}
+          {hasItems(certificates) ? <a href="#certificates">Sertifikatlar</a> : null}
+          {hasItems(socialLinks) ? <a href="#contact">Aloqa</a> : null}
         </nav>
       </header>
 
@@ -160,6 +161,7 @@ export default function MinimalTemplate({ profile }) {
                 <article key={item.id || item.name}>
                   <strong>{item.name}</strong>
                   {item.issuer ? <p>{item.issuer}</p> : null}
+                  {item.issuedOn ? <p>{item.issuedOn}</p> : null}
                   {item.url ? <ExternalLink href={resolveAssetUrl(item.url)}>Sertifikatni ko'rish</ExternalLink> : null}
                 </article>
               ))}

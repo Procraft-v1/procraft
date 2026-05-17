@@ -46,7 +46,7 @@ function ExternalLink({ href, children, className }) {
 
 /* ─── UI COMPONENTS ─────────────────────────────────────────── */
 
-function NavBar({ profile, projects, skills, experiences, socialLinks }) {
+function NavBar({ profile, projects, skills, experiences, certificates, socialLinks }) {
   return (
     <header className="mw-nav">
       <a href="#top" className="mw-nav__logo">
@@ -64,6 +64,7 @@ function NavBar({ profile, projects, skills, experiences, socialLinks }) {
         {hasItems(projects) && <a href="#projects">Loyihalar</a>}
         {hasItems(skills) && <a href="#skills">Ko'nikmalar</a>}
         {hasItems(experiences) && <a href="#experience">Tajriba</a>}
+        {hasItems(certificates) && <a href="#certificates">Sertifikatlar</a>}
         {hasItems(socialLinks) && <a href="#contact">Aloqa</a>}
       </nav>
 
@@ -76,7 +77,7 @@ function NavBar({ profile, projects, skills, experiences, socialLinks }) {
   );
 }
 
-function HeroSection({ profile, projects, skills, experiences }) {
+function HeroSection({ profile, projects, skills, experiences, certificates }) {
   const name = profile.fullName || profile.username || "";
   const [firstName, ...rest] = name.split(" ");
   const lastName = rest.join(" ");
@@ -123,6 +124,12 @@ function HeroSection({ profile, projects, skills, experiences }) {
             <div className="mw-stat">
               <strong>{String(experiences.length).padStart(2, "0")}</strong>
               <span>Tajriba</span>
+            </div>
+          )}
+          {hasItems(certificates) && (
+            <div className="mw-stat">
+              <strong>{String(certificates.length).padStart(2, "0")}</strong>
+              <span>Sertifikat</span>
             </div>
           )}
         </div>
@@ -376,16 +383,14 @@ function ExperienceSection({ experiences }) {
   );
 }
 
-function CredentialsSection({ educations, certificates }) {
-  if (!hasItems(educations) && !hasItems(certificates)) return null;
+function EducationSection({ educations }) {
+  if (!hasItems(educations)) return null;
   return (
-    <section id="credentials" className="mw-section mw-section--alt">
+    <section id="education" className="mw-section mw-section--alt">
       <div className="mw-section__head">
-        <span className="mw-eyebrow">Credentials</span>
+        <span className="mw-eyebrow">Education</span>
         <h2 className="mw-section__title">
-          Ta'lim &amp;
-          <br />
-          sertifikatlar
+          Ta'lim
         </h2>
       </div>
 
@@ -428,7 +433,23 @@ function CredentialsSection({ educations, certificates }) {
             </div>
           </article>
         ))}
+      </div>
+    </section>
+  );
+}
 
+function CertificatesSection({ certificates }) {
+  if (!hasItems(certificates)) return null;
+  return (
+    <section id="certificates" className="mw-section mw-section--alt">
+      <div className="mw-section__head">
+        <span className="mw-eyebrow">Certificates</span>
+        <h2 className="mw-section__title">
+          Sertifikatlar
+        </h2>
+      </div>
+
+      <div className="mw-creds">
         {certificates.map((item) => (
           <article className="mw-cred-card" key={item.id || item.name}>
             <div
@@ -456,6 +477,9 @@ function CredentialsSection({ educations, certificates }) {
               <strong className="mw-cred-card__name">{item.name}</strong>
               {item.issuer && (
                 <span className="mw-cred-card__type">{item.issuer}</span>
+              )}
+              {item.issuedOn && (
+                <span className="mw-cred-card__type">{item.issuedOn}</span>
               )}
               {item.url && (
                 <ExternalLink href={resolveAssetUrl(item.url)} className="mw-cred-card__link">
@@ -526,6 +550,7 @@ export default function ModernTemplate({ profile }) {
         projects={projects}
         skills={skills}
         experiences={experiences}
+        certificates={certificates}
         socialLinks={socialLinks}
       />
 
@@ -535,15 +560,14 @@ export default function ModernTemplate({ profile }) {
           projects={projects}
           skills={skills}
           experiences={experiences}
+          certificates={certificates}
         />
 
         <ProjectsSection projects={projects} />
         <SkillsSection skills={skills} />
         <ExperienceSection experiences={experiences} />
-        <CredentialsSection
-          educations={educations}
-          certificates={certificates}
-        />
+        <EducationSection educations={educations} />
+        <CertificatesSection certificates={certificates} />
         <ContactSection socialLinks={socialLinks} />
       </main>
     </div>

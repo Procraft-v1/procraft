@@ -44,14 +44,7 @@ public sealed class AuthController : ControllerBase
     public async Task<ActionResult> LoginAsync([FromBody] LoginApiRequest request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new LoginCommand(request.EmailOrUsername, request.Password), cancellationToken);
-        return Ok(new
-        {
-            requiresVerification = true,
-            verificationId = result.VerificationId,
-            maskedEmail = result.MaskedEmail,
-            expiresAt = result.ExpiresAt,
-            codeLength = result.CodeLength,
-        });
+        return Ok(new { user = result.User });
     }
 
     [HttpPost("login/verify")]
