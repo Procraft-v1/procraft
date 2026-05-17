@@ -49,8 +49,6 @@ public partial class CreatePendingRegistrations : Migration
             name: "IX_pending_registrations_Username",
             table: "pending_registrations",
             column: "Username");
-
-        migrationBuilder.Sql("DELETE FROM users WHERE \"IsEmailConfirmed\" = FALSE;");
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)
