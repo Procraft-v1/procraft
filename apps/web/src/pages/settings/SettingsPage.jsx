@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
   Card,
   Col,
   Descriptions,
+  Form,
   Input,
   Modal,
   Row,
@@ -25,7 +26,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { routes } from '@procraft/config';
 import { useAuth, useProfile } from '@procraft/hooks';
-import { getErrorMessage } from '@procraft/i18n';
+import { getErrorFieldMessages, getErrorMessage } from '@procraft/i18n';
 
 function read(user, camelKey, pascalKey, fallback = '') {
   return user?.[camelKey] ?? user?.[pascalKey] ?? fallback;
@@ -38,13 +39,16 @@ function getPortfolioUrl(user) {
 
 export default function SettingsPage() {
   const navigate = useNavigate();
-  const { user, isAuthenticated, deleteAccount } = useAuth();
+  const { user, isAuthenticated, deleteAccount, updateAccount } = useAuth();
+  const [accountForm] = Form.useForm();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isSavingAccount, setIsSavingAccount] = useState(false);
   const { profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated });
   const email = read(user, 'email', 'Email', '-');
   const username = read(user, 'username', 'Username', '-');
+  const phoneNumber = read(user, 'phoneNumber', 'PhoneNumber', '');
   const isEmailConfirmed = Boolean(read(user, 'isEmailConfirmed', 'IsEmailConfirmed', false));
   const portfolioUrl = profile ? getPortfolioUrl(user) : '';
   const deleteConfirmationText = useMemo(
@@ -65,6 +69,40 @@ export default function SettingsPage() {
         setIsDeleteModalOpen(true);
       },
     });
+  };
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    accountForm.setFieldsValue({
+      email,
+      username,
+      phoneNumber,
+    });
+  }, [accountForm, email, phoneNumber, user, username]);
+
+  const handleAccountSave = async (values) => {
+    setIsSavingAccount(true);
+
+    try {
+      await updateAccount({
+        email: values.email,
+        username: values.username,
+        phoneNumber: values.phoneNumber || null,
+      });
+      message.success("Account ma'lumotlari saqlandi");
+    } catch (error) {
+      const fieldMessages = getErrorFieldMessages(error);
+      if (fieldMessages.length > 0) {
+        accountForm.setFields(fieldMessages);
+      } else {
+        message.error(getErrorMessage(error));
+      }
+    } finally {
+      setIsSavingAccount(false);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -115,18 +153,65 @@ export default function SettingsPage() {
               </Space>
             )}
           >
-            <Descriptions column={1} colon={false}>
-              <Descriptions.Item label="Email">
-                <Space wrap>
-                  <Typography.Text copyable>{email}</Typography.Text>
-                  {isEmailConfirmed && (
-                    <Tag color="green">Tasdiqlangan</Tag>
-                  )}
-                </Space>
-              </Descriptions.Item>
-              <Descriptions.Item label="Username">
-                <Typography.Text copyable>{username}</Typography.Text>
-              </Descriptions.Item>
+            <Form
+              form={accountForm}
+              layout="vertical"
+              requiredMark={false}
+              onFinish={handleAccountSave}
+            >
+              <Row gutter={12}>
+                <Col xs={24} md={12}>
+                  <Form.Item
+                    label="Email"
+                    name="email"
+                    rules={[
+                      { required: true, type: 'email', message: "To'g'ri email kiriting" },
+                    ]}
+                  >
+                    <Input autoComplete="email" />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item
+                    label="Foydalanuvchi nomi"
+                    name="username"
+                    rules={[
+                      { required: true, message: "Foydalanuvchi nomini kiriting" },
+                      { min: 3, max: 30, message: "Foydalanuvchi nomi 3-30 ta belgidan iborat bo'lishi kerak" },
+                      {
+                        pattern: /^[a-z0-9_-]+$/,
+                        message: "Faqat kichik harf, raqam, tire yoki pastki chiziq kiriting",
+                      },
+                    ]}
+                  >
+                    <Input autoComplete="username" spellCheck={false} />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item
+                    label="Telefon raqam"
+                    name="phoneNumber"
+                    rules={[
+                      {
+                        pattern: /^\+?[0-9\s().-]{7,32}$/,
+                        message: "Telefon raqam formatini to'g'ri kiriting",
+                      },
+                    ]}
+                  >
+                    <Input autoComplete="tel" inputMode="tel" placeholder="+998 90 123 45 67" />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Space wrap>
+                <Button type="primary" htmlType="submit" loading={isSavingAccount}>
+                  Saqlash
+                </Button>
+                {isEmailConfirmed && <Tag color="green">Email tasdiqlangan</Tag>}
+              </Space>
+            </Form>
+
+            <Descriptions column={1} colon={false} style={{ marginTop: 22 }}>
               <Descriptions.Item label="Portfolio link">
                 {portfolioUrl ? (
                   <Typography.Text copyable>{portfolioUrl}</Typography.Text>
@@ -137,20 +222,11 @@ export default function SettingsPage() {
             </Descriptions>
 
             {portfolioUrl ? (
-              <Button
-                icon={<ExportOutlined />}
-                href={portfolioUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Button icon={<ExportOutlined />} href={portfolioUrl} target="_blank" rel="noopener noreferrer">
                 Portfolio ochish
               </Button>
             ) : (
-              <Button
-                icon={<LinkOutlined />}
-                loading={isProfileLoading}
-                onClick={() => navigate(routes.dashboardProfile)}
-              >
+              <Button icon={<LinkOutlined />} loading={isProfileLoading} onClick={() => navigate(routes.dashboardProfile)}>
                 Profilni to'ldirish
               </Button>
             )}

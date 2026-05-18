@@ -14,6 +14,7 @@ public sealed class PendingRegistrationConfiguration : IEntityTypeConfiguration<
 
         builder.Property(x => x.Email).IsRequired().HasMaxLength(320);
         builder.Property(x => x.Username).IsRequired().HasMaxLength(30);
+        builder.Property(x => x.PhoneNumber).HasMaxLength(32);
         builder.Property(x => x.PasswordHash).IsRequired().HasMaxLength(512);
         builder.Property(x => x.CodeHash).IsRequired().HasMaxLength(64);
         builder.Property(x => x.ExpiresAt).IsRequired();

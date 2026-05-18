@@ -49,6 +49,11 @@ export function logout() {
   return axiosClient.post('/auth/logout');
 }
 
+export async function updateAccount(payload) {
+  await getCsrf();
+  return axiosClient.put('/auth/account', payload);
+}
+
 export async function deleteAccount() {
   await getCsrf();
   return axiosClient.delete('/auth/account');

@@ -10,6 +10,8 @@ public sealed class AuthUserDto
 
     public string Username { get; init; } = string.Empty;
 
+    public string? PhoneNumber { get; init; }
+
     public bool IsEmailConfirmed { get; init; }
 
     public static AuthUserDto FromUser(User user) =>
@@ -18,6 +20,7 @@ public sealed class AuthUserDto
             Id = user.Id,
             Email = user.Email,
             Username = user.Username,
+            PhoneNumber = user.PhoneNumber,
             IsEmailConfirmed = user.IsEmailConfirmed,
         };
 }

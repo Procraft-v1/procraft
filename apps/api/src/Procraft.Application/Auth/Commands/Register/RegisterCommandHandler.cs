@@ -41,6 +41,7 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Re
     {
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
         var normalizedUsername = request.Username.Trim().ToLowerInvariant();
+        var normalizedPhone = NormalizePhoneNumber(request.PhoneNumber);
 
         if (await _db.Users.AsNoTracking().AnyAsync(u => u.Email == normalizedEmail, cancellationToken))
         {
@@ -81,6 +82,7 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Re
             Id = verificationId,
             Email = normalizedEmail,
             Username = normalizedUsername,
+            PhoneNumber = normalizedPhone,
             PasswordHash = _passwordHasher.Hash(request.Password),
             CodeHash = HashRegisterCode(verificationId, code, _jwt.Secret),
             ExpiresAt = expiresAt,
@@ -131,5 +133,11 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Re
         var name = email[..at];
         var domain = email[at..];
         return $"{name[0]}***{domain}";
+    }
+
+    private static string? NormalizePhoneNumber(string? phoneNumber)
+    {
+        var trimmed = phoneNumber?.Trim();
+        return string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
     }
 }

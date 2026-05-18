@@ -1,10 +1,10 @@
 using FluentValidation;
 
-namespace Procraft.Application.Auth.Commands.Register;
+namespace Procraft.Application.Auth.Commands.UpdateAccount;
 
-public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand>
+public sealed class UpdateAccountCommandValidator : AbstractValidator<UpdateAccountCommand>
 {
-    public RegisterCommandValidator()
+    public UpdateAccountCommandValidator()
     {
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
 
@@ -14,11 +14,6 @@ public sealed class RegisterCommandValidator : AbstractValidator<RegisterCommand
             .MaximumLength(30)
             .Matches("^[a-z0-9_-]+$")
             .WithMessage("Username may only contain lowercase letters, digits, hyphen, or underscore.");
-
-        RuleFor(x => x.Password)
-            .NotEmpty()
-            .MinimumLength(8)
-            .MaximumLength(100);
 
         RuleFor(x => x.PhoneNumber)
             .MaximumLength(32)

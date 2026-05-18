@@ -8,6 +8,7 @@ using Procraft.Application.Auth.Commands.RefreshToken;
 using Procraft.Application.Auth.Commands.Register;
 using Procraft.Application.Auth.Commands.RequestPasswordReset;
 using Procraft.Application.Auth.Commands.ResetPassword;
+using Procraft.Application.Auth.Commands.UpdateAccount;
 using Procraft.Application.Auth.Commands.VerifyLogin;
 using Procraft.Application.Auth.Commands.VerifyRegister;
 using Procraft.Application.Auth.Queries.Me;
@@ -37,7 +38,7 @@ public sealed class AuthController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult> RegisterAsync([FromBody] RegisterApiRequest request, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new RegisterCommand(request.Email, request.Username, request.Password), cancellationToken);
+        var result = await _mediator.Send(new RegisterCommand(request.Email, request.Username, request.Password, request.PhoneNumber), cancellationToken);
         return Ok(new
         {
             verificationId = result.VerificationId,
@@ -124,9 +125,17 @@ public sealed class AuthController : ControllerBase
         var result = await _mediator.Send(new DeleteAccountCommand(), cancellationToken);
         return Ok(new { message = result.Message });
     }
+
+    [HttpPut("account")]
+    [Authorize]
+    public async Task<ActionResult> UpdateAccountAsync([FromBody] UpdateAccountApiRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new UpdateAccountCommand(request.Email, request.Username, request.PhoneNumber), cancellationToken);
+        return Ok(new { user = result.User });
+    }
 }
 
-public sealed record RegisterApiRequest(string Email, string Username, string Password);
+public sealed record RegisterApiRequest(string Email, string Username, string Password, string? PhoneNumber);
 
 public sealed record VerifyRegisterApiRequest(Guid VerificationId, string Code);
 
@@ -137,3 +146,5 @@ public sealed record VerifyLoginApiRequest(Guid VerificationId, string Code);
 public sealed record ForgotPasswordApiRequest(string Email);
 
 public sealed record ResetPasswordApiRequest(Guid ResetId, string Code, string NewPassword);
+
+public sealed record UpdateAccountApiRequest(string Email, string Username, string? PhoneNumber);

@@ -11,6 +11,7 @@ import {
   login as loginRequest,
   logout as logoutRequest,
   register as registerRequest,
+  updateAccount as updateAccountRequest,
   verifyRegister as verifyRegisterRequest,
   verifyLogin as verifyLoginRequest,
 } from "@procraft/services";
@@ -148,6 +149,16 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const updateAccount = useCallback(async (data) => {
+    const res = await updateAccountRequest(data);
+    const nextUser = readUser(res);
+    setUser(nextUser);
+    if (nextUser) {
+      setSessionHint();
+    }
+    return nextUser;
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -160,6 +171,7 @@ export function AuthProvider({ children }) {
         verifyRegister,
         logout,
         deleteAccount,
+        updateAccount,
         refetchMe,
       }}
     >

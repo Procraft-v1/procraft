@@ -6,6 +6,8 @@ public sealed class PendingRegistration : BaseEntity
 
     public string Username { get; set; } = string.Empty;
 
+    public string? PhoneNumber { get; set; }
+
     public string PasswordHash { get; set; } = string.Empty;
 
     public string CodeHash { get; set; } = string.Empty;

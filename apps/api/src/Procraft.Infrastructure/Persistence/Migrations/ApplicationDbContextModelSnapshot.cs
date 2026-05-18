@@ -38,6 +38,10 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
                 .HasMaxLength(512)
                 .HasColumnType("character varying(512)");
 
+            b.Property<string>("PhoneNumber")
+                .HasMaxLength(32)
+                .HasColumnType("character varying(32)");
+
             b.Property<DateTimeOffset?>("UpdatedAt")
                 .HasColumnType("timestamp with time zone");
 
@@ -237,6 +241,10 @@ partial class ApplicationDbContextModelSnapshot : ModelSnapshot
                 .IsRequired()
                 .HasMaxLength(512)
                 .HasColumnType("character varying(512)");
+
+            b.Property<string>("PhoneNumber")
+                .HasMaxLength(32)
+                .HasColumnType("character varying(32)");
 
             b.Property<DateTimeOffset?>("UpdatedAt")
                 .HasColumnType("timestamp with time zone");

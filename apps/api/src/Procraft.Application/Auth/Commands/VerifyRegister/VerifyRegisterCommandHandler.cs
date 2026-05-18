@@ -97,6 +97,7 @@ public sealed class VerifyRegisterCommandHandler : IRequestHandler<VerifyRegiste
             Id = Guid.NewGuid(),
             Email = registration.Email,
             Username = registration.Username,
+            PhoneNumber = registration.PhoneNumber,
             PasswordHash = registration.PasswordHash,
             IsEmailConfirmed = true,
             CreatedAt = now,

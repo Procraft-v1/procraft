@@ -138,9 +138,26 @@ export default function Register() {
                 rules={[
                   { required: true, message: "Foydalanuvchi nomini tanlang." },
                   { min: 3, max: 30, message: "Foydalanuvchi nomi 3-30 ta belgidan iborat bo'lishi kerak." },
+                  {
+                    pattern: /^[a-z0-9_-]+$/,
+                    message: "Faqat kichik harf, raqam, tire yoki pastki chiziq kiriting.",
+                  },
                 ]}
               >
                 <Input autoComplete="off" spellCheck={false} size="large" />
+              </Form.Item>
+
+              <Form.Item
+                label="Telefon raqam"
+                name="phoneNumber"
+                rules={[
+                  {
+                    pattern: /^\+?[0-9\s().-]{7,32}$/,
+                    message: "Telefon raqam formatini to'g'ri kiriting.",
+                  },
+                ]}
+              >
+                <Input autoComplete="tel" inputMode="tel" size="large" placeholder="+998 90 123 45 67" />
               </Form.Item>
 
               <Form.Item
