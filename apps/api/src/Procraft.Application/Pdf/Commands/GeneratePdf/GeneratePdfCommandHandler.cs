@@ -7,18 +7,23 @@ namespace Procraft.Application.Pdf.Commands.GeneratePdf;
 
 public sealed class GeneratePdfCommandHandler : IRequestHandler<GeneratePdfCommand, GeneratedPdfFile>
 {
+    private const string FallbackApiOrigin = "https://api.procraft.uz";
+
     private readonly IApplicationDbContext _db;
     private readonly ICurrentUserService _currentUserService;
     private readonly IPdfService _pdfService;
+    private readonly IRequestContext _requestContext;
 
     public GeneratePdfCommandHandler(
         IApplicationDbContext db,
         ICurrentUserService currentUserService,
-        IPdfService pdfService)
+        IPdfService pdfService,
+        IRequestContext requestContext)
     {
         _db = db;
         _currentUserService = currentUserService;
         _pdfService = pdfService;
+        _requestContext = requestContext;
     }
 
     public async Task<GeneratedPdfFile> Handle(GeneratePdfCommand request, CancellationToken cancellationToken)
@@ -61,12 +66,16 @@ public sealed class GeneratePdfCommandHandler : IRequestHandler<GeneratePdfComma
             .Select(x => new PdfEducationModel(x.Institution, x.EducationType, x.Degree, x.Field, x.StartDate, x.EndDate))
             .ToListAsync(cancellationToken);
 
-        var certificates = await _db.Certificates.AsNoTracking()
+        var certificateRows = await _db.Certificates.AsNoTracking()
             .Where(x => x.ProfileId == profile.Id)
             .OrderBy(x => x.SortOrder)
             .ThenByDescending(x => x.IssuedOn)
-            .Select(x => new PdfCertificateModel(x.Name, x.Issuer, x.IssuedOn, x.Url))
+            .Select(x => new { x.Name, x.Issuer, x.IssuedOn, x.Url })
             .ToListAsync(cancellationToken);
+
+        var certificates = certificateRows
+            .Select(x => new PdfCertificateModel(x.Name, x.Issuer, x.IssuedOn, ToPublicUrl(x.Url)))
+            .ToList();
 
         var socialLinks = await _db.SocialLinks.AsNoTracking()
             .Where(x => x.ProfileId == profile.Id)
@@ -90,5 +99,30 @@ public sealed class GeneratePdfCommandHandler : IRequestHandler<GeneratePdfComma
 
         var content = await _pdfService.GenerateResumeAsync(resume, cancellationToken);
         return new GeneratedPdfFile("resume.pdf", "application/pdf", content);
+    }
+
+    private string? ToPublicUrl(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return value;
+        }
+
+        var trimmed = value.Trim();
+        if (Uri.TryCreate(trimmed, UriKind.Absolute, out _))
+        {
+            return trimmed;
+        }
+
+        if (!trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+        {
+            return trimmed;
+        }
+
+        var origin = string.IsNullOrWhiteSpace(_requestContext.PublicOrigin)
+            ? FallbackApiOrigin
+            : _requestContext.PublicOrigin.TrimEnd('/');
+
+        return $"{origin}{trimmed}";
     }
 }

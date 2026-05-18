@@ -6,4 +6,6 @@ public interface IRequestContext
     string? IpAddress { get; }
 
     string? UserAgent { get; }
+
+    string? PublicOrigin { get; }
 }

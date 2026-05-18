@@ -38,4 +38,18 @@ public sealed class RequestContextService : IRequestContext
     }
 
     public string? UserAgent => _http.HttpContext?.Request.Headers.UserAgent.FirstOrDefault();
+
+    public string? PublicOrigin
+    {
+        get
+        {
+            var request = _http.HttpContext?.Request;
+            if (request is null || !request.Host.HasValue)
+            {
+                return null;
+            }
+
+            return $"{request.Scheme}://{request.Host.Value}";
+        }
+    }
 }
