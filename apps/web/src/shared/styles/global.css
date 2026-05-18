@@ -120,6 +120,46 @@ body,
   border-top: 1px solid rgb(255 255 255 / 8%);
 }
 
+.dashboard-sidebar__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px 4px 10px;
+}
+
+.dashboard-sidebar__contact-title {
+  padding-inline: 10px;
+  color: rgb(255 255 255 / 58%) !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.dashboard-sidebar__contact-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.dashboard-sidebar__contact-links .ant-btn {
+  justify-content: flex-start;
+  height: 32px;
+  padding-inline: 10px;
+  color: rgb(255 255 255 / 76%);
+  border-radius: 8px;
+}
+
+.dashboard-sidebar__contact-links .ant-btn:not(:disabled):hover {
+  color: var(--pc-white) !important;
+  background: rgb(255 255 255 / 8%) !important;
+}
+
+.dashboard-sidebar__contact-links .ant-btn:disabled {
+  color: rgb(255 255 255 / 34%) !important;
+  cursor: not-allowed;
+}
+
 .dashboard-menu--logout {
   flex: 0;
   padding: 0;

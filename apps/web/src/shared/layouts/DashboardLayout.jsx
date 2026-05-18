@@ -7,16 +7,20 @@ import {
   ExportOutlined,
   FilePdfOutlined,
   IdcardOutlined,
+  InstagramOutlined,
   LayoutOutlined,
   LoginOutlined,
   LinkOutlined,
   LogoutOutlined,
+  MailOutlined,
   MenuOutlined,
+  SendOutlined,
   ThunderboltOutlined,
   UserOutlined,
+  YoutubeOutlined,
 } from "@ant-design/icons";
 
-import { routes } from "@procraft/config";
+import { PROCRAFT_CONTACT_LINKS, routes } from "@procraft/config";
 import { useAuth, useProfile } from "@procraft/hooks";
 import { Logo } from "@procraft/ui";
 
@@ -59,6 +63,47 @@ function getInitials(user) {
 function getPortfolioUrl(user) {
   const username = user?.username?.trim();
   return username ? `https://${username}.procraft.uz/` : "";
+}
+
+function ContactLinks() {
+  return (
+    <div className="dashboard-sidebar__contact">
+      <Typography.Text className="dashboard-sidebar__contact-title">Bog'lanish</Typography.Text>
+      <div className="dashboard-sidebar__contact-links">
+        <Button
+          type="text"
+          size="small"
+          icon={<SendOutlined />}
+          href={PROCRAFT_CONTACT_LINKS.telegram}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Telegram
+        </Button>
+        <Button
+          type="text"
+          size="small"
+          icon={<MailOutlined />}
+          href={PROCRAFT_CONTACT_LINKS.email}
+        >
+          Email
+        </Button>
+        <Button type="text" size="small" icon={<InstagramOutlined />} disabled>
+          Instagram
+        </Button>
+        <Button
+          type="text"
+          size="small"
+          icon={<YoutubeOutlined />}
+          href={PROCRAFT_CONTACT_LINKS.youtube}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          YouTube
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 export default function DashboardLayout() {
@@ -177,6 +222,7 @@ export default function DashboardLayout() {
           className="dashboard-menu"
         />
         <div className="dashboard-sidebar__footer">
+          <ContactLinks />
           <Menu
             theme="dark"
             selectable={false}
@@ -219,6 +265,7 @@ export default function DashboardLayout() {
           className="dashboard-menu"
         />
         <div className="dashboard-sidebar__footer">
+          <ContactLinks />
           <Menu
             theme="dark"
             selectable={false}

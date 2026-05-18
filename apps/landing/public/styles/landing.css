@@ -1072,8 +1072,16 @@ details[open] .faq-plus {
 }
 .footer-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 24px;
 }
+
+.footer-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
 .footer-link {
   font-size: 14px;
   font-weight: 500;
@@ -1082,6 +1090,12 @@ details[open] .faq-plus {
 }
 .footer-link:hover {
   color: var(--pc-blue);
+}
+
+.footer-link--disabled,
+.footer-link--disabled:hover {
+  color: color-mix(in srgb, var(--pc-muted), transparent 42%);
+  cursor: not-allowed;
 }
 
 /* ============ SCROLL REVEAL ============ */
