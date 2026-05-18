@@ -784,12 +784,14 @@ export default function ProfilePage() {
                       Yopiq repository
                     </Typography.Text>
                   ) : item.githubUrl ? (
-                    <Typography.Link href={item.githubUrl}>
+                    <Typography.Link href={item.githubUrl} target="_blank" rel="noopener noreferrer">
                       GitHub
                     </Typography.Link>
                   ) : null}
                   {item.liveUrl ? (
-                    <Typography.Link href={item.liveUrl}>Live</Typography.Link>
+                    <Typography.Link href={item.liveUrl} target="_blank" rel="noopener noreferrer">
+                      Live
+                    </Typography.Link>
                   ) : null}
                 </Space>
               </Space>
@@ -858,7 +860,9 @@ export default function ProfilePage() {
                   </Typography.Text>
                 ) : null}
                 {item.url ? (
-                  <Typography.Link href={resolveAssetUrl(item.url)}>{item.url}</Typography.Link>
+                  <Typography.Link href={resolveAssetUrl(item.url)} target="_blank" rel="noopener noreferrer">
+                    {item.url}
+                  </Typography.Link>
                 ) : null}
               </Space>
             }
@@ -876,7 +880,9 @@ export default function ProfilePage() {
             title={item.platform}
             description={
               item.url ? (
-                <Typography.Link href={item.url}>{item.url}</Typography.Link>
+                <Typography.Link href={item.url} target="_blank" rel="noopener noreferrer">
+                  {item.url}
+                </Typography.Link>
               ) : null
             }
           />

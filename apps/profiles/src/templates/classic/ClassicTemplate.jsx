@@ -12,7 +12,7 @@ function ExternalLink({ href, children }) {
   }
 
   return (
-    <a href={href} target="_blank" rel="noreferrer">
+    <a href={href} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );

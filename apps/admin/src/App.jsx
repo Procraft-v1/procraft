@@ -280,7 +280,7 @@ export default function App() {
                     icon={<LinkOutlined />}
                     href={getPortfolioUrl(username)}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                   >
                     Ochish
                   </Button>

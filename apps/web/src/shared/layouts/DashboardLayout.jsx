@@ -255,7 +255,7 @@ export default function DashboardLayout() {
                 icon={<ExportOutlined />}
                 href={portfolioUrl}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 Portfolio
               </Button>

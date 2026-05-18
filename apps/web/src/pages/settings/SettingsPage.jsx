@@ -141,7 +141,7 @@ export default function SettingsPage() {
                 icon={<ExportOutlined />}
                 href={portfolioUrl}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 Portfolio ochish
               </Button>

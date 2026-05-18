@@ -104,7 +104,7 @@ export default function DashboardHomePage() {
               )}
               </div>
               {portfolioUrl ? (
-                <Button icon={<ExportOutlined />} href={portfolioUrl} target="_blank" rel="noreferrer" block>
+                <Button icon={<ExportOutlined />} href={portfolioUrl} target="_blank" rel="noopener noreferrer" block>
                   Ochish
                 </Button>
               ) : (

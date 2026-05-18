@@ -38,7 +38,7 @@ function initials(profile) {
 function ExternalLink({ href, children, className }) {
   if (!href) return null;
   return (
-    <a className={className} href={href} target="_blank" rel="noreferrer">
+    <a className={className} href={href} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );
