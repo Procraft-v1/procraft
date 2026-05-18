@@ -253,6 +253,9 @@ body,
 }
 
 .dashboard-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   padding: calc(84px + clamp(18px, 3vw, 32px)) clamp(18px, 3vw, 32px) clamp(18px, 3vw, 32px);
 }
 
@@ -263,7 +266,7 @@ body,
   align-items: center;
   max-width: 1160px;
   padding-top: 24px;
-  margin-top: 34px;
+  margin-top: auto;
   color: var(--pc-muted);
   border-top: 1px solid var(--pc-border);
 }
