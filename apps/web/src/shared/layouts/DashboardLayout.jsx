@@ -7,17 +7,13 @@ import {
   ExportOutlined,
   FilePdfOutlined,
   IdcardOutlined,
-  InstagramOutlined,
   LayoutOutlined,
   LoginOutlined,
   LinkOutlined,
   LogoutOutlined,
-  MailOutlined,
   MenuOutlined,
-  SendOutlined,
   ThunderboltOutlined,
   UserOutlined,
-  YoutubeOutlined,
 } from "@ant-design/icons";
 
 import { PROCRAFT_CONTACT_LINKS, routes } from "@procraft/config";
@@ -65,44 +61,33 @@ function getPortfolioUrl(user) {
   return username ? `https://${username}.procraft.uz/` : "";
 }
 
-function ContactLinks() {
+function DashboardFooter() {
   return (
-    <div className="dashboard-sidebar__contact">
-      <Typography.Text className="dashboard-sidebar__contact-title">Bog'lanish</Typography.Text>
-      <div className="dashboard-sidebar__contact-links">
-        <Button
-          type="text"
-          size="small"
-          icon={<SendOutlined />}
+    <footer className="dashboard-footer">
+      <Typography.Text className="dashboard-footer__brand">Procraft</Typography.Text>
+      <nav className="dashboard-footer__links" aria-label="Procraft bilan bog'lanish">
+        <Typography.Link
           href={PROCRAFT_CONTACT_LINKS.telegram}
           target="_blank"
           rel="noopener noreferrer"
         >
           Telegram
-        </Button>
-        <Button
-          type="text"
-          size="small"
-          icon={<MailOutlined />}
-          href={PROCRAFT_CONTACT_LINKS.email}
-        >
+        </Typography.Link>
+        <Typography.Link href={PROCRAFT_CONTACT_LINKS.email}>
           Email
-        </Button>
-        <Button type="text" size="small" icon={<InstagramOutlined />} disabled>
+        </Typography.Link>
+        <span className="dashboard-footer__disabled" aria-disabled="true">
           Instagram
-        </Button>
-        <Button
-          type="text"
-          size="small"
-          icon={<YoutubeOutlined />}
+        </span>
+        <Typography.Link
           href={PROCRAFT_CONTACT_LINKS.youtube}
           target="_blank"
           rel="noopener noreferrer"
         >
           YouTube
-        </Button>
-      </div>
-    </div>
+        </Typography.Link>
+      </nav>
+    </footer>
   );
 }
 
@@ -222,7 +207,6 @@ export default function DashboardLayout() {
           className="dashboard-menu"
         />
         <div className="dashboard-sidebar__footer">
-          <ContactLinks />
           <Menu
             theme="dark"
             selectable={false}
@@ -265,7 +249,6 @@ export default function DashboardLayout() {
           className="dashboard-menu"
         />
         <div className="dashboard-sidebar__footer">
-          <ContactLinks />
           <Menu
             theme="dark"
             selectable={false}
@@ -333,6 +316,7 @@ export default function DashboardLayout() {
         </header>
         <Layout.Content className="dashboard-content">
           <Outlet />
+          <DashboardFooter />
         </Layout.Content>
       </Layout>
 
