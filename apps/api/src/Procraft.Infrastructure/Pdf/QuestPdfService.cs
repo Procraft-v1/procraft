@@ -7,6 +7,8 @@ namespace Procraft.Infrastructure.Pdf;
 
 public sealed class QuestPdfService : IPdfService
 {
+    private const string UploadsPublicOrigin = "https://api.procraft.uz";
+
     private static readonly string HeadingColor = Colors.BlueGrey.Darken4;
     private static readonly string MutedColor = Colors.Grey.Darken2;
     private static readonly string RuleColor = Colors.Grey.Lighten2;
@@ -315,20 +317,33 @@ public sealed class QuestPdfService : IPdfService
             return;
         }
 
+        var linkValue = NormalizeLinkValue(value);
+
         column.Item().Text(text =>
         {
             text.DefaultTextStyle(style => style.FontSize(fontSize));
             text.Span($"{label}: ").SemiBold().FontColor(MutedColor);
 
-            if (IsHttpUrl(value))
+            if (IsHttpUrl(linkValue))
             {
-                text.Hyperlink(value, value).FontColor(LinkColor).Underline();
+                text.Hyperlink(linkValue, linkValue).FontColor(LinkColor).Underline();
             }
             else
             {
-                text.Span(value).FontColor(MutedColor);
+                text.Span(linkValue).FontColor(MutedColor);
             }
         });
+    }
+
+    private static string NormalizeLinkValue(string value)
+    {
+        var trimmed = value.Trim();
+        if (trimmed.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{UploadsPublicOrigin}{trimmed}";
+        }
+
+        return trimmed;
     }
 
     private static bool IsHttpUrl(string? value) =>
