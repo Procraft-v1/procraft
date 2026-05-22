@@ -1,0 +1,38 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="675" fill="#050816"/>
+  <path d="M0 70H1200M0 140H1200M0 210H1200M0 280H1200M0 350H1200M0 420H1200M0 490H1200M0 560H1200M0 630H1200M80 0V675M160 0V675M240 0V675M320 0V675M400 0V675M480 0V675M560 0V675M640 0V675M720 0V675M800 0V675M880 0V675M960 0V675M1040 0V675M1120 0V675" stroke="#38BDF8" stroke-opacity="0.08"/>
+  <rect x="70" y="56" width="1060" height="563" rx="18" fill="#0B1020" stroke="#1E293B" stroke-width="2"/>
+  <rect x="70" y="56" width="1060" height="66" rx="18" fill="#081120"/>
+  <circle cx="104" cy="89" r="9" fill="#EF4444"/>
+  <circle cx="132" cy="89" r="9" fill="#F59E0B"/>
+  <circle cx="160" cy="89" r="9" fill="#22C55E"/>
+  <text x="204" y="96" fill="#94A3B8" font-family="Consolas, monospace" font-size="20" font-weight="700">portfolio.os</text>
+  <text x="114" y="196" fill="#22C55E" font-family="Consolas, monospace" font-size="24">$ whoami</text>
+  <text x="114" y="274" fill="#E5E7EB" font-family="Inter, Arial, sans-serif" font-size="64" font-weight="800">Developer</text>
+  <text x="114" y="324" fill="#38BDF8" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700">Dark terminal + code editor portfolio</text>
+  <rect x="114" y="374" width="176" height="48" rx="8" fill="#38BDF8"/>
+  <text x="142" y="405" fill="#050816" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800">View projects</text>
+  <rect x="306" y="374" width="124" height="48" rx="8" fill="#0B1020" stroke="#1E293B"/>
+  <text x="336" y="405" fill="#E5E7EB" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800">Contact</text>
+  <rect x="626" y="170" width="406" height="310" rx="14" fill="#050816" stroke="#1E293B" stroke-width="2"/>
+  <rect x="626" y="170" width="406" height="54" rx="14" fill="#081120"/>
+  <circle cx="652" cy="197" r="7" fill="#EF4444"/>
+  <circle cx="674" cy="197" r="7" fill="#F59E0B"/>
+  <circle cx="696" cy="197" r="7" fill="#22C55E"/>
+  <text x="724" y="203" fill="#94A3B8" font-family="Consolas, monospace" font-size="16">portfolio.config.ts</text>
+  <text x="658" y="272" fill="#94A3B8" font-family="Consolas, monospace" font-size="22">const</text>
+  <text x="724" y="272" fill="#E5E7EB" font-family="Consolas, monospace" font-size="22">profile = {</text>
+  <text x="690" y="318" fill="#E5E7EB" font-family="Consolas, monospace" font-size="22">stack:</text>
+  <text x="778" y="318" fill="#22C55E" font-family="Consolas, monospace" font-size="22">"React, .NET"</text>
+  <text x="690" y="364" fill="#E5E7EB" font-family="Consolas, monospace" font-size="22">projects:</text>
+  <text x="816" y="364" fill="#38BDF8" font-family="Consolas, monospace" font-size="22">12</text>
+  <text x="690" y="410" fill="#E5E7EB" font-family="Consolas, monospace" font-size="22">available:</text>
+  <text x="832" y="410" fill="#22C55E" font-family="Consolas, monospace" font-size="22">true</text>
+  <text x="658" y="456" fill="#E5E7EB" font-family="Consolas, monospace" font-size="22">};</text>
+  <rect x="114" y="510" width="918" height="54" rx="10" fill="#0B1020" stroke="#1E293B"/>
+  <text x="144" y="545" fill="#94A3B8" font-family="Consolas, monospace" font-size="20">Projects</text>
+  <text x="304" y="545" fill="#94A3B8" font-family="Consolas, monospace" font-size="20">Stack</text>
+  <text x="434" y="545" fill="#94A3B8" font-family="Consolas, monospace" font-size="20">Experience</text>
+  <text x="624" y="545" fill="#94A3B8" font-family="Consolas, monospace" font-size="20">Contact</text>
+  <rect x="834" y="526" width="132" height="18" rx="9" fill="#22C55E" fill-opacity="0.9"/>
+</svg>

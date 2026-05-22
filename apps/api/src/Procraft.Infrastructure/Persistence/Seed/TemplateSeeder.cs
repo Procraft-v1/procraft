@@ -14,6 +14,7 @@ public static class TemplateSeeder
             new TemplateSeed("Modern", "modern", "Card-based modern layout.", null),
             new TemplateSeed("Classic", "classic", "Traditional chronological resume.", null),
             new TemplateSeed("Editorial", "editorial", "Magazine-style editorial portfolio.", "/templates/editorial.svg"),
+            new TemplateSeed("Developer", "developer", "Dark terminal and code editor portfolio for developers.", "/templates/developer.svg"),
         };
 
         foreach (var seed in templates)

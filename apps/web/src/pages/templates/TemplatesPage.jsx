@@ -8,6 +8,7 @@ const templateCopy = {
   modern: "Moviy va cyan urg'ular bilan zamonaviy kartali ko'rinish.",
   classic: "Rasmiy, markazlangan va klassik professional ko'rinish.",
   editorial: "Katta tipografiya va jurnal uslubidagi premium portfolio.",
+  developer: "Dark terminal, code editor va dashboard uslubidagi developer portfolio.",
 };
 
 function getTemplatePreviewUrl(template) {
