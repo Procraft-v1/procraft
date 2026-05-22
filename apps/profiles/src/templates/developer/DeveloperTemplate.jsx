@@ -1,12 +1,6 @@
 import { resolveAssetUrl } from '@procraft/config';
 import './DeveloperTemplate.css';
 
-const philosophy = [
-  'Clean architecture',
-  'Responsive interfaces',
-  'Performance-first delivery',
-];
-
 function hasItems(items) {
   return Array.isArray(items) && items.length > 0;
 }
@@ -95,7 +89,7 @@ function TechStack({ skills }) {
         {Object.entries(grouped).map(([category, items]) => (
           <article className="dev-stack-card" key={category}>
             <div className="dev-terminal-line">
-              <span>$</span> stack --category {category.toLowerCase()}
+              <span>$</span> stack --category <strong>{category.toLowerCase()}</strong>
             </div>
             <div className="dev-skill-list">
               {items.map((skill) => (
@@ -245,7 +239,13 @@ export default function DeveloperTemplate({ profile }) {
     <div className="dev-os">
       <header className="dev-nav">
         <a className="dev-nav__brand" href="#home">
-          <span>{initials(profile)}</span>
+          <span>
+            {profile.avatarUrl ? (
+              <img src={resolveAssetUrl(profile.avatarUrl)} alt={profile.fullName || 'Profile avatar'} />
+            ) : (
+              initials(profile)
+            )}
+          </span>
           <strong>{displayName}</strong>
         </a>
         <nav>
@@ -286,17 +286,6 @@ export default function DeveloperTemplate({ profile }) {
         <Projects projects={projects} />
         <Stats projects={projects} skills={skills} experiences={experiences} />
         <Timeline experiences={experiences} educations={educations} />
-
-        <Section id="philosophy" eyebrow="Philosophy" title="Code philosophy">
-          <div className="dev-philosophy">
-            {philosophy.map((item) => (
-              <article key={item}>
-                <span>OK</span>
-                <h3>{item}</h3>
-              </article>
-            ))}
-          </div>
-        </Section>
 
         <Contact profile={profile} socialLinks={socialLinks} />
       </main>

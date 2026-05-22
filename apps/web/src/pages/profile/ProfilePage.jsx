@@ -774,7 +774,17 @@ export default function ProfilePage() {
             description={
               <Space direction="vertical" size={2}>
                 {item.description ? (
-                  <Typography.Text type="secondary">
+                  <Typography.Text
+                    type="secondary"
+                    title={item.description}
+                    style={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 3,
+                      overflow: "hidden",
+                      whiteSpace: "normal",
+                    }}
+                  >
                     {item.description}
                   </Typography.Text>
                 ) : null}
