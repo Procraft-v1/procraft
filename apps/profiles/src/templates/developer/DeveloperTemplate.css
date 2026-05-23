@@ -166,9 +166,6 @@
 }
 
 .dev-terminal-line {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   min-height: 32px;
   color: #94a3b8;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
