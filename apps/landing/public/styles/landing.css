@@ -1057,45 +1057,81 @@ details[open] .faq-plus {
 
 /* ============ FOOTER ============ */
 .footer {
-  border-top: 1px solid var(--pc-border);
-  padding: clamp(32px, 5vw, 48px) clamp(24px, 6vw, 80px);
+  padding: 18px clamp(18px, 5vw, 72px) 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: rgb(226 232 240 / 80%);
+  background: #050816;
+}
+
+.footer .logo {
+  color: #f8fafc;
+  font-size: 18px;
+}
+
+.footer-top,
+.footer-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 20px;
-  background: var(--pc-white);
+  width: 100%;
+  gap: 18px;
 }
+
+.footer-top {
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgb(148 163 184 / 18%);
+}
+
 .footer-copy {
+  margin: 0;
   font-size: 14px;
-  color: var(--pc-muted);
+  color: rgb(148 163 184 / 86%);
 }
+
 .footer-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
+  justify-content: flex-end;
+  gap: 20px;
 }
 
 .footer-contact {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  justify-content: flex-end;
+  gap: 14px;
 }
 
 .footer-link {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--pc-muted);
+  color: rgb(203 213 225 / 82%);
   transition: color 0.2s;
 }
+
 .footer-link:hover {
-  color: var(--pc-blue);
+  color: #38bdf8;
 }
 
 .footer-link--disabled,
 .footer-link--disabled:hover {
-  color: color-mix(in srgb, var(--pc-muted), transparent 42%);
+  color: rgb(148 163 184 / 42%);
   cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .footer-top,
+  .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .footer-links,
+  .footer-contact {
+    justify-content: flex-start;
+  }
 }
 
 /* ============ SCROLL REVEAL ============ */

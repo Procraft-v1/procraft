@@ -346,6 +346,16 @@ body,
   transform: none;
 }
 
+.profile-project-description {
+  display: -webkit-box;
+  max-width: min(100%, 680px);
+  overflow: hidden;
+  line-height: 1.55;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
 .dashboard-card .ant-card-body,
 .dashboard-form-card .ant-card-body,
 .dashboard-avatar-card .ant-card-body,

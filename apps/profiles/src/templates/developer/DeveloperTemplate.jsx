@@ -1,4 +1,5 @@
-import { resolveAssetUrl } from '@procraft/config';
+import { useEffect, useState } from 'react';
+import { PROCRAFT_CONTACT_LINKS, resolveAssetUrl } from '@procraft/config';
 import './DeveloperTemplate.css';
 
 function hasItems(items) {
@@ -160,6 +161,14 @@ function Stats({ projects, skills, experiences }) {
 }
 
 function Timeline({ experiences, educations }) {
+  const educationTypeLabels = {
+    formal: 'Universitet / kollej',
+    course: 'Kurs / bootcamp',
+    self: "Shaxsiy o'rganish",
+    mentor: 'Mentor / ustoz',
+    online: 'Onlayn kurs',
+  };
+
   const items = [
     ...experiences.map((item) => ({
       id: item.id || `${item.company}-${item.position}`,
@@ -174,7 +183,7 @@ function Timeline({ experiences, educations }) {
       title: item.institution,
       meta: [item.degree, item.field].filter(Boolean).join(' - '),
       detail: null,
-      date: dateRange(item.startDate, item.endDate, false),
+      date: educationTypeLabels[item.educationType] || item.educationType || "Ta'lim",
       kind: item.educationType || 'learning',
     })),
   ];
@@ -228,6 +237,8 @@ function Contact({ profile, socialLinks }) {
 }
 
 export default function DeveloperTemplate({ profile }) {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isNavShrunk, setIsNavShrunk] = useState(false);
   const skills = profile.skills ?? [];
   const projects = profile.projects ?? [];
   const experiences = profile.workExperiences ?? [];
@@ -235,9 +246,18 @@ export default function DeveloperTemplate({ profile }) {
   const socialLinks = profile.socialLinks ?? [];
   const displayName = profile.fullName || profile.username || 'Developer';
 
+  useEffect(() => {
+    const updateNav = () => setIsNavShrunk(window.scrollY > 18);
+    updateNav();
+    window.addEventListener('scroll', updateNav, { passive: true });
+    return () => window.removeEventListener('scroll', updateNav);
+  }, []);
+
+  const closeNav = () => setIsNavOpen(false);
+
   return (
     <div className="dev-os">
-      <header className="dev-nav">
+      <header className={`dev-nav${isNavShrunk ? ' dev-nav--shrink' : ''}${isNavOpen ? ' dev-nav--open' : ''}`}>
         <a className="dev-nav__brand" href="#home">
           <span>
             {profile.avatarUrl ? (
@@ -248,12 +268,22 @@ export default function DeveloperTemplate({ profile }) {
           </span>
           <strong>{displayName}</strong>
         </a>
+        <button
+          className="dev-nav__toggle"
+          type="button"
+          aria-label="Menu"
+          aria-expanded={isNavOpen}
+          onClick={() => setIsNavOpen((value) => !value)}
+        >
+          <span />
+          <span />
+        </button>
         <nav>
-          <a href="#home">Home</a>
-          {hasItems(skills) ? <a href="#stack">Stack</a> : null}
-          {hasItems(projects) ? <a href="#projects">Projects</a> : null}
-          {hasItems(experiences) || hasItems(educations) ? <a href="#experience">Experience</a> : null}
-          <a href="#contact">Contact</a>
+          <a href="#home" onClick={closeNav}>Home</a>
+          {hasItems(skills) ? <a href="#stack" onClick={closeNav}>Stack</a> : null}
+          {hasItems(projects) ? <a href="#projects" onClick={closeNav}>Projects</a> : null}
+          {hasItems(experiences) || hasItems(educations) ? <a href="#experience" onClick={closeNav}>Experience</a> : null}
+          <a href="#contact" onClick={closeNav}>Contact</a>
         </nav>
       </header>
 
@@ -271,13 +301,6 @@ export default function DeveloperTemplate({ profile }) {
           </div>
 
           <div className="dev-hero__visual">
-            <div className="dev-avatar">
-              {profile.avatarUrl ? (
-                <img src={resolveAssetUrl(profile.avatarUrl)} alt={profile.fullName || 'Profile avatar'} />
-              ) : (
-                <span>{initials(profile)}</span>
-              )}
-            </div>
             <CodeEditorPreview profile={profile} projects={projects} skills={skills} />
           </div>
         </section>
@@ -292,15 +315,12 @@ export default function DeveloperTemplate({ profile }) {
 
       <footer className="dev-footer">
         <span>Built with Procraft</span>
-        {hasItems(socialLinks) ? (
-          <nav>
-            {socialLinks.map((link) => (
-              <ExternalLink key={link.id || `${link.platform}-${link.url}`} href={link.url}>
-                {link.platform}
-              </ExternalLink>
-            ))}
-          </nav>
-        ) : null}
+        <nav>
+          <ExternalLink href={PROCRAFT_CONTACT_LINKS.telegram}>Telegram</ExternalLink>
+          <ExternalLink href={PROCRAFT_CONTACT_LINKS.email}>Email</ExternalLink>
+          <span aria-disabled="true">Instagram</span>
+          <ExternalLink href={PROCRAFT_CONTACT_LINKS.youtube}>YouTube</ExternalLink>
+        </nav>
       </footer>
     </div>
   );

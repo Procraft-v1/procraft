@@ -776,14 +776,8 @@ export default function ProfilePage() {
                 {item.description ? (
                   <Typography.Text
                     type="secondary"
+                    className="profile-project-description"
                     title={item.description}
-                    style={{
-                      display: "-webkit-box",
-                      WebkitBoxOrient: "vertical",
-                      WebkitLineClamp: 3,
-                      overflow: "hidden",
-                      whiteSpace: "normal",
-                    }}
                   >
                     {item.description}
                   </Typography.Text>

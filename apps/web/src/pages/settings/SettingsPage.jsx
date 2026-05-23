@@ -21,6 +21,7 @@ import {
   ExportOutlined,
   GlobalOutlined,
   LinkOutlined,
+  QuestionCircleOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -254,6 +255,31 @@ export default function SettingsPage() {
                 { value: 'en', label: 'English' },
               ]}
             />
+          </Card>
+
+          <Card
+            className="dashboard-card"
+            style={{ marginTop: 16 }}
+            title={(
+              <Space>
+                <QuestionCircleOutlined />
+                <span>Yordam</span>
+              </Space>
+            )}
+          >
+            <Space direction="vertical" size={14}>
+              <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
+                Video qo'llanmalar va yangiliklar Procraft Telegram kanalida.
+              </Typography.Paragraph>
+              <Button
+                icon={<ExportOutlined />}
+                href="https://t.me/procraftuz"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Telegram kanal
+              </Button>
+            </Space>
           </Card>
         </Col>
 
