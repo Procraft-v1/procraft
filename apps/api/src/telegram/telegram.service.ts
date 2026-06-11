@@ -64,6 +64,11 @@ export class TelegramBotService implements OnModuleInit {
   }
 
   private async handleRegistration(chatId: number, verificationId: string): Promise<void> {
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(verificationId)) {
+      await this.sendMessage(chatId, "Noto'g'ri link. Procraft saytidan qayta ro'yxatdan o'ting.");
+      return;
+    }
+
     const now = new Date();
     const repo = this.dataSource.getRepository(PendingRegistrationEntity);
     const pending = await repo.findOne({ where: { id: verificationId } });
@@ -90,6 +95,11 @@ export class TelegramBotService implements OnModuleInit {
   }
 
   private async handlePasswordReset(chatId: number, resetId: string): Promise<void> {
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(resetId)) {
+      await this.sendMessage(chatId, "Noto'g'ri link. Procraft saytidan qayta parol tiklash so'rovini yuboring.");
+      return;
+    }
+
     const now = new Date();
     const repo = this.dataSource.getRepository(PasswordResetCodeEntity);
     const reset = await repo.findOne({ where: { id: resetId } });
