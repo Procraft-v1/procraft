@@ -51,6 +51,12 @@ services:
       Smtp__FromAddress: ${Smtp__FromAddress:-noreply@procraft.uz}
       Smtp__FromName: ${Smtp__FromName:-Procraft}
       Smtp__EnableSsl: ${Smtp__EnableSsl:-true}
+      Telegram__BotToken: ${Telegram__BotToken:-}
+      Telegram__BotUsername: ${Telegram__BotUsername:-}
+      Telegram__WebhookUrl: ${Telegram__WebhookUrl:-}
+      Eskiz__Email: ${Eskiz__Email:-}
+      Eskiz__Password: ${Eskiz__Password:-}
+      Eskiz__Sender: ${Eskiz__Sender:-4546}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://procraft.uz,https://www.procraft.uz,https://dashboard.procraft.uz,https://admin.procraft.uz}
       UPLOADS_ROOT: /app/uploads
     volumes:
