@@ -1,31 +1,38 @@
-# Procraft API — skeleton multi-stage Dockerfile
-# Final wiring (non-root user, distroless, probes) completes during deployment rollout.
+# Procraft API — NestJS multi-stage production build.
+# Drop-in replacement for the previous ASP.NET image: same port (8080), same
+# /health endpoint, same env variables, same /app/uploads volume path.
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM node:22-alpine AS build
 WORKDIR /src
 
-COPY Procraft.sln ./
-COPY src/Procraft.Api/Procraft.Api.csproj src/Procraft.Api/
-COPY src/Procraft.Application/Procraft.Application.csproj src/Procraft.Application/
-COPY src/Procraft.Domain/Procraft.Domain.csproj src/Procraft.Domain/
-COPY src/Procraft.Infrastructure/Procraft.Infrastructure.csproj src/Procraft.Infrastructure/
-COPY tests/Procraft.Api.Tests/Procraft.Api.Tests.csproj tests/Procraft.Api.Tests/
-COPY tests/Procraft.Application.Tests/Procraft.Application.Tests.csproj tests/Procraft.Application.Tests/
+COPY package.json package-lock.json ./
+RUN npm ci
 
-RUN dotnet restore Procraft.sln
+COPY tsconfig.json tsconfig.build.json ./
+COPY src ./src
+RUN npm run build
 
-COPY . .
+# Production dependencies only.
+RUN npm prune --omit=dev
 
-RUN test -f src/Procraft.Infrastructure/Persistence/Migrations/20260504120000_CreateAuthTables.cs
-RUN test -f src/Procraft.Infrastructure/Persistence/Migrations/20260504124500_AddTemplatesAndProfileSelection.cs
-RUN dotnet publish src/Procraft.Api/Procraft.Api.csproj -c Release -o /app/out --no-restore
-
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM node:22-alpine AS runtime
 WORKDIR /app
-COPY --from=build /app/out ./
 
-ENV ASPNETCORE_URLS=http://+:8080
-ENV ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+# curl is required by the docker-compose healthcheck command.
+RUN apk add --no-cache curl
+
+ENV NODE_ENV=production
+ENV PORT=8080
+
+COPY --from=build /src/node_modules ./node_modules
+COPY --from=build /src/dist ./dist
+COPY --from=build /src/package.json ./package.json
+
+RUN mkdir -p /app/uploads
+
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "Procraft.Api.dll"]
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=30s \
+  CMD curl -f http://localhost:8080/health || exit 1
+
+CMD ["node", "dist/main.js"]

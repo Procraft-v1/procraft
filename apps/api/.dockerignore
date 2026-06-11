@@ -1,4 +1,7 @@
-**/appsettings.Development.json
-**/obj/
-**/bin/
-**/*.user
+node_modules
+dist
+coverage
+uploads
+test
+.env
+*.log
