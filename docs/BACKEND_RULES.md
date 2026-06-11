@@ -1,4 +1,10 @@
-# Backend rules (ASP.NET)
+# Backend rules (ASP.NET — legacy)
+
+> **2026-06-11:** Backend NestJS ga ko'chirildi (`apps/api`). Bu hujjat
+> `apps/api-dotnet` dagi legacy implementatsiyani tavsiflaydi va rollback
+> ma'lumotnomasi sifatida saqlanadi. Joriy backend qoidalari:
+> [`apps/api/README.md`](../apps/api/README.md), migratsiya tafsilotlari:
+> [`MIGRATION_REPORT.md`](MIGRATION_REPORT.md), deploy: [`DEPLOYMENT.md`](DEPLOYMENT.md).
 
 ## Layers
 
