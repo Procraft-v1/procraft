@@ -36,6 +36,17 @@ export class TelegramBotService implements OnModuleInit {
     } catch (err) {
       this.logger.error('Failed to register Telegram webhook', err);
     }
+
+    try {
+      await this.callApi('setMyDescription', {
+        description: "Procraft — professional portfolio va resume yaratish platformasi.\n\nRo'yxatdan o'tish yoki parol tiklash uchun procraft.uz dan link oling.",
+      });
+      await this.callApi('setMyShortDescription', {
+        short_description: 'Procraft tasdiqlash kodi boti',
+      });
+    } catch {
+      // Bot description setup is non-critical
+    }
   }
 
   /** Called by the webhook controller for every incoming Telegram update. */
@@ -59,7 +70,24 @@ export class TelegramBotService implements OnModuleInit {
     } else if (payload) {
       await this.handleRegistration(chatId, payload);
     } else {
-      await this.sendMessage(chatId, "Salom! Procraft saytidan tasdiqlash linkini bosing.");
+      await this.sendWelcome(chatId);
+    }
+  }
+
+  private async sendWelcome(chatId: number): Promise<void> {
+    try {
+      await this.callApi('sendPhoto', {
+        chat_id: chatId,
+        photo: 'https://procraft.uz/brand/procraft-app-icon-rounded.png',
+        caption:
+          '*Procraft Bot*\n\nSalom\\! 👋\n\nRo\'yxatdan o\'tish yoki parol tiklash uchun [procraft\\.uz](https://procraft.uz) saytidan maxsus link oling va uni bosing\\.',
+        parse_mode: 'MarkdownV2',
+      });
+    } catch {
+      await this.sendMessage(
+        chatId,
+        "Salom! Procraft botiga xush kelibsiz.\n\nRo'yxatdan o'tish yoki parol tiklash uchun procraft.uz saytidan maxsus link oling va bosing.",
+      );
     }
   }
 
