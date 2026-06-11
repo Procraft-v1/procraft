@@ -13,7 +13,13 @@ import {
 import { ConflictException, UnauthorizedException } from '../common/exceptions';
 import { getClientIp, getUserAgent } from '../common/request-context';
 import { getConfig } from '../config/env';
+
+function buildTelegramLink(payload: string): string | null {
+  const username = getConfig().telegram.botUsername;
+  return username ? `https://t.me/${username}?start=${payload}` : null;
+}
 import { EmailService } from '../email/email.service';
+import { SmsService } from '../sms/sms.service';
 import { CookieService } from './cookie.service';
 import { PasswordHasher } from './password-hasher';
 import { TokenService } from './token.service';
@@ -72,6 +78,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
     private readonly cookieService: CookieService,
     private readonly emailService: EmailService,
+    private readonly smsService: SmsService,
   ) {}
 
   /** RegisterCommandHandler port: pending registration + emailed 4-digit code. */
@@ -81,7 +88,7 @@ export class AuthService {
     username: string,
     password: string,
     phoneNumber: string | null,
-  ): Promise<{ verificationId: string; maskedEmail: string; expiresAt: Date; codeLength: number }> {
+  ): Promise<{ verificationId: string; maskedEmail: string; expiresAt: Date; codeLength: number; telegramLink: string | null }> {
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedUsername = username.trim().toLowerCase();
     const normalizedPhone = normalizePhoneNumber(phoneNumber);
@@ -130,17 +137,29 @@ export class AuthService {
       });
     });
 
-    await this.emailService.send(
-      normalizedEmail,
-      "Procraft ro'yxatdan o'tish kodi",
-      `Procraft account yaratish kodi: ${code}\nKod ${CODE_EXPIRES_IN_MINUTES} daqiqa amal qiladi.`,
-    );
+    const telegramLink = buildTelegramLink(verificationId);
+
+    if (!telegramLink) {
+      if (normalizedPhone) {
+        await this.smsService.send(
+          normalizedPhone,
+          `Procraft tasdiqlash kodi: ${code}. Kod ${CODE_EXPIRES_IN_MINUTES} daqiqa amal qiladi.`,
+        );
+      } else {
+        await this.emailService.send(
+          normalizedEmail,
+          "Procraft ro'yxatdan o'tish kodi",
+          `Procraft account yaratish kodi: ${code}\nKod ${CODE_EXPIRES_IN_MINUTES} daqiqa amal qiladi.`,
+        );
+      }
+    }
 
     return {
       verificationId,
       maskedEmail: maskEmail(normalizedEmail),
       expiresAt,
       codeLength: CODE_LENGTH,
+      telegramLink,
     };
   }
 
@@ -290,13 +309,15 @@ export class AuthService {
   async requestPasswordReset(
     req: Request,
     email: string,
-  ): Promise<{ resetId: string; maskedEmail: string; expiresAt: Date; codeLength: number }> {
+  ): Promise<{ resetId: string; maskedEmail: string; expiresAt: Date; codeLength: number; telegramLink: string | null }> {
     const normalizedEmail = email.trim().toLowerCase();
     const resetId = randomUUID();
     const now = new Date();
     const expiresAt = new Date(now.getTime() + CODE_EXPIRES_IN_MINUTES * 60_000);
 
     const user = await this.dataSource.getRepository(UserEntity).findOne({ where: { email: normalizedEmail } });
+
+    const telegramLink = buildTelegramLink(`reset_${resetId}`);
 
     if (user) {
       const code = generateCode();
@@ -323,11 +344,13 @@ export class AuthService {
         });
       });
 
-      await this.emailService.send(
-        user.email,
-        'Procraft parolni tiklash kodi',
-        `Procraft parolingizni tiklash kodi: ${code}\nKod ${CODE_EXPIRES_IN_MINUTES} daqiqa amal qiladi.`,
-      );
+      if (!telegramLink) {
+        await this.emailService.send(
+          user.email,
+          'Procraft parolni tiklash kodi',
+          `Procraft parolingizni tiklash kodi: ${code}\nKod ${CODE_EXPIRES_IN_MINUTES} daqiqa amal qiladi.`,
+        );
+      }
     }
 
     return {
@@ -335,7 +358,62 @@ export class AuthService {
       maskedEmail: maskEmail(normalizedEmail),
       expiresAt,
       codeLength: CODE_LENGTH,
+      telegramLink,
     };
+  }
+
+  /** Telefon raqam orqali parol tiklash kodi yuborish. */
+  async requestPasswordResetByPhone(
+    req: Request,
+    phoneNumber: string,
+  ): Promise<{ resetId: string; maskedPhone: string; expiresAt: Date; codeLength: number }> {
+    const normalizedPhone = phoneNumber.trim();
+    const resetId = randomUUID();
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + CODE_EXPIRES_IN_MINUTES * 60_000);
+
+    const user = await this.dataSource
+      .getRepository(UserEntity)
+      .createQueryBuilder('u')
+      .where('u."PhoneNumber" = :phone', { phone: normalizedPhone })
+      .getOne();
+
+    if (user) {
+      const code = generateCode();
+
+      await this.dataSource.transaction(async (manager) => {
+        await manager
+          .createQueryBuilder()
+          .update(PasswordResetCodeEntity)
+          .set({ consumedAt: now, updatedAt: now })
+          .where('"UserId" = :userId AND "ConsumedAt" IS NULL AND "ExpiresAt" > :now', { userId: user.id, now })
+          .execute();
+
+        await manager.getRepository(PasswordResetCodeEntity).insert({
+          id: resetId,
+          userId: user.id,
+          codeHash: this.tokenService.hashVerificationCode(resetId, code),
+          expiresAt,
+          consumedAt: null,
+          attemptCount: 0,
+          createdByIp: getClientIp(req),
+          userAgent: getUserAgent(req),
+          createdAt: now,
+          updatedAt: null,
+        });
+      });
+
+      await this.smsService.send(
+        normalizedPhone,
+        `Procraft parol tiklash kodi: ${code}. Kod ${CODE_EXPIRES_IN_MINUTES} daqiqa amal qiladi.`,
+      );
+    }
+
+    const maskedPhone = normalizedPhone.length > 4
+      ? `${normalizedPhone.slice(0, 4)}***${normalizedPhone.slice(-2)}`
+      : '***';
+
+    return { resetId, maskedPhone, expiresAt, codeLength: CODE_LENGTH };
   }
 
   /** ResetPasswordCommandHandler port: code check, password update, revoke all refresh sessions. */

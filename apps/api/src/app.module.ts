@@ -12,6 +12,7 @@ import { PasswordHasher } from './auth/password-hasher';
 import { TokenService } from './auth/token.service';
 import { GuidRouteParam } from './common/guid-param.pipe';
 import { EmailService } from './email/email.service';
+import { SmsService } from './sms/sms.service';
 import { HealthController } from './health/health.controller';
 import { PdfController } from './pdf/pdf.controller';
 import { PdfService } from './pdf/pdf.service';
@@ -28,6 +29,7 @@ import { SocialLinksController } from './sections/social-links';
 import { StorageModuleServices } from './storage/storage.providers';
 import { SubscriptionsController } from './subscriptions/subscriptions.controller';
 import { TelegramBotService } from './telegram/telegram.service';
+import { TelegramController } from './telegram/telegram.controller';
 import { TemplatesController } from './templates/templates.controller';
 
 @Module({
@@ -57,6 +59,7 @@ import { TemplatesController } from './templates/templates.controller';
   controllers: [
     HealthController,
     AuthController,
+    TelegramController,
     AdminController,
     AnalyticsController,
     TemplatesController,
@@ -78,6 +81,7 @@ import { TemplatesController } from './templates/templates.controller';
     AuthService,
     CookieService,
     EmailService,
+    SmsService,
     GuidRouteParam,
     JwtAuthGuard,
     PasswordHasher,

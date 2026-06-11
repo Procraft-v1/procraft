@@ -27,6 +27,10 @@ interface ForgotPasswordBody {
   email?: string;
 }
 
+interface ForgotPasswordByPhoneBody {
+  phoneNumber?: string;
+}
+
 interface ResetPasswordBody {
   resetId?: string;
   code?: string;
@@ -123,6 +127,7 @@ export class AuthController {
       maskedEmail: result.maskedEmail,
       expiresAt: toDateTimeOffsetString(result.expiresAt),
       codeLength: result.codeLength,
+      telegramLink: result.telegramLink,
     };
   }
 
@@ -172,6 +177,28 @@ export class AuthController {
     return {
       resetId: result.resetId,
       maskedEmail: result.maskedEmail,
+      expiresAt: toDateTimeOffsetString(result.expiresAt),
+      codeLength: result.codeLength,
+      telegramLink: result.telegramLink,
+    };
+  }
+
+  @Post('password/forgot-by-phone')
+  @HttpCode(200)
+  async forgotPasswordByPhone(@Req() req: Request, @Body() body: ForgotPasswordByPhoneBody) {
+    const validator = new Validator();
+    validator
+      .ruleFor('PhoneNumber', str(body.phoneNumber))
+      .notEmpty()
+      .maximumLength(32)
+      .matches(PHONE_PATTERN)
+      .withMessage('Phone number may contain digits, spaces, plus, dots, hyphen, or parentheses.');
+    validator.throwIfInvalid();
+
+    const result = await this.authService.requestPasswordResetByPhone(req, body.phoneNumber!);
+    return {
+      resetId: result.resetId,
+      maskedPhone: result.maskedPhone,
       expiresAt: toDateTimeOffsetString(result.expiresAt),
       codeLength: result.codeLength,
     };

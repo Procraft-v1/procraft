@@ -190,6 +190,18 @@ export class AppConfig {
     enableSsl: envBool('Smtp__EnableSsl', true),
   };
 
+  readonly eskiz = {
+    email: env('Eskiz__Email') ?? '',
+    password: env('Eskiz__Password') ?? '',
+    sender: env('Eskiz__Sender') ?? '4546',
+  };
+
+  readonly telegram = {
+    botToken: env('Telegram__BotToken') ?? '',
+    botUsername: env('Telegram__BotUsername') ?? '',
+    webhookUrl: env('Telegram__WebhookUrl') ?? '',
+  };
+
   readonly admin = {
     username: env('Admin__Username') ?? env('ADMIN_USERNAME') ?? '',
     password: env('Admin__Password') ?? env('ADMIN_PASSWORD') ?? '',
