@@ -88,10 +88,14 @@ export class TelegramBotService implements OnModuleInit {
       },
     );
 
-    await this.sendMessage(
-      chatId,
-      `Procraft tasdiqlash kodingiz: *${code}*\n\nKod 5 daqiqa amal qiladi.`,
-    );
+    try {
+      await this.sendMessage(
+        chatId,
+        `Procraft tasdiqlash kodingiz: *${code}*\n\nKod 5 daqiqa amal qiladi.`,
+      );
+    } catch (err) {
+      this.logger.error(`Failed to send Telegram message to chat ${chatId}`, err);
+    }
   }
 
   private async handlePasswordReset(chatId: number, resetId: string): Promise<void> {
@@ -119,10 +123,14 @@ export class TelegramBotService implements OnModuleInit {
       },
     );
 
-    await this.sendMessage(
-      chatId,
-      `Procraft parol tiklash kodingiz: *${code}*\n\nKod 5 daqiqa amal qiladi.`,
-    );
+    try {
+      await this.sendMessage(
+        chatId,
+        `Procraft parol tiklash kodingiz: *${code}*\n\nKod 5 daqiqa amal qiladi.`,
+      );
+    } catch (err) {
+      this.logger.error(`Failed to send Telegram message to chat ${chatId}`, err);
+    }
   }
 
   async sendMessage(chatId: number | string, text: string): Promise<void> {
