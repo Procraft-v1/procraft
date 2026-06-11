@@ -62,9 +62,9 @@ export class ProfileService {
     const profile = await this.dataSource
       .getRepository(ProfileEntity)
       .createQueryBuilder('profile')
-      .innerJoinAndSelect('profile.user', 'user')
+      .innerJoinAndSelect('profile.user', 'owner')
       .leftJoinAndSelect('profile.template', 'template')
-      .where('user."Username" = :username', { username: normalizedUsername })
+      .where('owner."Username" = :username', { username: normalizedUsername })
       .getOne();
 
     if (!profile) {
