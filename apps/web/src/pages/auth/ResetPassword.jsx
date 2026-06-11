@@ -81,7 +81,9 @@ export default function ResetPassword() {
           </Typography.Title>
           <Typography.Text type="secondary">
             {challenge
-              ? `${challenge.maskedEmail} manziliga yuborilgan kodni kiriting.`
+              ? challenge.telegramLink
+                ? "Telegram botdan tasdiqlash kodini oling va kiriting."
+                : `${challenge.maskedEmail} manziliga yuborilgan kodni kiriting.`
               : "Emailingizga tasdiqlash kodi yuboramiz."}
           </Typography.Text>
         </div>
@@ -109,6 +111,23 @@ export default function ResetPassword() {
             </Form.Item>
           ) : (
             <>
+              {challenge?.telegramLink ? (
+                <div style={{ marginBottom: 16, textAlign: "center" }}>
+                  <Button
+                    size="large"
+                    block
+                    href={challenge.telegramLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ background: "#229ED9", borderColor: "#229ED9", color: "#fff", marginBottom: 12 }}
+                  >
+                    Telegram botdan kod oling
+                  </Button>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    Botni ochib, yuborilgan 4 ta raqamli kodni quyiga kiriting.
+                  </Typography.Text>
+                </div>
+              ) : null}
               <Form.Item
                 label="Tasdiqlash kodi"
                 name="code"

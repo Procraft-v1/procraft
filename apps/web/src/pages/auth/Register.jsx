@@ -96,7 +96,9 @@ export default function Register() {
           </Typography.Title>
           <Typography.Text type="secondary">
             {challenge
-              ? `${challenge.maskedEmail} manziliga yuborilgan kodni kiriting.`
+              ? challenge.telegramLink
+                ? "Telegram botdan tasdiqlash kodini oling va kiriting."
+                : `${challenge.maskedEmail} manziliga yuborilgan kodni kiriting.`
               : "Procraft ish maydoningizni yarating."}
           </Typography.Text>
         </div>
@@ -172,21 +174,40 @@ export default function Register() {
               </Form.Item>
             </>
           ) : (
-            <Form.Item
-              label="Tasdiqlash kodi"
-              name="code"
-              rules={[
-                { required: true, message: "4 xonali kodni kiriting." },
-                { pattern: /^\d{4}$/, message: "Kod 4 ta raqamdan iborat bo'lishi kerak." },
-              ]}
-            >
-              <Input
-                autoComplete="one-time-code"
-                inputMode="numeric"
-                maxLength={4}
-                size="large"
-              />
-            </Form.Item>
+            <>
+              {challenge?.telegramLink ? (
+                <div style={{ marginBottom: 16, textAlign: "center" }}>
+                  <Button
+                    size="large"
+                    block
+                    href={challenge.telegramLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ background: "#229ED9", borderColor: "#229ED9", color: "#fff", marginBottom: 12 }}
+                  >
+                    Telegram botdan kod oling
+                  </Button>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    Botni ochib, yuborilgan 4 ta raqamli kodni quyiga kiriting.
+                  </Typography.Text>
+                </div>
+              ) : null}
+              <Form.Item
+                label="Tasdiqlash kodi"
+                name="code"
+                rules={[
+                  { required: true, message: "4 xonali kodni kiriting." },
+                  { pattern: /^\d{4}$/, message: "Kod 4 ta raqamdan iborat bo'lishi kerak." },
+                ]}
+              >
+                <Input
+                  autoComplete="one-time-code"
+                  inputMode="numeric"
+                  maxLength={4}
+                  size="large"
+                />
+              </Form.Item>
+            </>
           )}
 
           {error ? (
