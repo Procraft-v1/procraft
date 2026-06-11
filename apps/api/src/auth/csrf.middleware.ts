@@ -22,7 +22,8 @@ export function csrfMiddleware(req: Request, res: Response, next: NextFunction):
   if (
     startsWithSegments(path, '/swagger') ||
     startsWithSegments(path, '/health') ||
-    startsWithSegments(path, '/api/admin')
+    startsWithSegments(path, '/api/admin') ||
+    startsWithSegments(path, '/api/telegram')
   ) {
     next();
     return;
