@@ -75,19 +75,24 @@ export class TelegramBotService implements OnModuleInit {
   }
 
   private async sendWelcome(chatId: number): Promise<void> {
+    const caption =
+      "Procraft botiga xush kelibsiz! 👋\n\n" +
+      "Procraft — professional portfolio va resume yaratish platformasi.\n\n" +
+      "Ro'yxatdan o'tish yoki parol tiklash uchun procraft.uz saytidan maxsus link oling va uni bosing.";
+
     try {
       await this.callApi('sendPhoto', {
         chat_id: chatId,
         photo: 'https://procraft.uz/brand/procraft-app-icon-rounded.png',
-        caption:
-          '*Procraft Bot*\n\nSalom\\! 👋\n\nRo\'yxatdan o\'tish yoki parol tiklash uchun [procraft\\.uz](https://procraft.uz) saytidan maxsus link oling va uni bosing\\.',
-        parse_mode: 'MarkdownV2',
+        caption,
       });
-    } catch {
-      await this.sendMessage(
-        chatId,
-        "Salom! Procraft botiga xush kelibsiz.\n\nRo'yxatdan o'tish yoki parol tiklash uchun procraft.uz saytidan maxsus link oling va bosing.",
-      );
+    } catch (err) {
+      this.logger.error(`Failed to send welcome photo to chat ${chatId}`, err);
+      try {
+        await this.sendMessage(chatId, caption);
+      } catch {
+        // Both photo and text failed; nothing more to do.
+      }
     }
   }
 
