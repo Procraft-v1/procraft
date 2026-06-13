@@ -1,0 +1,41 @@
+{
+  "publicProfile": {
+    "notFound": "Profil topilmadi.",
+    "skills": "Ko'nikmalar",
+    "projects": "Loyihalar",
+    "selectedProjects": "Tanlangan loyihalar",
+    "experience": "Tajriba",
+    "education": "Ta'lim",
+    "certificates": "Sertifikatlar",
+    "contact": "Aloqa",
+    "now": "Hozir",
+    "viewProjects": "Loyihalarni ko'rish",
+    "viewWork": "Ishlarni ko'rish",
+    "connect": "Bog'lanish",
+    "privateRepo": "Yopiq repository",
+    "viewCertificate": "Sertifikatni ko'rish",
+    "technologies": "Texnologiyalar",
+    "emptyTitle": "Portfolio hali to'ldirilmoqda",
+    "emptyDesc": "Ko'nikmalar, tajriba va loyihalar qo'shilganda bu sahifa jurnal uslubidagi portfolio sifatida ochiladi.",
+    "contactConnect": "Birga ishlash uchun bog'laning",
+    "contactAvailable": "{title} sifatida yangi loyiha, jamoa yoki hamkorlik uchun ochiq.",
+    "statProjects": "Loyiha",
+    "statSkills": "Ko'nikma",
+    "statExperience": "Tajriba",
+    "statCertificates": "Sertifikat"
+  },
+  "experienceType": {
+    "work": "Ish joyi",
+    "freelance": "Freelance",
+    "project": "Shaxsiy loyiha",
+    "internship": "Amaliyot",
+    "volunteer": "Volunteer"
+  },
+  "educationType": {
+    "formal": "Universitet / kollej",
+    "course": "Kurs / bootcamp",
+    "self": "Shaxsiy o'rganish",
+    "mentor": "Mentor / ustoz",
+    "online": "Onlayn kurs"
+  }
+}

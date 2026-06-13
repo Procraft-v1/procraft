@@ -47,6 +47,22 @@ export const fetchPublicProfile = cache(async (username: string): Promise<Public
 
 const FALLBACK_OG_IMAGE = 'https://procraft.uz/brand/procraft-logo-mark-transparent.png';
 
+const OG_LOCALE: Record<string, string> = {
+  uz: 'uz_UZ',
+  en: 'en_US',
+  ru: 'ru_RU',
+};
+
+function defaultDescription(locale: string, displayName: string): string {
+  if (locale === 'en') {
+    return `${displayName}'s portfolio — A professional portfolio built on the Procraft platform.`;
+  }
+  if (locale === 'ru') {
+    return `Портфолио ${displayName} — Профессиональное портфолио, созданное на платформе Procraft.`;
+  }
+  return `${displayName} portfolio sahifasi — Procraft platformasida yaratilgan professional portfolio.`;
+}
+
 function truncate(value: string, max = 160): string {
   const clean = value.replace(/\s+/g, ' ').trim();
   if (clean.length <= max) {
@@ -69,7 +85,11 @@ function toAbsoluteAssetUrl(value?: string): string | null {
   return resolved;
 }
 
-export function buildProfileMetadata(username: string, profile: PublicProfile | null): Metadata {
+export function buildProfileMetadata(
+  locale: string,
+  username: string,
+  profile: PublicProfile | null,
+): Metadata {
   if (!profile) {
     return {
       title: 'Procraft Profiles',
@@ -77,20 +97,30 @@ export function buildProfileMetadata(username: string, profile: PublicProfile | 
     };
   }
 
+  const slug = profile.username || username;
   const displayName = profile.fullName || profile.username || username;
   const role = profile.title ? String(profile.title) : 'Portfolio';
   const title = `${displayName} — ${role} | Procraft`;
   const description = profile.bio
     ? truncate(String(profile.bio))
-    : `${displayName} portfolio sahifasi — Procraft platformasida yaratilgan professional portfolio.`;
-  const canonical = `https://${profile.username || username}.procraft.uz/`;
+    : defaultDescription(locale, displayName);
   const image = toAbsoluteAssetUrl(profile.avatarUrl) || FALLBACK_OG_IMAGE;
+
+  // Canonical is always the default (uz) subdomain root
+  const base = `https://${slug}.procraft.uz`;
+  const canonical = locale === 'uz' ? `${base}/` : `${base}/${locale}/`;
 
   return {
     title,
     description,
     alternates: {
       canonical,
+      languages: {
+        'x-default': `${base}/`,
+        uz: `${base}/`,
+        en: `${base}/en/`,
+        ru: `${base}/ru/`,
+      },
     },
     openGraph: {
       type: 'profile',
@@ -99,7 +129,7 @@ export function buildProfileMetadata(username: string, profile: PublicProfile | 
       title,
       description,
       images: [{ url: image }],
-      locale: 'uz_UZ',
+      locale: OG_LOCALE[locale] ?? 'uz_UZ',
     },
     twitter: {
       card: 'summary_large_image',

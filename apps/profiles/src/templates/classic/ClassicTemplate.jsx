@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Typography } from 'antd';
 import { resolveAssetUrl } from '@procraft/config';
 import './ClassicTemplate.css';
@@ -20,8 +21,8 @@ function ExternalLink({ href, children }) {
   );
 }
 
-function dateRange(startDate, endDate, isCurrent) {
-  return [startDate, isCurrent ? 'Hozir' : endDate].filter(Boolean).join(' - ');
+function dateRange(startDate, endDate, isCurrent, present) {
+  return [startDate, isCurrent ? present : endDate].filter(Boolean).join(' - ');
 }
 
 function initials(profile) {
@@ -43,6 +44,8 @@ function ClassicSection({ title, children }) {
 }
 
 export default function ClassicTemplate({ profile }) {
+  const t = useTranslations('publicProfile');
+
   const skills = profile.skills ?? [];
   const projects = profile.projects ?? [];
   const experiences = profile.workExperiences ?? [];
@@ -85,13 +88,13 @@ export default function ClassicTemplate({ profile }) {
       <div className="classic-layout">
         <div className="classic-main">
           {hasItems(experiences) ? (
-            <ClassicSection title="Tajriba">
+            <ClassicSection title={t('experience')}>
               <div className="classic-list">
                 {experiences.map((item) => (
                   <article className="classic-entry" key={item.id || `${item.company}-${item.position}`}>
                     <div className="classic-entry__heading">
                       <Typography.Title level={3}>{item.position}</Typography.Title>
-                      <span>{dateRange(item.startDate, item.endDate, item.isCurrent)}</span>
+                      <span>{dateRange(item.startDate, item.endDate, item.isCurrent, t('now'))}</span>
                     </div>
                     <strong>{item.company}</strong>
                     {item.description ? <p>{item.description}</p> : null}
@@ -102,14 +105,14 @@ export default function ClassicTemplate({ profile }) {
           ) : null}
 
           {hasItems(projects) ? (
-            <ClassicSection title="Tanlangan loyihalar">
+            <ClassicSection title={t('selectedProjects')}>
               <div className="classic-list">
                 {projects.map((project) => (
                   <article className="classic-entry" key={project.id || project.name}>
                     <Typography.Title level={3}>{project.name}</Typography.Title>
                     {project.description ? <p>{project.description}</p> : null}
                     <div className="classic-links">
-                      {project.isRepositoryPrivate ? <span>Yopiq repository</span> : null}
+                      {project.isRepositoryPrivate ? <span>{t('privateRepo')}</span> : null}
                       {!project.isRepositoryPrivate && project.githubUrl ? (
                         <ExternalLink href={project.githubUrl}>GitHub</ExternalLink>
                       ) : null}
@@ -124,7 +127,7 @@ export default function ClassicTemplate({ profile }) {
 
         <aside className="classic-side">
           {hasItems(skills) ? (
-            <ClassicSection title="Ko'nikmalar">
+            <ClassicSection title={t('skills')}>
               <div className="classic-skills">
                 {skills.map((skill) => (
                   <span key={skill.id || skill.name}>{skill.name}</span>
@@ -134,7 +137,7 @@ export default function ClassicTemplate({ profile }) {
           ) : null}
 
           {hasItems(educations) ? (
-            <ClassicSection title="Ta'lim">
+            <ClassicSection title={t('education')}>
               <div className="classic-stack">
                 {educations.map((item) => (
                   <article key={item.id || item.institution}>
@@ -149,14 +152,18 @@ export default function ClassicTemplate({ profile }) {
           ) : null}
 
           {hasItems(certificates) ? (
-            <ClassicSection title="Sertifikatlar">
+            <ClassicSection title={t('certificates')}>
               <div className="classic-stack">
                 {certificates.map((item) => (
                   <article key={item.id || item.name}>
                     <strong>{item.name}</strong>
                     {item.issuer ? <p>{item.issuer}</p> : null}
                     {item.issuedOn ? <p>{item.issuedOn}</p> : null}
-                    {item.url ? <ExternalLink href={resolveAssetUrl(item.url)}>Sertifikatni ko'rish</ExternalLink> : null}
+                    {item.url ? (
+                      <ExternalLink href={resolveAssetUrl(item.url)}>
+                        {t('viewCertificate')}
+                      </ExternalLink>
+                    ) : null}
                   </article>
                 ))}
               </div>

@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { AntdRegistry } from '@ant-design/nextjs-registry';
 
-import Providers from './providers';
-
-import '../shared/styles/global.css';
-
+// Global metadata (icons, metadataBase) lives here.
+// The actual <html lang> and <body> are provided by [locale]/layout.tsx
+// so that the lang attribute reflects the active locale.
 export const metadata: Metadata = {
   metadataBase: new URL('https://procraft.uz'),
   title: 'Procraft Profiles',
@@ -16,13 +14,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="uz">
-      <body>
-        <AntdRegistry>
-          <Providers>{children}</Providers>
-        </AntdRegistry>
-      </body>
-    </html>
-  );
+  return children;
 }

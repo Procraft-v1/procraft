@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { PROCRAFT_CONTACT_LINKS, resolveAssetUrl } from '@procraft/config';
 import './DeveloperTemplate.css';
 
@@ -17,8 +18,8 @@ function initials(profile) {
     .join('');
 }
 
-function dateRange(startDate, endDate, isCurrent) {
-  return [startDate, isCurrent ? 'Hozir' : endDate].filter(Boolean).join(' - ');
+function dateRange(startDate, endDate, isCurrent, present) {
+  return [startDate, isCurrent ? present : endDate].filter(Boolean).join(' - ');
 }
 
 function ExternalLink({ href, children, className }) {
@@ -73,7 +74,7 @@ function CodeEditorPreview({ profile, projects, skills }) {
   );
 }
 
-function TechStack({ skills }) {
+function TechStack({ skills, t }) {
   if (!hasItems(skills)) {
     return null;
   }
@@ -87,7 +88,7 @@ function TechStack({ skills }) {
   }, {});
 
   return (
-    <Section id="stack" eyebrow="Stack" title="Texnologiyalar">
+    <Section id="stack" eyebrow="Stack" title={t('technologies')}>
       <div className="dev-stack-grid">
         {Object.entries(grouped).map(([category, items]) => (
           <article className="dev-stack-card" key={category}>
@@ -109,7 +110,7 @@ function TechStack({ skills }) {
   );
 }
 
-function Projects({ projects }) {
+function Projects({ projects, t }) {
   if (!hasItems(projects)) {
     return null;
   }
@@ -129,7 +130,7 @@ function Projects({ projects }) {
               {!project.isRepositoryPrivate && project.githubUrl ? (
                 <ExternalLink href={project.githubUrl}>GitHub</ExternalLink>
               ) : null}
-              {project.isRepositoryPrivate ? <span>Yopiq repository</span> : null}
+              {project.isRepositoryPrivate ? <span>{t('privateRepo')}</span> : null}
               {project.liveUrl ? <ExternalLink href={project.liveUrl}>Live</ExternalLink> : null}
             </div>
           </article>
@@ -162,22 +163,14 @@ function Stats({ projects, skills, experiences }) {
   );
 }
 
-function Timeline({ experiences, educations }) {
-  const educationTypeLabels = {
-    formal: 'Universitet / kollej',
-    course: 'Kurs / bootcamp',
-    self: "Shaxsiy o'rganish",
-    mentor: 'Mentor / ustoz',
-    online: 'Onlayn kurs',
-  };
-
+function Timeline({ experiences, educations, t, te }) {
   const items = [
     ...experiences.map((item) => ({
       id: item.id || `${item.company}-${item.position}`,
       title: item.position,
       meta: item.company,
       detail: item.description,
-      date: dateRange(item.startDate, item.endDate, item.isCurrent),
+      date: dateRange(item.startDate, item.endDate, item.isCurrent, t('now')),
       kind: item.experienceType || 'work',
     })),
     ...educations.map((item) => ({
@@ -185,7 +178,7 @@ function Timeline({ experiences, educations }) {
       title: item.institution,
       meta: [item.degree, item.field].filter(Boolean).join(' - '),
       detail: null,
-      date: educationTypeLabels[item.educationType] || item.educationType || "Ta'lim",
+      date: te(item.educationType ?? 'formal'),
       kind: item.educationType || 'learning',
     })),
   ];
@@ -215,7 +208,7 @@ function Timeline({ experiences, educations }) {
   );
 }
 
-function Contact({ profile, socialLinks }) {
+function Contact({ profile, socialLinks, t }) {
   const title = profile.title || 'Developer';
 
   return (
@@ -223,7 +216,7 @@ function Contact({ profile, socialLinks }) {
       <div>
         <span className="dev-section__eyebrow">Contact</span>
         <h2>Build mode: available</h2>
-        <p>{title} sifatida yangi loyiha, jamoa yoki hamkorlik uchun ochiq.</p>
+        <p>{t('contactAvailable', { title })}</p>
       </div>
       {hasItems(socialLinks) ? (
         <nav className="dev-contact__links" aria-label="Social links">
@@ -239,6 +232,9 @@ function Contact({ profile, socialLinks }) {
 }
 
 export default function DeveloperTemplate({ profile }) {
+  const t = useTranslations('publicProfile');
+  const te = useTranslations('educationType');
+
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isNavShrunk, setIsNavShrunk] = useState(false);
   const skills = profile.skills ?? [];
@@ -307,12 +303,12 @@ export default function DeveloperTemplate({ profile }) {
           </div>
         </section>
 
-        <TechStack skills={skills} />
-        <Projects projects={projects} />
+        <TechStack skills={skills} t={t} />
+        <Projects projects={projects} t={t} />
         <Stats projects={projects} skills={skills} experiences={experiences} />
-        <Timeline experiences={experiences} educations={educations} />
+        <Timeline experiences={experiences} educations={educations} t={t} te={te} />
 
-        <Contact profile={profile} socialLinks={socialLinks} />
+        <Contact profile={profile} socialLinks={socialLinks} t={t} />
       </main>
 
       <footer className="dev-footer">

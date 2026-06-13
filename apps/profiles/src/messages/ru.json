@@ -1,0 +1,41 @@
+{
+  "publicProfile": {
+    "notFound": "Профиль не найден.",
+    "skills": "Навыки",
+    "projects": "Проекты",
+    "selectedProjects": "Избранные проекты",
+    "experience": "Опыт",
+    "education": "Образование",
+    "certificates": "Сертификаты",
+    "contact": "Контакт",
+    "now": "Настоящее время",
+    "viewProjects": "Просмотреть проекты",
+    "viewWork": "Просмотреть работы",
+    "connect": "Связаться",
+    "privateRepo": "Закрытый репозиторий",
+    "viewCertificate": "Просмотреть сертификат",
+    "technologies": "Технологии",
+    "emptyTitle": "Портфолио в процессе заполнения",
+    "emptyDesc": "Эта страница откроется как портфолио в стиле журнала после добавления навыков, опыта и проектов.",
+    "contactConnect": "Давайте работать вместе",
+    "contactAvailable": "Открыт к новым проектам, командам и сотрудничеству в роли {title}.",
+    "statProjects": "Проектов",
+    "statSkills": "Навыков",
+    "statExperience": "Опыта",
+    "statCertificates": "Сертификатов"
+  },
+  "experienceType": {
+    "work": "Трудоустройство",
+    "freelance": "Фриланс",
+    "project": "Личный проект",
+    "internship": "Стажировка",
+    "volunteer": "Волонтёрство"
+  },
+  "educationType": {
+    "formal": "Университет / колледж",
+    "course": "Курс / bootcamp",
+    "self": "Самообучение",
+    "mentor": "Ментор",
+    "online": "Онлайн-курс"
+  }
+}

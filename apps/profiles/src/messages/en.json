@@ -1,0 +1,41 @@
+{
+  "publicProfile": {
+    "notFound": "Profile not found.",
+    "skills": "Skills",
+    "projects": "Projects",
+    "selectedProjects": "Selected projects",
+    "experience": "Experience",
+    "education": "Education",
+    "certificates": "Certificates",
+    "contact": "Contact",
+    "now": "Present",
+    "viewProjects": "View projects",
+    "viewWork": "View my work",
+    "connect": "Connect",
+    "privateRepo": "Private repository",
+    "viewCertificate": "View certificate",
+    "technologies": "Technologies",
+    "emptyTitle": "Portfolio coming soon",
+    "emptyDesc": "This page will open as a magazine-style portfolio once skills, experience and projects are added.",
+    "contactConnect": "Let's work together",
+    "contactAvailable": "Open to new projects, teams and collaborations as a {title}.",
+    "statProjects": "Projects",
+    "statSkills": "Skills",
+    "statExperience": "Experience",
+    "statCertificates": "Certificates"
+  },
+  "experienceType": {
+    "work": "Employment",
+    "freelance": "Freelance",
+    "project": "Personal project",
+    "internship": "Internship",
+    "volunteer": "Volunteer"
+  },
+  "educationType": {
+    "formal": "University / college",
+    "course": "Course / bootcamp",
+    "self": "Self-learning",
+    "mentor": "Mentor",
+    "online": "Online course"
+  }
+}

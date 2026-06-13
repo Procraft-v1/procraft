@@ -3,18 +3,13 @@ import { headers } from 'next/headers';
 
 import { getSubdomain } from '@procraft/utils';
 
-import PublicProfileView from '../components/PublicProfileView';
-import { buildProfileMetadata, fetchPublicProfile } from '../lib/public-profile';
+import PublicProfileView from '../../components/PublicProfileView';
+import { buildProfileMetadata, fetchPublicProfile } from '../../lib/public-profile';
 
 export const dynamic = 'force-dynamic';
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 
-/**
- * Production resolves the username from the wildcard subdomain
- * ({username}.procraft.uz); local dev falls back to `?username=demo` —
- * identical to the legacy SPA's useUsername() hook.
- */
 function resolveUsername(searchParams: SearchParams): string {
   const param = Array.isArray(searchParams.username)
     ? searchParams.username[0]
@@ -29,16 +24,24 @@ function resolveUsername(searchParams: SearchParams): string {
 }
 
 export async function generateMetadata({
+  params: { locale },
   searchParams,
 }: {
+  params: { locale: string };
   searchParams: SearchParams;
 }): Promise<Metadata> {
   const username = resolveUsername(searchParams);
   const profile = await fetchPublicProfile(username);
-  return buildProfileMetadata(username, profile);
+  return buildProfileMetadata(locale, username, profile);
 }
 
-export default function Page({ searchParams }: { searchParams: SearchParams }) {
+export default function Page({
+  params: { locale },
+  searchParams,
+}: {
+  params: { locale: string };
+  searchParams: SearchParams;
+}) {
   const username = resolveUsername(searchParams);
-  return <PublicProfileView username={username} />;
+  return <PublicProfileView username={username} locale={locale} />;
 }

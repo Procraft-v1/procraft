@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Typography } from 'antd';
 import { resolveAssetUrl } from '@procraft/config';
 import './EditorialTemplate.css';
@@ -17,8 +18,8 @@ function initials(profile) {
     .join('');
 }
 
-function dateRange(startDate, endDate, isCurrent) {
-  return [startDate, isCurrent ? 'Hozir' : endDate].filter(Boolean).join(' - ');
+function dateRange(startDate, endDate, isCurrent, present) {
+  return [startDate, isCurrent ? present : endDate].filter(Boolean).join(' - ');
 }
 
 function ExternalLink({ href, children }) {
@@ -43,6 +44,8 @@ function EditorialSection({ title, children }) {
 }
 
 export default function EditorialTemplate({ profile }) {
+  const t = useTranslations('publicProfile');
+
   const skills = profile.skills ?? [];
   const projects = profile.projects ?? [];
   const experiences = profile.workExperiences ?? [];
@@ -91,7 +94,7 @@ export default function EditorialTemplate({ profile }) {
             </div>
 
             {hasItems(socialLinks) ? (
-              <EditorialSection title="Aloqa">
+              <EditorialSection title={t('contact')}>
                 <div className="editorial-link-list">
                   {socialLinks.map((link) => (
                     <ExternalLink key={link.id || `${link.platform}-${link.url}`} href={link.url}>
@@ -103,7 +106,7 @@ export default function EditorialTemplate({ profile }) {
             ) : null}
 
             {hasItems(skills) ? (
-              <EditorialSection title="Ko'nikmalar">
+              <EditorialSection title={t('skills')}>
                 <div className="editorial-skills">
                   {skills.map((skill) => (
                     <span key={skill.id || skill.name}>
@@ -116,7 +119,7 @@ export default function EditorialTemplate({ profile }) {
             ) : null}
 
             {hasItems(educations) ? (
-              <EditorialSection title="Ta'lim">
+              <EditorialSection title={t('education')}>
                 <div className="editorial-stack">
                   {educations.map((item) => (
                     <article key={item.id || item.institution}>
@@ -134,11 +137,11 @@ export default function EditorialTemplate({ profile }) {
 
         <div className="editorial-main">
           {hasItems(experiences) ? (
-            <EditorialSection title="Tajriba">
+            <EditorialSection title={t('experience')}>
               <div className="editorial-timeline">
                 {experiences.map((item) => (
                   <article key={item.id || `${item.company}-${item.position}`}>
-                    <span>{dateRange(item.startDate, item.endDate, item.isCurrent)}</span>
+                    <span>{dateRange(item.startDate, item.endDate, item.isCurrent, t('now'))}</span>
                     <Typography.Title level={3}>{item.position}</Typography.Title>
                     <strong>{item.company}</strong>
                     {item.description ? <p>{item.description}</p> : null}
@@ -149,14 +152,14 @@ export default function EditorialTemplate({ profile }) {
           ) : null}
 
           {hasItems(projects) ? (
-            <EditorialSection title="Tanlangan loyihalar">
+            <EditorialSection title={t('selectedProjects')}>
               <div className="editorial-projects">
                 {projects.map((project) => (
                   <article key={project.id || project.name}>
                     <Typography.Title level={3}>{project.name}</Typography.Title>
                     {project.description ? <p>{project.description}</p> : null}
                     <div>
-                      {project.isRepositoryPrivate ? <span>Yopiq repository</span> : null}
+                      {project.isRepositoryPrivate ? <span>{t('privateRepo')}</span> : null}
                       {!project.isRepositoryPrivate && project.githubUrl ? (
                         <ExternalLink href={project.githubUrl}>GitHub</ExternalLink>
                       ) : null}
@@ -169,14 +172,18 @@ export default function EditorialTemplate({ profile }) {
           ) : null}
 
           {hasItems(certificates) ? (
-            <EditorialSection title="Sertifikatlar">
+            <EditorialSection title={t('certificates')}>
               <div className="editorial-stack">
                 {certificates.map((item) => (
                   <article key={item.id || item.name}>
                     <strong>{item.name}</strong>
                     {item.issuer ? <p>{item.issuer}</p> : null}
                     {item.issuedOn ? <p>{item.issuedOn}</p> : null}
-                    {item.url ? <ExternalLink href={resolveAssetUrl(item.url)}>Sertifikatni ko'rish</ExternalLink> : null}
+                    {item.url ? (
+                      <ExternalLink href={resolveAssetUrl(item.url)}>
+                        {t('viewCertificate')}
+                      </ExternalLink>
+                    ) : null}
                   </article>
                 ))}
               </div>
@@ -185,10 +192,8 @@ export default function EditorialTemplate({ profile }) {
 
           {!hasMain ? (
             <section className="editorial-empty">
-              <Typography.Title level={2}>Portfolio hali to'ldirilmoqda</Typography.Title>
-              <Typography.Paragraph>
-                Ko'nikmalar, tajriba va loyihalar qo'shilganda bu sahifa jurnal uslubidagi portfolio sifatida ochiladi.
-              </Typography.Paragraph>
+              <Typography.Title level={2}>{t('emptyTitle')}</Typography.Title>
+              <Typography.Paragraph>{t('emptyDesc')}</Typography.Paragraph>
             </section>
           ) : null}
         </div>

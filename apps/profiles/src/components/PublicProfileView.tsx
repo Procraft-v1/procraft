@@ -5,7 +5,13 @@ import ProfileAlert from './ProfileAlert';
 import ProfileViewTracker from './ProfileViewTracker';
 import { fetchPublicProfile } from '../lib/public-profile';
 
-export default async function PublicProfileView({ username }: { username: string }) {
+export default async function PublicProfileView({
+  username,
+  locale,
+}: {
+  username: string;
+  locale?: string;
+}) {
   if (!username) {
     return <ProfileAlert type="info" message="Profile username is missing." />;
   }

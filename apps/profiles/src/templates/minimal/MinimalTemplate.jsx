@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Typography } from 'antd';
 import { resolveAssetUrl } from '@procraft/config';
 import './MinimalTemplate.css';
@@ -17,8 +18,8 @@ function initials(profile) {
     .join('');
 }
 
-function dateRange(startDate, endDate, isCurrent) {
-  return [startDate, isCurrent ? 'Hozir' : endDate].filter(Boolean).join(' - ');
+function dateRange(startDate, endDate, isCurrent, present) {
+  return [startDate, isCurrent ? present : endDate].filter(Boolean).join(' - ');
 }
 
 function ExternalLink({ href, children }) {
@@ -43,6 +44,8 @@ function Section({ id, title, children }) {
 }
 
 export default function MinimalTemplate({ profile }) {
+  const t = useTranslations('publicProfile');
+
   const skills = profile.skills ?? [];
   const projects = profile.projects ?? [];
   const experiences = profile.workExperiences ?? [];
@@ -57,11 +60,11 @@ export default function MinimalTemplate({ profile }) {
           {profile.fullName || profile.username || 'Portfolio'}
         </a>
         <nav>
-          {hasItems(projects) ? <a href="#projects">Loyihalar</a> : null}
-          {hasItems(experiences) ? <a href="#experience">Tajriba</a> : null}
-          {hasItems(skills) ? <a href="#skills">Ko'nikmalar</a> : null}
-          {hasItems(certificates) ? <a href="#certificates">Sertifikatlar</a> : null}
-          {hasItems(socialLinks) ? <a href="#contact">Aloqa</a> : null}
+          {hasItems(projects) ? <a href="#projects">{t('projects')}</a> : null}
+          {hasItems(experiences) ? <a href="#experience">{t('experience')}</a> : null}
+          {hasItems(skills) ? <a href="#skills">{t('skills')}</a> : null}
+          {hasItems(certificates) ? <a href="#certificates">{t('certificates')}</a> : null}
+          {hasItems(socialLinks) ? <a href="#contact">{t('contact')}</a> : null}
         </nav>
       </header>
 
@@ -72,8 +75,8 @@ export default function MinimalTemplate({ profile }) {
           {profile.bio ? <Typography.Paragraph>{profile.bio}</Typography.Paragraph> : null}
 
           <div className="site-hero__actions">
-            {hasItems(projects) ? <a href="#projects">Loyihalarni ko'rish</a> : null}
-            {hasItems(socialLinks) ? <a href="#contact">Bog'lanish</a> : null}
+            {hasItems(projects) ? <a href="#projects">{t('viewProjects')}</a> : null}
+            {hasItems(socialLinks) ? <a href="#contact">{t('connect')}</a> : null}
           </div>
         </div>
 
@@ -91,7 +94,7 @@ export default function MinimalTemplate({ profile }) {
       </section>
 
       {hasItems(skills) ? (
-        <Section id="skills" title="Ko'nikmalar">
+        <Section id="skills" title={t('skills')}>
           <div className="site-skills">
             {skills.map((skill) => (
               <span key={skill.id || skill.name}>
@@ -104,14 +107,14 @@ export default function MinimalTemplate({ profile }) {
       ) : null}
 
       {hasItems(projects) ? (
-        <Section id="projects" title="Loyihalar">
+        <Section id="projects" title={t('projects')}>
           <div className="site-card-grid">
             {projects.map((project) => (
               <article className="site-card" key={project.id || project.name}>
                 <Typography.Title level={3}>{project.name}</Typography.Title>
                 {project.description ? <p>{project.description}</p> : null}
                 <div className="site-card__links">
-                  {project.isRepositoryPrivate ? <span>Yopiq repository</span> : null}
+                  {project.isRepositoryPrivate ? <span>{t('privateRepo')}</span> : null}
                   {!project.isRepositoryPrivate && project.githubUrl ? (
                     <ExternalLink href={project.githubUrl}>GitHub</ExternalLink>
                   ) : null}
@@ -124,7 +127,7 @@ export default function MinimalTemplate({ profile }) {
       ) : null}
 
       {hasItems(experiences) ? (
-        <Section id="experience" title="Tajriba">
+        <Section id="experience" title={t('experience')}>
           <div className="site-list">
             {experiences.map((item) => (
               <article className="site-row" key={item.id || `${item.company}-${item.position}`}>
@@ -133,7 +136,7 @@ export default function MinimalTemplate({ profile }) {
                   <strong>{item.company}</strong>
                   {item.description ? <p>{item.description}</p> : null}
                 </div>
-                <span>{dateRange(item.startDate, item.endDate, item.isCurrent)}</span>
+                <span>{dateRange(item.startDate, item.endDate, item.isCurrent, t('now'))}</span>
               </article>
             ))}
           </div>
@@ -142,7 +145,7 @@ export default function MinimalTemplate({ profile }) {
 
       <div className="site-two-column">
         {hasItems(educations) ? (
-          <Section id="education" title="Ta'lim">
+          <Section id="education" title={t('education')}>
             <div className="site-stack">
               {educations.map((item) => (
                 <article key={item.id || item.institution}>
@@ -157,14 +160,18 @@ export default function MinimalTemplate({ profile }) {
         ) : null}
 
         {hasItems(certificates) ? (
-          <Section id="certificates" title="Sertifikatlar">
+          <Section id="certificates" title={t('certificates')}>
             <div className="site-stack">
               {certificates.map((item) => (
                 <article key={item.id || item.name}>
                   <strong>{item.name}</strong>
                   {item.issuer ? <p>{item.issuer}</p> : null}
                   {item.issuedOn ? <p>{item.issuedOn}</p> : null}
-                  {item.url ? <ExternalLink href={resolveAssetUrl(item.url)}>Sertifikatni ko'rish</ExternalLink> : null}
+                  {item.url ? (
+                    <ExternalLink href={resolveAssetUrl(item.url)}>
+                      {t('viewCertificate')}
+                    </ExternalLink>
+                  ) : null}
                 </article>
               ))}
             </div>
@@ -174,7 +181,7 @@ export default function MinimalTemplate({ profile }) {
 
       {hasItems(socialLinks) ? (
         <footer id="contact" className="site-footer">
-          <Typography.Title level={2}>Bog'lanish</Typography.Title>
+          <Typography.Title level={2}>{t('connect')}</Typography.Title>
           <div>
             {socialLinks.map((link) => (
               <ExternalLink key={link.id || `${link.platform}-${link.url}`} href={link.url}>
