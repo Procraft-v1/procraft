@@ -9,9 +9,9 @@ Cloudflare/DNS
    │
 nginx (host, SSL):
    ├─ procraft.uz            → /var/www/procraft/apps/landing/dist  (statik)
-   ├─ dashboard.procraft.uz  → 127.0.0.1:3001  ──►  docker: web      (Next.js SSR)
-   ├─ admin.procraft.uz      → 127.0.0.1:3003  ──►  docker: admin    (Next.js)
-   ├─ *.procraft.uz          → 127.0.0.1:3002  ──►  docker: profiles (Next.js SSR)
+   ├─ dashboard.procraft.uz  → 127.0.0.1:3101  ──►  docker: web      (Next.js SSR)
+   ├─ admin.procraft.uz      → 127.0.0.1:3103  ──►  docker: admin    (Next.js)
+   ├─ *.procraft.uz          → 127.0.0.1:3102  ──►  docker: profiles (Next.js SSR)
    └─ api.procraft.uz        → 127.0.0.1:8080  ──►  docker: api (NestJS)
                                                       │
                                               docker: postgres:16
@@ -52,9 +52,9 @@ docker compose up -d web profiles admin   # api/postgres'ga tegmaydi
 docker compose ps                          # uchchala frontend ham "Up (healthy)"
 
 # Tezkor tekshiruv:
-curl -s 127.0.0.1:3001/login | grep -c Procraft           # >= 1
-curl -s -H "Host: rax1mjon.procraft.uz" 127.0.0.1:3002/ | grep -c 'og:title'   # 1
-curl -s 127.0.0.1:3003/ | grep -c Procraft                 # >= 1
+curl -s 127.0.0.1:3101/login | grep -c Procraft           # >= 1
+curl -s -H "Host: rax1mjon.procraft.uz" 127.0.0.1:3102/ | grep -c 'og:title'   # 1
+curl -s 127.0.0.1:3103/ | grep -c Procraft                 # >= 1
 ```
 
 Birinchi marta o'tishda: nginx vhost'larni statikdan proxy'ga almashtiring —

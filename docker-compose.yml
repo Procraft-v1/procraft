@@ -71,8 +71,10 @@ services:
       start_period: 30s
 
   # --- Next.js frontends (SSR) ---------------------------------------------
-  # nginx (host) proxies: dashboard.procraft.uz -> 127.0.0.1:3001,
-  # *.procraft.uz -> 127.0.0.1:3002, admin.procraft.uz -> 127.0.0.1:3003.
+  # nginx (host) proxies: dashboard.procraft.uz -> 127.0.0.1:3101,
+  # *.procraft.uz -> 127.0.0.1:3102, admin.procraft.uz -> 127.0.0.1:3103.
+  # Ports are in the 31xx range to avoid the 30xx block owned by the
+  # co-tenant "hosilbazar" pm2 apps on this host.
   # Rollback: point nginx back at apps/*-legacy/dist (see docs/NEXTJS_MIGRATION.md).
 
   web:
@@ -85,7 +87,7 @@ services:
         VITE_APP_NAME: ${VITE_APP_NAME:-Procraft}
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3001:3000"
+      - "127.0.0.1:3101:3000"
 
   profiles:
     build:
@@ -103,7 +105,7 @@ services:
       # to the public API URL when unset.
       API_INTERNAL_URL: http://api:8080/api
     ports:
-      - "127.0.0.1:3002:3000"
+      - "127.0.0.1:3102:3000"
 
   admin:
     build:
@@ -115,7 +117,7 @@ services:
         VITE_APP_NAME: ${VITE_APP_NAME:-Procraft}
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3003:3000"
+      - "127.0.0.1:3103:3000"
 
 volumes:
   postgres_data:

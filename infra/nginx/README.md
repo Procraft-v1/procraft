@@ -6,9 +6,9 @@ landing bundle, three Next.js SSR containers, and the API container.
 | Public URL | Backend target |
 | --- | --- |
 | `https://procraft.uz/` | Static root of **`apps/landing`** `dist/` (unchanged) |
-| `https://dashboard.procraft.uz/` | **Next.js `web`** container → `127.0.0.1:3001` ([dashboard.procraft.uz.conf](./dashboard.procraft.uz.conf)) |
-| `https://admin.procraft.uz/` | **Next.js `admin`** container → `127.0.0.1:3003` ([admin.procraft.uz.conf](./admin.procraft.uz.conf)) |
-| `https://{username}.procraft.uz/` | **Next.js `profiles`** container → `127.0.0.1:3002` ([profiles.procraft.uz.conf](./profiles.procraft.uz.conf)) |
+| `https://dashboard.procraft.uz/` | **Next.js `web`** container → `127.0.0.1:3101` ([dashboard.procraft.uz.conf](./dashboard.procraft.uz.conf)) |
+| `https://admin.procraft.uz/` | **Next.js `admin`** container → `127.0.0.1:3103` ([admin.procraft.uz.conf](./admin.procraft.uz.conf)) |
+| `https://{username}.procraft.uz/` | **Next.js `profiles`** container → `127.0.0.1:3102` ([profiles.procraft.uz.conf](./profiles.procraft.uz.conf)) |
 | `https://api.procraft.uz/api/*` | `apps/api` container (`proxy_pass`, [routing.snippet.conf](./routing.snippet.conf)) |
 | `https://api.procraft.uz/uploads/*` | API static file middleware |
 

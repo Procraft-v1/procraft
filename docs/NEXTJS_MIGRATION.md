@@ -12,9 +12,9 @@ API mosligi, topilgan muammolar va rollback. Deploy qadamlari:
 
 | Ilova | Avval | Endi | Hosting |
 | --- | --- | --- | --- |
-| `apps/web` (dashboard.procraft.uz) | Vite SPA (statik dist) | Next.js App Router, client sahifalar | Docker `web` → 127.0.0.1:3001 |
-| `apps/profiles` (*.procraft.uz) | Vite SPA (statik dist) | **Next.js SSR + dinamik metadata** | Docker `profiles` → 127.0.0.1:3002 |
-| `apps/admin` (admin.procraft.uz) | Vite SPA (statik dist) | Next.js, client sahifa | Docker `admin` → 127.0.0.1:3003 |
+| `apps/web` (dashboard.procraft.uz) | Vite SPA (statik dist) | Next.js App Router, client sahifalar | Docker `web` → 127.0.0.1:3101 |
+| `apps/profiles` (*.procraft.uz) | Vite SPA (statik dist) | **Next.js SSR + dinamik metadata** | Docker `profiles` → 127.0.0.1:3102 |
+| `apps/admin` (admin.procraft.uz) | Vite SPA (statik dist) | Next.js, client sahifa | Docker `admin` → 127.0.0.1:3103 |
 | `apps/landing` (procraft.uz) | Statik HTML (React EMAS) | **O'zgarmagan** | nginx statik (avvalgidek) |
 | `apps/web-legacy`, `apps/profiles-legacy`, `apps/admin-legacy` | — | Eski Vite ilovalar saqlangan (rollback) | `dist/` har deployda yangilanadi |
 | `packages/*` | — | Import path'lar o'zgarmagan; 2 ta mayda moslik tuzatish | — |
@@ -203,9 +203,9 @@ qaytarish + `systemctl reload nginx` (~2 daqiqa, konteyner/DNS o'zgarishsiz).
 - [ ] `pnpm run build` — 16/16 yashil (legacy dist'lar ham yangilanadi)
 - [ ] `docker compose build web profiles admin`
 - [ ] `docker compose up -d web profiles admin` (api/postgres'ga tegmaydi)
-- [ ] `curl -s 127.0.0.1:3001/login | grep -c Procraft` → ≥1
-- [ ] `curl -s -H "Host: rax1mjon.procraft.uz" 127.0.0.1:3002/ | grep -c og:title` → 1
-- [ ] `curl -s 127.0.0.1:3003/ | grep -c Procraft` → ≥1
+- [ ] `curl -s 127.0.0.1:3101/login | grep -c Procraft` → ≥1
+- [ ] `curl -s -H "Host: rax1mjon.procraft.uz" 127.0.0.1:3102/ | grep -c og:title` → 1
+- [ ] `curl -s 127.0.0.1:3103/ | grep -c Procraft` → ≥1
 - [ ] nginx vhost'larni almashtirish (infra/nginx/*.conf bo'yicha), `nginx -t`,
       `systemctl reload nginx`
 - [ ] Brauzerda: login → dashboard → profil tahrir → shablon → PDF → logout
