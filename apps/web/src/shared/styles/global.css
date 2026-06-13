@@ -181,7 +181,7 @@ body,
   min-width: 0;
 }
 
-.dashboard-menu-button {
+.dashboard-topbar .dashboard-menu-button {
   display: none;
   flex-shrink: 0;
 }
@@ -475,7 +475,7 @@ body,
     left: 0;
   }
 
-  .dashboard-menu-button {
+  .dashboard-topbar .dashboard-menu-button {
     display: inline-flex;
   }
 
