@@ -106,6 +106,13 @@ services:
       API_INTERNAL_URL: http://api:8080/api
     ports:
       - "127.0.0.1:3102:3000"
+    healthcheck:
+      # `/` 404s without a profile subdomain Host header; probe a static asset.
+      test: ["CMD-SHELL", "wget -qO /dev/null http://127.0.0.1:3000/brand/procraft-app-icon-rounded.png || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   admin:
     build:

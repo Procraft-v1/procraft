@@ -44,7 +44,9 @@ COPY --from=build --chown=nextjs:nodejs /repo/apps/profiles/public ./apps/profil
 USER nextjs
 EXPOSE 3000
 
+# Hit a static asset, not `/`: the root 404s without a profile subdomain
+# Host header (which the healthcheck cannot supply), but the server is up.
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=15s \
-  CMD wget -qO /dev/null http://127.0.0.1:3000/ || exit 1
+  CMD wget -qO /dev/null http://127.0.0.1:3000/brand/procraft-app-icon-rounded.png || exit 1
 
 CMD ["node", "apps/profiles/server.js"]
