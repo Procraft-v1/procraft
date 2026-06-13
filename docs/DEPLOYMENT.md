@@ -9,13 +9,16 @@ Cloudflare/DNS
    │
 nginx (host, SSL):
    ├─ procraft.uz            → /var/www/procraft/apps/landing/dist  (statik)
-   ├─ dashboard.procraft.uz  → /var/www/procraft/apps/web/dist      (statik)
-   ├─ admin.procraft.uz      → /var/www/procraft/apps/admin/dist    (statik)
-   ├─ *.procraft.uz          → /var/www/procraft/apps/profiles/dist (statik)
+   ├─ dashboard.procraft.uz  → 127.0.0.1:3001  ──►  docker: web      (Next.js SSR)
+   ├─ admin.procraft.uz      → 127.0.0.1:3003  ──►  docker: admin    (Next.js)
+   ├─ *.procraft.uz          → 127.0.0.1:3002  ──►  docker: profiles (Next.js SSR)
    └─ api.procraft.uz        → 127.0.0.1:8080  ──►  docker: api (NestJS)
                                                       │
                                               docker: postgres:16
                                               volumes: postgres_data, uploads_data
+
+Rollback nishonlari (statik, har deployda yangilanadi):
+   apps/web-legacy/dist · apps/admin-legacy/dist · apps/profiles-legacy/dist
 ```
 
 `.env` — `/var/www/procraft/.env` (chmod 600). Bu fayl ham docker compose, ham
@@ -43,8 +46,34 @@ Eslatmalar:
 cd /var/www/procraft
 git pull origin main
 pnpm install --no-frozen-lockfile
-pnpm run build                # to'rttala frontend dist'i yangilanadi
-# nginx to'g'ridan-to'g'ri dist papkalardan o'qiydi — reload kerak emas
+pnpm run build                # landing dist + legacy rollback dist'lari + Next buildlar
+docker compose build web profiles admin
+docker compose up -d web profiles admin   # api/postgres'ga tegmaydi
+docker compose ps                          # uchchala frontend ham "Up (healthy)"
+
+# Tezkor tekshiruv:
+curl -s 127.0.0.1:3001/login | grep -c Procraft           # >= 1
+curl -s -H "Host: rax1mjon.procraft.uz" 127.0.0.1:3002/ | grep -c 'og:title'   # 1
+curl -s 127.0.0.1:3003/ | grep -c Procraft                 # >= 1
+```
+
+Birinchi marta o'tishda: nginx vhost'larni statikdan proxy'ga almashtiring —
+tayyor bloklar [infra/nginx/](../infra/nginx/) da; so'ng `nginx -t && systemctl reload nginx`.
+
+### ROLLBACK — eski Vite frontendga qaytish (~2 daqiqa)
+
+Eski SPA'lar `apps/web-legacy`, `apps/profiles-legacy`, `apps/admin-legacy` da
+saqlanadi va `pnpm run build` ularning `dist/`ini har deployda yangilab boradi.
+Tegishli nginx vhost'da proxy o'rniga statik blokni qaytaring:
+
+```nginx
+root /var/www/procraft/apps/web-legacy/dist;   # yoki profiles-legacy / admin-legacy
+index index.html;
+location / { try_files $uri $uri/ /index.html; }
+```
+
+```bash
+nginx -t && systemctl reload nginx   # konteyner/DNS o'zgarishsiz
 ```
 
 ## Production checklist

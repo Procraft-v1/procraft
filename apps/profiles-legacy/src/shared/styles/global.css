@@ -1,0 +1,44 @@
+:root {
+  --pc-navy: #0d1b2a;
+  --pc-blue: #2563eb;
+  --pc-cyan: #06b6d4;
+  --pc-bg: #f6f7f9;
+  --pc-border: #e5e7eb;
+  --pc-muted: #64748b;
+  --pc-white: #ffffff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Inter,
+    Manrope,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: var(--pc-bg);
+  color: var(--pc-navy);
+}
+
+a {
+  color: var(--pc-blue);
+}
+
+.profile-loading {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+}

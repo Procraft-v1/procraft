@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { PROCRAFT_CONTACT_LINKS, resolveAssetUrl } from '@procraft/config';
 import './DeveloperTemplate.css';

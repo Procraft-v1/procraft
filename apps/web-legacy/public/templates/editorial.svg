@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600" role="img" aria-labelledby="title desc">
+  <title id="title">Editorial template preview</title>
+  <desc id="desc">Magazine-style portfolio preview with bold typography and two-column resume sections.</desc>
+  <defs>
+    <pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#18212f" stroke-opacity=".07" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="960" height="600" fill="#f7f2e8"/>
+  <rect width="960" height="600" fill="url(#grid)"/>
+  <rect x="70" y="58" width="820" height="3" fill="#18212f"/>
+  <rect x="70" y="84" width="122" height="34" fill="#18212f"/>
+  <text x="92" y="107" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#f7f2e8">PORTFOLIO</text>
+  <text x="70" y="214" font-family="Georgia, serif" font-size="94" font-weight="700" fill="#18212f">Editorial</text>
+  <text x="70" y="302" font-family="Georgia, serif" font-size="94" font-weight="700" fill="#18212f">Resume</text>
+  <rect x="742" y="114" width="128" height="128" fill="#8f3f2c"/>
+  <rect x="730" y="102" width="128" height="128" fill="#cfe8dc" stroke="#18212f" stroke-width="4"/>
+  <circle cx="794" cy="150" r="25" fill="#18212f"/>
+  <path d="M748 212c11-36 82-36 93 0" fill="#18212f"/>
+  <rect x="70" y="354" width="240" height="22" rx="2" fill="#8f3f2c"/>
+  <rect x="70" y="394" width="220" height="16" rx="2" fill="#18212f" opacity=".82"/>
+  <rect x="70" y="424" width="260" height="16" rx="2" fill="#18212f" opacity=".55"/>
+  <rect x="70" y="454" width="180" height="16" rx="2" fill="#18212f" opacity=".35"/>
+  <line x1="380" y1="354" x2="380" y2="520" stroke="#18212f" stroke-width="2"/>
+  <rect x="418" y="354" width="330" height="24" rx="2" fill="#18212f"/>
+  <rect x="418" y="400" width="390" height="14" rx="2" fill="#18212f" opacity=".65"/>
+  <rect x="418" y="430" width="316" height="14" rx="2" fill="#18212f" opacity=".42"/>
+  <rect x="418" y="480" width="360" height="14" rx="2" fill="#18212f" opacity=".65"/>
+  <rect x="418" y="510" width="270" height="14" rx="2" fill="#18212f" opacity=".42"/>
+  <rect x="70" y="548" width="820" height="3" fill="#18212f"/>
+</svg>

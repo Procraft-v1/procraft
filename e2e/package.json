@@ -1,0 +1,17 @@
+{
+  "name": "@procraft/e2e",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:web": "playwright test --project=web",
+    "test:profiles": "playwright test --project=profiles",
+    "test:legacy": "cross-env E2E_TARGET=legacy playwright test --project=web",
+    "report": "playwright show-report",
+    "lint": "echo \"lint configured later\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "cross-env": "^7.0.3"
+  }
+}

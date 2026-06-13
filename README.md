@@ -90,13 +90,18 @@ Development can use `appsettings.Development.json`, environment variables, or `d
 
 | Path           | Role                                      |
 | -------------- | ----------------------------------------- |
-| `apps/landing` | SEO-first marketing site (separate SPA)    |
-| `apps/web`     | Auth + dashboard SPA                     |
-| `apps/profiles`| Public portfolios (`username.` subdomain)  |
-| `apps/api`     | ASP.NET Core API (Clean Architecture)    |
+| `apps/landing` | SEO-first static marketing site            |
+| `apps/web`     | Auth + dashboard (**Next.js App Router**) |
+| `apps/profiles`| Public portfolios, SSR (**Next.js**, `username.` subdomain) |
+| `apps/admin`   | Admin stats panel (**Next.js**)           |
+| `apps/*-legacy`| Preserved Vite SPAs (instant rollback targets) |
+| `apps/api`     | NestJS API (`apps/api-dotnet` is the retired .NET backend) |
 | `packages/*`   | Shared frontend layers (see ARCHITECTURE) |
+| `e2e/`         | Playwright E2E suite (runs against Next **and** legacy) |
 | `docs/`        | Project rules and architecture docs        |
 | `infra/nginx/` | Production routing reference               |
+
+> Frontend migration details (Vite → Next.js): [`docs/NEXTJS_MIGRATION.md`](docs/NEXTJS_MIGRATION.md)
 
 ## Documentation
 

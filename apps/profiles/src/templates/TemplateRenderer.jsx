@@ -1,3 +1,5 @@
+'use client';
+
 import ClassicTemplate from './classic/ClassicTemplate.jsx';
 import DeveloperTemplate from './developer/DeveloperTemplate.jsx';
 import EditorialTemplate from './editorial/EditorialTemplate.jsx';

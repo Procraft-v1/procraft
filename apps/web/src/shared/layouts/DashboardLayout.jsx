@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Avatar, Button, Drawer, Layout, Menu, Modal, Space, Typography } from "antd";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   BarChartOutlined,
@@ -61,6 +63,14 @@ function getPortfolioUrl(user) {
   return username ? `https://${username}.procraft.uz/` : "";
 }
 
+function getCurrentLocation() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  return `${window.location.pathname}${window.location.search}`;
+}
+
 function DashboardFooter() {
   return (
     <footer className="dashboard-footer">
@@ -91,34 +101,34 @@ function DashboardFooter() {
   );
 }
 
-export default function DashboardLayout() {
+export default function DashboardLayout({ children }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [authPrompt, setAuthPrompt] = useState(null);
   const [isHeaderShrunk, setIsHeaderShrunk] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const { user, logout, isAuthenticated } = useAuth();
   const { profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated });
   const userLabel = user?.username || user?.email || "Account";
   const portfolioUrl = profile ? getPortfolioUrl(user) : "";
-  const selectedKeys = [location.pathname];
+  const selectedKeys = [pathname];
 
   useEffect(() => {
     const handleAuthRequired = (event) => {
       setAuthPrompt({
-        returnTo: event.detail?.returnTo || `${location.pathname}${location.search}`,
+        returnTo: event.detail?.returnTo || getCurrentLocation(),
       });
     };
 
     window.addEventListener("procraft:auth-required", handleAuthRequired);
     return () => window.removeEventListener("procraft:auth-required", handleAuthRequired);
-  }, [location.pathname, location.search]);
+  }, [pathname]);
 
   useEffect(() => {
     window.__procraftRequireAuth = (returnTo) => {
       setAuthPrompt({
-        returnTo: returnTo || `${window.location.pathname}${window.location.search}`,
+        returnTo: returnTo || getCurrentLocation(),
       });
     };
 
@@ -138,21 +148,21 @@ export default function DashboardLayout() {
   }, []);
 
   const handleMenuClick = ({ key }) => {
-    navigate(key);
+    router.push(key);
     setIsMobileMenuOpen(false);
   };
 
   const getReturnTo = (nextReturnTo) =>
-    typeof nextReturnTo === "string" ? nextReturnTo : `${location.pathname}${location.search}`;
+    typeof nextReturnTo === "string" ? nextReturnTo : getCurrentLocation();
 
   const goToLogin = (nextReturnTo) => {
     const returnTo = getReturnTo(nextReturnTo);
-    navigate(`${routes.login}?returnTo=${encodeURIComponent(returnTo)}`);
+    router.push(`${routes.login}?returnTo=${encodeURIComponent(returnTo)}`);
   };
 
   const goToRegister = (nextReturnTo) => {
     const returnTo = getReturnTo(nextReturnTo);
-    navigate(`${routes.register}?returnTo=${encodeURIComponent(returnTo)}`);
+    router.push(`${routes.register}?returnTo=${encodeURIComponent(returnTo)}`);
   };
 
   const handleLogout = async () => {
@@ -167,7 +177,7 @@ export default function DashboardLayout() {
 
     try {
       await logout();
-      navigate(routes.login, { replace: true });
+      router.replace(routes.login);
     } finally {
       setIsLoggingOut(false);
     }
@@ -194,7 +204,7 @@ export default function DashboardLayout() {
         <button
           type="button"
           className="dashboard-sidebar__brand dashboard-sidebar__brand-button"
-          onClick={() => navigate(routes.dashboard)}
+          onClick={() => router.push(routes.dashboard)}
         >
           <Logo size={36} textColor="#FFFFFF" />
         </button>
@@ -234,7 +244,7 @@ export default function DashboardLayout() {
           type="button"
           className="dashboard-sidebar__brand dashboard-sidebar__brand-button"
           onClick={() => {
-            navigate(routes.dashboard);
+            router.push(routes.dashboard);
             setIsMobileMenuOpen(false);
           }}
         >
@@ -272,7 +282,7 @@ export default function DashboardLayout() {
             <button
               type="button"
               className="dashboard-topbar__mobile-brand"
-              onClick={() => navigate(routes.dashboard)}
+              onClick={() => router.push(routes.dashboard)}
               aria-label="Bosh sahifaga qaytish"
             >
               <Logo size={30} showText={false} />
@@ -292,7 +302,7 @@ export default function DashboardLayout() {
             ) : (
               <Button
                 icon={<LinkOutlined />}
-                onClick={() => navigate(routes.dashboardProfile)}
+                onClick={() => router.push(routes.dashboardProfile)}
                 loading={isProfileLoading}
               >
                 Profil
@@ -315,7 +325,7 @@ export default function DashboardLayout() {
           </div>
         </header>
         <Layout.Content className="dashboard-content">
-          <Outlet />
+          {children}
           <DashboardFooter />
         </Layout.Content>
       </Layout>
@@ -328,14 +338,14 @@ export default function DashboardLayout() {
             Hozir emas
           </Button>,
           <Button key="login" onClick={() => {
-            const returnTo = authPrompt?.returnTo || `${location.pathname}${location.search}`;
+            const returnTo = authPrompt?.returnTo || getCurrentLocation();
             setAuthPrompt(null);
             goToLogin(returnTo);
           }}>
             Kirish
           </Button>,
           <Button key="register" type="primary" onClick={() => {
-            const returnTo = authPrompt?.returnTo || `${location.pathname}${location.search}`;
+            const returnTo = authPrompt?.returnTo || getCurrentLocation();
             setAuthPrompt(null);
             goToRegister(returnTo);
           }}>

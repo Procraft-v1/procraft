@@ -2,15 +2,17 @@
   "name": "@procraft/web",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite --port 5174",
-    "build": "vite build",
-    "preview": "vite preview --port 4174",
-    "lint": "echo \"lint configured later\""
+    "dev": "next dev -p 5174",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "preview": "next start -p 4174",
+    "lint": "next lint",
+    "clean": "rimraf .next"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
+    "@ant-design/nextjs-registry": "^1.1.0",
     "@procraft/config": "workspace:*",
     "@procraft/hooks": "workspace:*",
     "@procraft/i18n": "workspace:*",
@@ -18,14 +20,19 @@
     "@procraft/ui": "workspace:*",
     "@tanstack/react-query": "^5.80.10",
     "antd": "^5.25.4",
+    "next": "^14.2.30",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^17.0.6",
-    "react-redux": "^9.2.0",
-    "react-router-dom": "^7.9.6"
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.1.4",
-    "vite": "^6.3.5"
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.30",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.6.3"
   }
 }

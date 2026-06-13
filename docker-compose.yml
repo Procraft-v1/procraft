@@ -70,6 +70,53 @@ services:
       retries: 3
       start_period: 30s
 
+  # --- Next.js frontends (SSR) ---------------------------------------------
+  # nginx (host) proxies: dashboard.procraft.uz -> 127.0.0.1:3001,
+  # *.procraft.uz -> 127.0.0.1:3002, admin.procraft.uz -> 127.0.0.1:3003.
+  # Rollback: point nginx back at apps/*-legacy/dist (see docs/NEXTJS_MIGRATION.md).
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://api.procraft.uz/api}
+        VITE_UPLOADS_URL: ${VITE_UPLOADS_URL:-https://api.procraft.uz/uploads}
+        VITE_APP_NAME: ${VITE_APP_NAME:-Procraft}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3000"
+
+  profiles:
+    build:
+      context: .
+      dockerfile: apps/profiles/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://api.procraft.uz/api}
+        VITE_UPLOADS_URL: ${VITE_UPLOADS_URL:-https://api.procraft.uz/uploads}
+        VITE_APP_NAME: ${VITE_APP_NAME:-Procraft}
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      # SSR profile fetches go over the internal docker network; falls back
+      # to the public API URL when unset.
+      API_INTERNAL_URL: http://api:8080/api
+    ports:
+      - "127.0.0.1:3002:3000"
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-https://api.procraft.uz/api}
+        VITE_UPLOADS_URL: ${VITE_UPLOADS_URL:-https://api.procraft.uz/uploads}
+        VITE_APP_NAME: ${VITE_APP_NAME:-Procraft}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3003:3000"
+
 volumes:
   postgres_data:
   uploads_data:

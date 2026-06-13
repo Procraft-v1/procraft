@@ -1,0 +1,17 @@
+# Applies to repo-root build contexts (Next.js frontend images).
+.git
+.tmp
+docs
+infra
+e2e
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+apps/api
+apps/api-dotnet
+apps/landing
+apps/web-legacy
+apps/profiles-legacy
+apps/admin-legacy
+*.log
