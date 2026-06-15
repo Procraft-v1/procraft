@@ -22,6 +22,7 @@ import {
   message,
 } from "antd";
 import { DeleteOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { resolveAssetUrl } from "@procraft/config";
 import { getErrorMessage } from "@procraft/i18n";
 import {
@@ -36,10 +37,8 @@ import {
   useAuth,
 } from "@procraft/hooks";
 
-const levelOptions = [1, 2, 3, 4, 5].map((level) => ({
-  label: `${level} - ${["Boshlang'ich", "O'rtacha", "Yaxshi", "Kuchli", "Ekspert"][level - 1]}`,
-  value: level,
-}));
+const EXPERIENCE_TYPE_VALUES = ["work", "freelance", "project", "internship", "volunteer"];
+const EDUCATION_TYPE_VALUES = ["formal", "course", "self", "mentor", "online"];
 
 const skillCategoryOptions = [
   { label: "Frontend", value: "Frontend" },
@@ -50,29 +49,26 @@ const skillCategoryOptions = [
   { label: "Soft skill", value: "Soft skill" },
 ];
 
-const experienceTypeOptions = [
-  { label: "Ish joyi", value: "work" },
-  { label: "Freelance", value: "freelance" },
-  { label: "Shaxsiy loyiha", value: "project" },
-  { label: "Amaliyot", value: "internship" },
-  { label: "Volunteer", value: "volunteer" },
-];
+function buildLevelOptions(t) {
+  return [1, 2, 3, 4, 5].map((level) => ({
+    label: `${level} - ${t(`sections.skills.levelLabel.${level}`)}`,
+    value: level,
+  }));
+}
 
-const experienceTypeLabels = Object.fromEntries(
-  experienceTypeOptions.map((option) => [option.value, option.label]),
-);
+function buildExperienceTypeOptions(t) {
+  return EXPERIENCE_TYPE_VALUES.map((value) => ({
+    label: t(`sections.experiences.type.${value}`),
+    value,
+  }));
+}
 
-const educationTypeOptions = [
-  { label: "Universitet / kollej", value: "formal" },
-  { label: "Kurs / bootcamp", value: "course" },
-  { label: "Shaxsiy o'rganish", value: "self" },
-  { label: "Mentor / ustoz", value: "mentor" },
-  { label: "Onlayn kurs", value: "online" },
-];
-
-const educationTypeLabels = Object.fromEntries(
-  educationTypeOptions.map((option) => [option.value, option.label]),
-);
+function buildEducationTypeOptions(t) {
+  return EDUCATION_TYPE_VALUES.map((value) => ({
+    label: t(`sections.educations.type.${value}`),
+    value,
+  }));
+}
 
 const CERTIFICATE_MAX_SIZE_MB = 10;
 const CERTIFICATE_MAX_SIZE_BYTES = CERTIFICATE_MAX_SIZE_MB * 1024 * 1024;
@@ -101,175 +97,177 @@ function getProfileInitials(profile) {
     .join("");
 }
 
-function buildSkillFields(categoryOptions) {
+function buildSkillFields(categoryOptions, t) {
   return [
     {
       name: "name",
-      label: "Ko'nikma nomi",
-      placeholder: "React, SMM, Copywriting...",
-      rules: [{ required: true, message: "Ko'nikma nomini kiriting" }],
+      label: t("sections.skills.name"),
+      placeholder: t("sections.skills.namePlaceholder"),
+      rules: [{ required: true, message: t("sections.skills.nameRequired") }],
     },
     {
       name: "level",
-      label: "Daraja",
+      label: t("sections.skills.level"),
       type: "select",
-      options: levelOptions,
-      placeholder: "Darajani tanlang",
+      options: buildLevelOptions(t),
+      placeholder: t("sections.skills.levelPlaceholder"),
     },
     {
       name: "category",
-      label: "Kategoriya",
+      label: t("sections.skills.category"),
       type: "autocomplete",
       options: categoryOptions,
-      placeholder: "Yozing yoki tanlang",
+      placeholder: t("sections.skills.categoryPlaceholder"),
     },
   ];
 }
 
-const sectionFields = {
-  projects: [
-    {
-      name: "name",
-      label: "Loyiha nomi",
-      rules: [{ required: true, message: "Loyiha nomini kiriting" }],
-    },
-    { name: "description", label: "Tavsif", type: "textarea" },
-    { name: "githubUrl", label: "GitHub havolasi" },
-    {
-      name: "isRepositoryPrivate",
-      label: "GitHub repository yopiq",
-      type: "checkbox",
-      valuePropName: "checked",
-      initialValue: false,
-    },
-    {
-      name: "liveUrl",
-      label: "Live link (Vercel/Netlify/site)",
-      placeholder: "https://your-project.vercel.app",
-    },
-  ],
-  experiences: [
-    {
-      name: "experienceType",
-      label: "Tajriba turi",
-      type: "select",
-      options: experienceTypeOptions,
-      initialValue: "work",
-      rules: [{ required: true, message: "Tajriba turini tanlang" }],
-    },
-    {
-      name: "company",
-      label: "Kompaniya",
-      labelByField: {
-        field: "experienceType",
-        values: {
-          work: "Kompaniya",
-          freelance: "Mijoz yoki kompaniya",
-          project: "Loyiha nomi",
-          internship: "Kompaniya yoki o'quv markazi",
-          volunteer: "Tashkilot",
+function buildSectionFields(t) {
+  return {
+    projects: [
+      {
+        name: "name",
+        label: t("sections.projects.name"),
+        rules: [{ required: true, message: t("sections.projects.nameRequired") }],
+      },
+      { name: "description", label: t("sections.projects.description"), type: "textarea" },
+      { name: "githubUrl", label: t("sections.projects.github") },
+      {
+        name: "isRepositoryPrivate",
+        label: t("sections.projects.privateRepo"),
+        type: "checkbox",
+        valuePropName: "checked",
+        initialValue: false,
+      },
+      {
+        name: "liveUrl",
+        label: t("sections.projects.liveUrl"),
+        placeholder: "https://your-project.vercel.app",
+      },
+    ],
+    experiences: [
+      {
+        name: "experienceType",
+        label: t("sections.experiences.type"),
+        type: "select",
+        options: buildExperienceTypeOptions(t),
+        initialValue: "work",
+        rules: [{ required: true, message: t("sections.experiences.typeRequired") }],
+      },
+      {
+        name: "company",
+        label: t("sections.experiences.company"),
+        labelByField: {
+          field: "experienceType",
+          values: {
+            work: t("sections.experiences.company"),
+            freelance: t("sections.experiences.company.freelance"),
+            project: t("sections.experiences.company.project"),
+            internship: t("sections.experiences.company.internship"),
+            volunteer: t("sections.experiences.company.volunteer"),
+          },
+        },
+        rules: [{ required: true, message: t("sections.experiences.companyRequired") }],
+      },
+      {
+        name: "position",
+        label: t("sections.experiences.position"),
+        rules: [{ required: true, message: t("sections.experiences.positionRequired") }],
+      },
+      {
+        name: "startDate",
+        label: t("sections.experiences.startDate"),
+        type: "date",
+        rules: [{ required: true, message: t("sections.experiences.startDateRequired") }],
+      },
+      { name: "endDate", label: t("sections.experiences.endDate"), type: "date" },
+      {
+        name: "isCurrent",
+        label: t("sections.experiences.isCurrent"),
+        type: "checkbox",
+        valuePropName: "checked",
+        initialValue: false,
+      },
+    ],
+    educations: [
+      {
+        name: "educationType",
+        label: t("sections.educations.type"),
+        type: "select",
+        options: buildEducationTypeOptions(t),
+        initialValue: "formal",
+        rules: [{ required: true, message: t("sections.educations.typeRequired") }],
+      },
+      {
+        name: "institution",
+        label: t("sections.educations.institution"),
+        labelByField: {
+          field: "educationType",
+          values: {
+            formal: t("sections.educations.institution"),
+            course: t("sections.educations.institution.course"),
+            self: t("sections.educations.institution.self"),
+            mentor: t("sections.educations.institution.mentor"),
+            online: t("sections.educations.institution.online"),
+          },
+        },
+        rules: [{ required: true, message: t("sections.educations.institutionRequired") }],
+      },
+      {
+        name: "degree",
+        label: t("sections.educations.degree"),
+        labelByField: {
+          field: "educationType",
+          values: {
+            formal: t("sections.educations.degree"),
+            course: t("sections.educations.degree.course"),
+            self: t("sections.educations.degree.self"),
+            mentor: t("sections.educations.degree.mentor"),
+            online: t("sections.educations.degree.online"),
+          },
         },
       },
-      rules: [{ required: true, message: "Kompaniya nomini kiriting" }],
-    },
-    {
-      name: "position",
-      label: "Rol yoki lavozim",
-      rules: [{ required: true, message: "Rol yoki lavozimni kiriting" }],
-    },
-    {
-      name: "startDate",
-      label: "Boshlanish sanasi",
-      type: "date",
-      rules: [{ required: true, message: "Boshlanish sanasini kiriting" }],
-    },
-    { name: "endDate", label: "Tugash sanasi", type: "date" },
-    {
-      name: "isCurrent",
-      label: "Hozir ham shu yerda ishlayman",
-      type: "checkbox",
-      valuePropName: "checked",
-      initialValue: false,
-    },
-  ],
-  educations: [
-    {
-      name: "educationType",
-      label: "Ta'lim turi",
-      type: "select",
-      options: educationTypeOptions,
-      initialValue: "formal",
-      rules: [{ required: true, message: "Ta'lim turini tanlang" }],
-    },
-    {
-      name: "institution",
-      label: "Ta'lim muassasasi",
-      labelByField: {
-        field: "educationType",
-        values: {
-          formal: "Ta'lim muassasasi",
-          course: "Kurs nomi yoki markaz",
-          self: "Nimani o'rgandingiz?",
-          mentor: "Ustoz yoki mentor ismi",
-          online: "Platforma yoki kurs nomi",
+      {
+        name: "field",
+        label: t("sections.educations.field"),
+        visibleWhen: {
+          field: "educationType",
+          values: ["formal", "course", "online"],
         },
       },
-      rules: [{ required: true, message: "Ta'lim muassasasini kiriting" }],
-    },
-    {
-      name: "degree",
-      label: "Daraja / sertifikat",
-      labelByField: {
-        field: "educationType",
-        values: {
-          formal: "Daraja",
-          course: "Natija / daraja",
-          self: "Natija yoki daraja",
-          mentor: "Shogirdlik yo'nalishi",
-          online: "Natija / daraja",
-        },
+    ],
+    certificates: [
+      {
+        name: "name",
+        label: t("sections.certificates.name"),
+        rules: [{ required: true, message: t("sections.certificates.nameRequired") }],
       },
-    },
-    {
-      name: "field",
-      label: "Yo'nalish",
-      visibleWhen: {
-        field: "educationType",
-        values: ["formal", "course", "online"],
+      { name: "issuer", label: t("sections.certificates.issuer") },
+      {
+        name: "url",
+        label: t("sections.certificates.url"),
+        placeholder: t("sections.certificates.urlPlaceholder"),
       },
-    },
-  ],
-  certificates: [
-    {
-      name: "name",
-      label: "Sertifikat nomi",
-      rules: [{ required: true, message: "Sertifikat nomini kiriting" }],
-    },
-    { name: "issuer", label: "Beruvchi tashkilot" },
-    {
-      name: "url",
-      label: "Sertifikat linki",
-      placeholder: "https://coursera.org/... yoki serverdagi fayl linki",
-    },
-    {
-      name: "file",
-      label: "Sertifikat fayli",
-      type: "certificateFile",
-    },
-  ],
-  socialLinks: [
-    {
-      name: "platform",
-      label: "Platforma",
-      rules: [{ required: true, message: "Platformani kiriting" }],
-    },
-    {
-      name: "url",
-      label: "Havola",
-      rules: [{ required: true, message: "Havolani kiriting" }],
-    },
-  ],
-};
+      {
+        name: "file",
+        label: t("sections.certificates.file"),
+        type: "certificateFile",
+      },
+    ],
+    socialLinks: [
+      {
+        name: "platform",
+        label: t("sections.socialLinks.platform"),
+        rules: [{ required: true, message: t("sections.socialLinks.platformRequired") }],
+      },
+      {
+        name: "url",
+        label: t("sections.socialLinks.url"),
+        rules: [{ required: true, message: t("sections.socialLinks.urlRequired") }],
+      },
+    ],
+  };
+}
 
 function compact(values) {
   return Object.fromEntries(
@@ -338,14 +336,16 @@ function renderField(field, form) {
 }
 
 function CertificateFileField({ value, onChange }) {
+  const { t } = useTranslation();
+
   const beforeUpload = async (file) => {
     if (!isAllowedCertificateFile(file)) {
-      message.error("Sertifikat fayli PDF, JPG, JPEG, PNG yoki WEBP formatida bo'lishi kerak");
+      message.error(t("sections.certificates.fileTypeError"));
       return Upload.LIST_IGNORE;
     }
 
     if (file.size > CERTIFICATE_MAX_SIZE_BYTES) {
-      message.error(`Sertifikat fayli ${CERTIFICATE_MAX_SIZE_MB}MB dan kichik bo'lishi kerak`);
+      message.error(t("sections.certificates.fileSizeError", { size: CERTIFICATE_MAX_SIZE_MB }));
       return Upload.LIST_IGNORE;
     }
 
@@ -365,23 +365,24 @@ function CertificateFileField({ value, onChange }) {
           return true;
         }}
       >
-        <Button icon={<UploadOutlined />}>Fayl tanlash</Button>
+        <Button icon={<UploadOutlined />}>{t("sections.certificates.fileSelect")}</Button>
       </Upload>
       <Typography.Text type="secondary">
-        Fayl Saqlash bosilganda sertifikat ma'lumotlari bilan birga yuklanadi. PDF, JPG, JPEG, PNG yoki WEBP. Maksimal hajm: {CERTIFICATE_MAX_SIZE_MB}MB.
+        {t("sections.certificates.fileHint", { size: CERTIFICATE_MAX_SIZE_MB })}
       </Typography.Text>
     </Space>
   );
 }
 
 function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
+  const { t } = useTranslation();
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const isDisabled = !profile;
 
   const beforeUpload = async (file) => {
     if (isDisabled) {
-      message.warning("Avval asosiy profil ma'lumotlarini saqlang");
+      message.warning(t("profile.avatar.saveFirst"));
       return Upload.LIST_IGNORE;
     }
 
@@ -389,7 +390,7 @@ function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
 
     try {
       await uploadAvatar(file);
-      message.success("Profil rasmi yuklandi");
+      message.success(t("profile.avatar.uploaded"));
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {
@@ -404,7 +405,7 @@ function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
 
     try {
       await deleteAvatar();
-      message.success("Profil rasmi o'chirildi");
+      message.success(t("profile.avatar.deleted"));
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {
@@ -424,11 +425,11 @@ function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
         </Avatar>
 
         <div className="dashboard-avatar-card__body">
-          <Typography.Title level={4}>Profil rasmi</Typography.Title>
+          <Typography.Title level={4}>{t("profile.avatar.title")}</Typography.Title>
           <Typography.Paragraph type="secondary">
             {isDisabled
-              ? "Rasm yuklashdan oldin asosiy profil ma'lumotlarini saqlang."
-              : "Public portfolio shablonlarida ko'rinadigan rasm."}
+              ? t("profile.avatar.subtitleDisabled")
+              : t("profile.avatar.subtitle")}
           </Typography.Paragraph>
           <Space wrap>
             <Upload
@@ -438,7 +439,7 @@ function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
               showUploadList={false}
             >
               <Button icon={<UploadOutlined />} loading={isUploading} disabled={isDisabled}>
-                Rasm yuklash
+                {t("profile.avatar.upload")}
               </Button>
             </Upload>
             {profile?.avatarUrl ? (
@@ -448,7 +449,7 @@ function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
                 loading={isDeleting}
                 onClick={handleDelete}
               >
-                O'chirish
+                {t("profile.avatar.delete")}
               </Button>
             ) : null}
           </Space>
@@ -459,6 +460,7 @@ function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
 }
 
 function CategoryAutoComplete({ field, value, onChange }) {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState(value ?? "");
   const input = searchValue.trim();
   const baseOptions = field.options ?? [];
@@ -479,12 +481,12 @@ function CategoryAutoComplete({ field, value, onChange }) {
         label: (
           <Space size={8}>
             <PlusOutlined />
-            <span>Yangi kategoriya: {input}</span>
+            <span>{t("profile.newCategoryLabel", { name: input })}</span>
           </Space>
         ),
       },
     ];
-  }, [baseOptions, input, isNewCategory]);
+  }, [baseOptions, input, isNewCategory, t]);
 
   useEffect(() => {
     setSearchValue(value ?? "");
@@ -509,7 +511,7 @@ function CategoryAutoComplete({ field, value, onChange }) {
       />
       {isNewCategory ? (
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          Yangi kategoriya sifatida saqlanadi.
+          {t("profile.newCategory")}
         </Typography.Text>
       ) : null}
     </Space>
@@ -528,6 +530,7 @@ function SectionCard({
   disabled,
   beforeSave,
 }) {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [editingItem, setEditingItem] = useState(null);
   const [formValues, setFormValues] = useState({});
@@ -575,7 +578,7 @@ function SectionCard({
       } else {
         await create(values);
       }
-      message.success(`${title} saqlandi`);
+      message.success(t("profile.section.saved", { title }));
       setIsModalOpen(false);
     } catch (error) {
       message.error(getErrorMessage(error));
@@ -589,7 +592,7 @@ function SectionCard({
 
     try {
       await remove(item.id);
-      message.success(`${title} o'chirildi`);
+      message.success(t("profile.section.deleted", { title }));
     } catch (error) {
       message.error(getErrorMessage(error));
     } finally {
@@ -602,7 +605,7 @@ function SectionCard({
       title={title}
       extra={
         <Button type="primary" onClick={openCreate} disabled={disabled}>
-          Qo'shish
+          {t("common.add")}
         </Button>
       }
     >
@@ -613,7 +616,7 @@ function SectionCard({
           emptyText: (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={`${title} hali qo'shilmagan`}
+              description={t("profile.section.empty", { title })}
             />
           ),
         }}
@@ -626,7 +629,7 @@ function SectionCard({
                 disabled={disabled}
                 onClick={() => openEdit(item)}
               >
-                Tahrirlash
+                {t("common.edit")}
               </Button>,
               <Button
                 key="delete"
@@ -636,7 +639,7 @@ function SectionCard({
                 loading={deletingId === item.id}
                 onClick={() => handleDelete(item)}
               >
-                O'chirish
+                {t("common.delete")}
               </Button>,
             ]}
           >
@@ -646,9 +649,11 @@ function SectionCard({
       />
 
       <Modal
-        title={`${editingItem ? "Tahrirlash" : "Qo'shish"}: ${title}`}
+        title={editingItem
+          ? t("profile.section.editModal", { title })
+          : t("profile.section.addModal", { title })}
         open={isModalOpen}
-        okText="Saqlash"
+        okText={t("common.save")}
         confirmLoading={isSaving}
         onOk={handleSubmit}
         onCancel={() => setIsModalOpen(false)}
@@ -678,7 +683,7 @@ function SectionCard({
       </Modal>
       {disabled ? (
         <Typography.Text type="secondary">
-          Bo'lim qo'shishdan oldin asosiy profil ma'lumotlarini saqlang.
+          {t("profile.section.saveFirst")}
         </Typography.Text>
       ) : null}
     </Card>
@@ -686,9 +691,19 @@ function SectionCard({
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const { isAuthenticated } = useAuth();
   const { profile, isLoading, updateProfile, uploadAvatar, deleteAvatar } = useProfile({ enabled: isAuthenticated });
+  const sectionFields = useMemo(() => buildSectionFields(t), [t]);
+  const experienceTypeLabels = useMemo(
+    () => Object.fromEntries(buildExperienceTypeOptions(t).map((o) => [o.value, o.label])),
+    [t],
+  );
+  const educationTypeLabels = useMemo(
+    () => Object.fromEntries(buildEducationTypeOptions(t).map((o) => [o.value, o.label])),
+    [t],
+  );
   const sectionQueryOptions = { query: { enabled: Boolean(profile) } };
   const skills = useSkills(sectionQueryOptions);
   const skillCategories = useSkillCategories(sectionQueryOptions);
@@ -741,10 +756,10 @@ export default function ProfilePage() {
     () => [
       {
         key: "skills",
-        title: "Ko'nikmalar",
+        title: t("sections.skills.title"),
         hook: skills,
         items: skills.skills,
-        fields: buildSkillFields(skillCategoryFieldOptions),
+        fields: buildSkillFields(skillCategoryFieldOptions, t),
         beforeSave: ensureSkillCategory,
         renderItem: (item) => (
           <List.Item.Meta
@@ -752,7 +767,7 @@ export default function ProfilePage() {
             description={
               <Space wrap>
                 {item.level ? (
-                  <Typography.Text>Daraja {item.level}/5</Typography.Text>
+                  <Typography.Text>{t("sections.skills.level")} {item.level}/5</Typography.Text>
                 ) : null}
                 {item.category ? (
                   <Typography.Text type="secondary">
@@ -766,7 +781,7 @@ export default function ProfilePage() {
       },
       {
         key: "projects",
-        title: "Loyihalar",
+        title: t("sections.projects.title"),
         hook: projects,
         items: projects.projects,
         fields: sectionFields.projects,
@@ -787,7 +802,7 @@ export default function ProfilePage() {
                 <Space wrap>
                   {item.isRepositoryPrivate ? (
                     <Typography.Text type="secondary">
-                      Yopiq repository
+                      {t("sections.projects.privateRepo")}
                     </Typography.Text>
                   ) : item.githubUrl ? (
                     <Typography.Link href={item.githubUrl} target="_blank" rel="noopener noreferrer">
@@ -807,7 +822,7 @@ export default function ProfilePage() {
       },
       {
         key: "experiences",
-        title: "Ish tajribasi",
+        title: t("sections.experiences.title"),
         hook: experiences,
         items: experiences.experiences,
         fields: sectionFields.experiences,
@@ -817,10 +832,10 @@ export default function ProfilePage() {
             description={
               <Space direction="vertical" size={2}>
                 <Typography.Text type="secondary">
-                  {experienceTypeLabels[item.experienceType] ?? "Ish joyi"}
+                  {experienceTypeLabels[item.experienceType] ?? t("sections.experiences.type.work")}
                 </Typography.Text>
                 <Typography.Text>
-                  {`${item.startDate || "Boshlanish"} - ${item.isCurrent ? "Hozir" : item.endDate || "Tugash"}`}
+                  {`${item.startDate || t("sections.experiences.startDate")} - ${item.isCurrent ? t("sections.experiences.now") : item.endDate || t("sections.experiences.endDate")}`}
                 </Typography.Text>
               </Space>
             }
@@ -829,7 +844,7 @@ export default function ProfilePage() {
       },
       {
         key: "educations",
-        title: "Ta'lim",
+        title: t("sections.educations.title"),
         hook: educations,
         items: educations.educations,
         fields: sectionFields.educations,
@@ -839,7 +854,7 @@ export default function ProfilePage() {
             description={
               <Space direction="vertical" size={2}>
                 <Typography.Text type="secondary">
-                  {educationTypeLabels[item.educationType] ?? "Universitet / kollej"}
+                  {educationTypeLabels[item.educationType] ?? t("sections.educations.type.formal")}
                 </Typography.Text>
                 <Typography.Text>
                   {[item.degree, item.field].filter(Boolean).join(" - ")}
@@ -851,7 +866,7 @@ export default function ProfilePage() {
       },
       {
         key: "certificates",
-        title: "Sertifikatlar",
+        title: t("sections.certificates.title"),
         hook: certificates,
         items: certificates.certificates,
         fields: sectionFields.certificates,
@@ -877,7 +892,7 @@ export default function ProfilePage() {
       },
       {
         key: "socialLinks",
-        title: "Ijtimoiy havolalar",
+        title: t("sections.socialLinks.title"),
         hook: socialLinks,
         items: socialLinks.socialLinks,
         fields: sectionFields.socialLinks,
@@ -895,7 +910,7 @@ export default function ProfilePage() {
         ),
       },
     ],
-    [certificates, educations, ensureSkillCategory, experiences, projects, skills, skillCategoryFieldOptions, socialLinks],
+    [certificates, educations, ensureSkillCategory, experiences, projects, skills, skillCategoryFieldOptions, socialLinks, sectionFields, experienceTypeLabels, educationTypeLabels, t],
   );
 
   useEffect(() => {
@@ -917,7 +932,7 @@ export default function ProfilePage() {
 
     try {
       await updateProfile(values);
-      message.success("Profil saqlandi");
+      message.success(t("profile.saved"));
     } catch (error) {
       message.error(getErrorMessage(error));
     }
@@ -930,9 +945,9 @@ export default function ProfilePage() {
   return (
     <section className="dashboard-page">
       <div className="dashboard-page__header">
-        <Typography.Title level={2}>Profil ma'lumotlari</Typography.Title>
+        <Typography.Title level={2}>{t("profile.title")}</Typography.Title>
         <Typography.Paragraph type="secondary">
-          Bu ma'lumotlar ommaviy profilingiz va tanlangan shablonlarda ko'rinadi.
+          {t("profile.subtitle")}
         </Typography.Paragraph>
       </div>
 
@@ -952,9 +967,9 @@ export default function ProfilePage() {
           <Row gutter={16}>
             <Col xs={24} md={12}>
               <Form.Item
-                label="To'liq ism"
+                label={t("profile.fullName")}
                 name="fullName"
-                rules={[{ required: true, message: "To'liq ismingizni kiriting" }]}
+                rules={[{ required: true, message: t("profile.fullNameRequired") }]}
               >
                 <Input
                   autoComplete="name"
@@ -964,7 +979,7 @@ export default function ProfilePage() {
               </Form.Item>
             </Col>
             <Col xs={24} md={12}>
-              <Form.Item label="Lavozim" name="title">
+              <Form.Item label={t("profile.jobTitle")} name="title">
                 <Input
                   maxLength={100}
                   size="large"
@@ -974,18 +989,18 @@ export default function ProfilePage() {
             </Col>
           </Row>
 
-          <Form.Item label="Bio" name="bio">
+          <Form.Item label={t("profile.bio")} name="bio">
             <Input.TextArea
               rows={6}
               maxLength={1000}
               showCount
-              placeholder="Ish tajribangiz haqida qisqa va ishonchli ma'lumot."
+              placeholder={t("profile.bioPlaceholder")}
             />
           </Form.Item>
 
           <Row gutter={16}>
             <Col xs={24} md={12}>
-              <Form.Item label="Manzil" name="location">
+              <Form.Item label={t("profile.location")} name="location">
                 <Input
                   autoComplete="address-level2"
                   size="large"
@@ -997,16 +1012,16 @@ export default function ProfilePage() {
 
           <div className="dashboard-form-actions">
             <Button type="primary" htmlType="submit" size="large">
-              Profilni saqlash
+              {t("profile.save")}
             </Button>
           </div>
         </Form>
       </Card>
 
       <div style={{ marginTop: 24 }}>
-        <Typography.Title level={3}>Profil bo'limlari</Typography.Title>
+        <Typography.Title level={3}>{t("profile.sectionsTitle")}</Typography.Title>
         <Typography.Paragraph type="secondary">
-          Ommaviy profilingizni to'ldiradigan qo'shimcha ma'lumotlarni kiriting.
+          {t("profile.sectionsSubtitle")}
         </Typography.Paragraph>
         <Row gutter={[18, 18]}>
           {sections.map((section) => (

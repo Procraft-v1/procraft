@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Input, Space, Typography, Spin } from "antd";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@procraft/hooks";
 import { getErrorFieldMessages, getErrorMessage } from "@procraft/i18n";
 import { Logo } from "@procraft/ui";
@@ -11,6 +12,7 @@ import { Logo } from "@procraft/ui";
 export default function Register() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   const { register, verifyRegister, isAuthenticated, isLoading } = useAuth();
   const [form] = Form.useForm();
 
@@ -37,7 +39,7 @@ export default function Register() {
       if (!challenge) {
         const nextChallenge = await register(values);
         if (!nextChallenge?.verificationId) {
-          setError("Ro'yxatdan o'tish kodi olinmadi. Backendni yangilab qayta urinib ko'ring.");
+          setError(t("auth.register.codeNotReceived"));
           return;
         }
 
@@ -95,14 +97,14 @@ export default function Register() {
             level={3}
             style={{ marginTop: 24, marginBottom: 4 }}
           >
-            Ro'yxatdan o'tish
+            {t("auth.register.title")}
           </Typography.Title>
           <Typography.Text type="secondary">
             {challenge
               ? challenge.telegramLink
-                ? "Telegram botdan tasdiqlash kodini oling va kiriting."
-                : `${challenge.maskedEmail} manziliga yuborilgan kodni kiriting.`
-              : "Procraft ish maydoningizni yarating."}
+                ? t("auth.register.subtitleTelegramCode")
+                : t("auth.register.subtitleEmailCode", { email: challenge.maskedEmail })
+              : t("auth.register.subtitle")}
           </Typography.Text>
         </div>
 
@@ -116,13 +118,13 @@ export default function Register() {
           {!challenge ? (
             <>
               <Form.Item
-                label="Elektron pochta"
+                label={t("auth.register.email")}
                 name="email"
                 rules={[
                   {
                     required: true,
                     type: "email",
-                    message: "To'g'ri elektron pochta manzilini kiriting.",
+                    message: t("auth.register.emailRequired"),
                   },
                 ]}
               >
@@ -130,22 +132,22 @@ export default function Register() {
               </Form.Item>
 
               <Form.Item
-                label="To'liq ism"
+                label={t("auth.register.fullName")}
                 name="fullname"
-                rules={[{ required: true, message: "To'liq ismingizni kiriting." }]}
+                rules={[{ required: true, message: t("auth.register.fullNameRequired") }]}
               >
                 <Input autoComplete="name" size="large" />
               </Form.Item>
 
               <Form.Item
-                label="Foydalanuvchi nomi"
+                label={t("auth.register.username")}
                 name="username"
                 rules={[
-                  { required: true, message: "Foydalanuvchi nomini tanlang." },
-                  { min: 3, max: 30, message: "Foydalanuvchi nomi 3-30 ta belgidan iborat bo'lishi kerak." },
+                  { required: true, message: t("auth.register.usernameRequired") },
+                  { min: 3, max: 30, message: t("auth.register.usernameLength") },
                   {
                     pattern: /^[a-z0-9_-]+$/,
-                    message: "Faqat kichik harf, raqam, tire yoki pastki chiziq kiriting.",
+                    message: t("auth.register.usernameFormat"),
                   },
                 ]}
               >
@@ -153,12 +155,12 @@ export default function Register() {
               </Form.Item>
 
               <Form.Item
-                label="Telefon raqam"
+                label={t("auth.register.phone")}
                 name="phoneNumber"
                 rules={[
                   {
                     pattern: /^\+?[0-9\s().-]{7,32}$/,
-                    message: "Telefon raqam formatini to'g'ri kiriting.",
+                    message: t("auth.register.phoneFormat"),
                   },
                 ]}
               >
@@ -166,11 +168,11 @@ export default function Register() {
               </Form.Item>
 
               <Form.Item
-                label="Parol"
+                label={t("auth.register.password")}
                 name="password"
                 rules={[
-                  { required: true, message: "Parol yarating." },
-                  { min: 8, message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak." },
+                  { required: true, message: t("auth.register.passwordRequired") },
+                  { min: 8, message: t("auth.register.passwordLength") },
                 ]}
               >
                 <Input.Password autoComplete="new-password" size="large" />
@@ -188,19 +190,19 @@ export default function Register() {
                     rel="noopener noreferrer"
                     style={{ background: "#229ED9", borderColor: "#229ED9", color: "#fff", marginBottom: 12 }}
                   >
-                    Telegram botdan kod oling
+                    {t("auth.register.telegramCodeButton")}
                   </Button>
                   <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                    Botni ochib, yuborilgan 4 ta raqamli kodni quyiga kiriting.
+                    {t("auth.register.telegramBotHint")}
                   </Typography.Text>
                 </div>
               ) : null}
               <Form.Item
-                label="Tasdiqlash kodi"
+                label={t("auth.register.verifyCode")}
                 name="code"
                 rules={[
-                  { required: true, message: "4 xonali kodni kiriting." },
-                  { pattern: /^\d{4}$/, message: "Kod 4 ta raqamdan iborat bo'lishi kerak." },
+                  { required: true, message: t("auth.register.codeRequired") },
+                  { pattern: /^\d{4}$/, message: t("auth.register.codeLength") },
                 ]}
               >
                 <Input
@@ -226,7 +228,7 @@ export default function Register() {
             block
             loading={isSubmitting}
           >
-            {challenge ? "Tasdiqlash" : "Kod yuborish"}
+            {challenge ? t("auth.register.verifySubmit") : t("auth.register.sendCode")}
           </Button>
 
           {challenge ? (
@@ -240,13 +242,13 @@ export default function Register() {
               }}
               style={{ marginTop: 8 }}
             >
-              Emailni o'zgartirish
+              {t("auth.register.changeEmail")}
             </Button>
           ) : null}
         </Form>
 
         <Typography.Text type="secondary" style={{ textAlign: "center" }}>
-          Hisobingiz bormi? <Link href="/login">Kirish</Link>
+          {t("auth.register.hasAccount")} <Link href="/login">{t("auth.register.loginLink")}</Link>
         </Typography.Text>
       </Space>
     </main>

@@ -27,6 +27,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { routes } from '@procraft/config';
 import { useAuth, useProfile } from '@procraft/hooks';
 import { getErrorFieldMessages, getErrorMessage } from '@procraft/i18n';
@@ -42,6 +43,7 @@ function getPortfolioUrl(user) {
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { user, isAuthenticated, deleteAccount, updateAccount } = useAuth();
   const [accountForm] = Form.useForm();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -55,17 +57,17 @@ export default function SettingsPage() {
   const isEmailConfirmed = Boolean(read(user, 'isEmailConfirmed', 'IsEmailConfirmed', false));
   const portfolioUrl = profile ? getPortfolioUrl(user) : '';
   const deleteConfirmationText = useMemo(
-    () => `${username} akkauntimni o'chirish`,
-    [username],
+    () => t('settings.danger.confirmText', { username }),
+    [t, username],
   );
 
   const openDeletePrompt = () => {
     Modal.confirm({
-      title: "Accountni o'chirishni xohlaysizmi?",
+      title: t('settings.danger.modalTitle'),
       icon: <ExclamationCircleOutlined />,
-      content: "Bu amal account, portfolio va profil ma'lumotlarini o'chiradi.",
-      okText: 'Ha, davom etish',
-      cancelText: 'Bekor qilish',
+      content: t('settings.danger.desc'),
+      okText: t('settings.danger.proceed'),
+      cancelText: t('settings.danger.cancel'),
       okButtonProps: { danger: true },
       onOk: () => {
         setDeleteConfirmText('');
@@ -95,7 +97,7 @@ export default function SettingsPage() {
         username: values.username,
         phoneNumber: values.phoneNumber || null,
       });
-      message.success("Account ma'lumotlari saqlandi");
+      message.success(t('settings.account.saved'));
     } catch (error) {
       const fieldMessages = getErrorFieldMessages(error);
       if (fieldMessages.length > 0) {
@@ -110,14 +112,14 @@ export default function SettingsPage() {
 
   const handleDeleteAccount = async () => {
     if (deleteConfirmText.trim() !== deleteConfirmationText) {
-      message.error("Tasdiqlash matni to'g'ri yozilmadi");
+      message.error(t('settings.danger.wrongConfirm'));
       return;
     }
 
     setIsDeletingAccount(true);
     try {
       await deleteAccount();
-      message.success("Account o'chirildi");
+      message.success(t('settings.danger.deleted'));
       router.replace(routes.login);
     } catch (error) {
       message.error(getErrorMessage(error));
@@ -130,8 +132,8 @@ export default function SettingsPage() {
     return (
       <Alert
         type="warning"
-        message="Account topilmadi"
-        description="Sozlamalarni ko'rish uchun qayta login qiling."
+        message={t('settings.account.notFound')}
+        description={t('settings.account.notFoundDesc')}
       />
     );
   }
@@ -139,9 +141,9 @@ export default function SettingsPage() {
   return (
     <section className="dashboard-page">
       <div className="dashboard-page__header">
-        <Typography.Title level={2}>Sozlamalar</Typography.Title>
+        <Typography.Title level={2}>{t('settings.title')}</Typography.Title>
         <Typography.Paragraph type="secondary">
-          Account va public link ma'lumotlari.
+          {t('settings.subtitle')}
         </Typography.Paragraph>
       </div>
 
@@ -152,7 +154,7 @@ export default function SettingsPage() {
             title={(
               <Space>
                 <UserOutlined />
-                <span>Account</span>
+                <span>{t('settings.account.title')}</span>
               </Space>
             )}
           >
@@ -165,10 +167,10 @@ export default function SettingsPage() {
               <Row gutter={12}>
                 <Col xs={24} md={12}>
                   <Form.Item
-                    label="Email"
+                    label={t('settings.account.email')}
                     name="email"
                     rules={[
-                      { required: true, type: 'email', message: "To'g'ri email kiriting" },
+                      { required: true, type: 'email', message: t('settings.account.emailRequired') },
                     ]}
                   >
                     <Input autoComplete="email" />
@@ -176,14 +178,14 @@ export default function SettingsPage() {
                 </Col>
                 <Col xs={24} md={12}>
                   <Form.Item
-                    label="Foydalanuvchi nomi"
+                    label={t('settings.account.username')}
                     name="username"
                     rules={[
-                      { required: true, message: "Foydalanuvchi nomini kiriting" },
-                      { min: 3, max: 30, message: "Foydalanuvchi nomi 3-30 ta belgidan iborat bo'lishi kerak" },
+                      { required: true, message: t('settings.account.usernameRequired') },
+                      { min: 3, max: 30, message: t('settings.account.usernameLength') },
                       {
                         pattern: /^[a-z0-9_-]+$/,
-                        message: "Faqat kichik harf, raqam, tire yoki pastki chiziq kiriting",
+                        message: t('settings.account.usernameFormat'),
                       },
                     ]}
                   >
@@ -192,12 +194,12 @@ export default function SettingsPage() {
                 </Col>
                 <Col xs={24} md={12}>
                   <Form.Item
-                    label="Telefon raqam"
+                    label={t('settings.account.phone')}
                     name="phoneNumber"
                     rules={[
                       {
                         pattern: /^\+?[0-9\s().-]{7,32}$/,
-                        message: "Telefon raqam formatini to'g'ri kiriting",
+                        message: t('settings.account.phoneFormat'),
                       },
                     ]}
                   >
@@ -208,29 +210,29 @@ export default function SettingsPage() {
 
               <Space wrap>
                 <Button type="primary" htmlType="submit" loading={isSavingAccount}>
-                  Saqlash
+                  {t('settings.account.save')}
                 </Button>
-                {isEmailConfirmed && <Tag color="green">Email tasdiqlangan</Tag>}
+                {isEmailConfirmed && <Tag color="green">{t('settings.account.emailConfirmed')}</Tag>}
               </Space>
             </Form>
 
             <Descriptions column={1} colon={false} style={{ marginTop: 22 }}>
-              <Descriptions.Item label="Portfolio link">
+              <Descriptions.Item label={t('settings.account.portfolioLink')}>
                 {portfolioUrl ? (
                   <Typography.Text copyable>{portfolioUrl}</Typography.Text>
                 ) : (
-                  <Typography.Text type="secondary">Profil yaratilgandan keyin chiqadi</Typography.Text>
+                  <Typography.Text type="secondary">{t('settings.account.portfolioLinkNotReady')}</Typography.Text>
                 )}
               </Descriptions.Item>
             </Descriptions>
 
             {portfolioUrl ? (
               <Button icon={<ExportOutlined />} href={portfolioUrl} target="_blank" rel="noopener noreferrer">
-                Portfolio ochish
+                {t('settings.account.openPortfolio')}
               </Button>
             ) : (
               <Button icon={<LinkOutlined />} loading={isProfileLoading} onClick={() => router.push(routes.dashboardProfile)}>
-                Profilni to'ldirish
+                {t('settings.account.fillProfile')}
               </Button>
             )}
           </Card>
@@ -242,7 +244,7 @@ export default function SettingsPage() {
             title={(
               <Space>
                 <GlobalOutlined />
-                <span>Interfeys</span>
+                <span>{t('settings.interface.title')}</span>
                 <Tag>V2</Tag>
               </Space>
             )}
@@ -253,7 +255,7 @@ export default function SettingsPage() {
               style={{ width: '100%' }}
               options={[
                 { value: 'uz', label: "O'zbekcha" },
-                { value: 'ru', label: 'Ð ÑƒÑÑÐºÐ¸Ð¹' },
+                { value: 'ru', label: 'Русский' },
                 { value: 'en', label: 'English' },
               ]}
             />
@@ -265,13 +267,13 @@ export default function SettingsPage() {
             title={(
               <Space>
                 <QuestionCircleOutlined />
-                <span>Yordam</span>
+                <span>{t('settings.help.title')}</span>
               </Space>
             )}
           >
             <Space direction="vertical" size={14}>
               <Typography.Paragraph type="secondary" style={{ marginBottom: 0 }}>
-                Video qo'llanmalar va yangiliklar Procraft Telegram kanalida.
+                {t('settings.help.desc')}
               </Typography.Paragraph>
               <Button
                 icon={<ExportOutlined />}
@@ -279,7 +281,7 @@ export default function SettingsPage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Telegram kanal
+                {t('settings.help.telegram')}
               </Button>
             </Space>
           </Card>
@@ -291,16 +293,16 @@ export default function SettingsPage() {
             title={(
               <Space>
                 <DeleteOutlined />
-                <span>Accountni o'chirish</span>
+                <span>{t('settings.danger.title')}</span>
               </Space>
             )}
           >
             <Space direction="vertical" size={14}>
               <Typography.Paragraph type="secondary">
-                Account o'chirilsa, login sessiyasi tugaydi va profil ma'lumotlari qayta tiklanmaydi.
+                {t('settings.danger.desc')}
               </Typography.Paragraph>
               <Button danger icon={<DeleteOutlined />} onClick={openDeletePrompt}>
-                Accountni o'chirish
+                {t('settings.danger.button')}
               </Button>
             </Space>
           </Card>
@@ -308,10 +310,10 @@ export default function SettingsPage() {
       </Row>
 
       <Modal
-        title="Accountni o'chirishni tasdiqlang"
+        title={t('settings.danger.modalTitle')}
         open={isDeleteModalOpen}
-        okText="O'chirish"
-        cancelText="Bekor qilish"
+        okText={t('settings.danger.delete')}
+        cancelText={t('settings.danger.cancel')}
         okButtonProps={{
           danger: true,
           disabled: deleteConfirmText.trim() !== deleteConfirmationText,
@@ -329,8 +331,8 @@ export default function SettingsPage() {
           <Alert
             type="warning"
             showIcon
-            message="Bu amalni ortga qaytarib bo'lmaydi"
-            description="Davom etish uchun pastdagi matnni aynan yozing."
+            message={t('settings.danger.warning')}
+            description={t('settings.danger.warningDesc')}
           />
           <Typography.Text code>{deleteConfirmationText}</Typography.Text>
           <Input

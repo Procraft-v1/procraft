@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Avatar, Button, Drawer, Layout, Menu, Modal, Space, Typography } from "antd";
+import { Avatar, Button, Drawer, Layout, Menu, Modal, Segmented, Space, Typography } from "antd";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 import {
   BarChartOutlined,
@@ -22,31 +23,40 @@ import { PROCRAFT_CONTACT_LINKS, routes } from "@procraft/config";
 import { useAuth, useProfile } from "@procraft/hooks";
 import { Logo } from "@procraft/ui";
 
-const menuItems = [
-  { key: routes.dashboardProfile, icon: <UserOutlined />, label: "Profil" },
-  {
-    key: routes.dashboardTemplates,
-    icon: <LayoutOutlined />,
-    label: "Shablonlar",
-  },
-  {
-    key: routes.dashboardAnalytics,
-    icon: <BarChartOutlined />,
-    label: "Analitika",
-  },
-  { key: routes.dashboardPdf, icon: <FilePdfOutlined />, label: "PDF" },
-  {
-    key: routes.dashboardSubscription,
-    icon: <ThunderboltOutlined />,
-    label: "Obuna (V2)",
-    disabled: true,
-  },
-  {
-    key: routes.dashboardSettings,
-    icon: <IdcardOutlined />,
-    label: "Sozlamalar",
-  },
+const LANG_STORAGE_KEY = "procraft_lang";
+const LANG_OPTIONS = [
+  { label: "UZ", value: "uz" },
+  { label: "EN", value: "en" },
+  { label: "RU", value: "ru" },
 ];
+
+function buildMenuItems(t) {
+  return [
+    { key: routes.dashboardProfile, icon: <UserOutlined />, label: t("sidebar.profile") },
+    {
+      key: routes.dashboardTemplates,
+      icon: <LayoutOutlined />,
+      label: t("sidebar.templates"),
+    },
+    {
+      key: routes.dashboardAnalytics,
+      icon: <BarChartOutlined />,
+      label: t("sidebar.analytics"),
+    },
+    { key: routes.dashboardPdf, icon: <FilePdfOutlined />, label: t("sidebar.pdf") },
+    {
+      key: routes.dashboardSubscription,
+      icon: <ThunderboltOutlined />,
+      label: t("sidebar.subscription"),
+      disabled: true,
+    },
+    {
+      key: routes.dashboardSettings,
+      icon: <IdcardOutlined />,
+      label: t("sidebar.settings"),
+    },
+  ];
+}
 
 function getInitials(user) {
   const source = user?.fullName || user?.username || user?.email || "P";
@@ -72,10 +82,12 @@ function getCurrentLocation() {
 }
 
 function DashboardFooter() {
+  const { t } = useTranslation();
+
   return (
     <footer className="dashboard-footer">
       <Typography.Text className="dashboard-footer__brand">Procraft</Typography.Text>
-      <nav className="dashboard-footer__links" aria-label="Procraft bilan bog'lanish">
+      <nav className="dashboard-footer__links" aria-label={t("footer.contactLabel")}>
         <Typography.Link
           href={PROCRAFT_CONTACT_LINKS.telegram}
           target="_blank"
@@ -108,11 +120,23 @@ export default function DashboardLayout({ children }) {
   const [isHeaderShrunk, setIsHeaderShrunk] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const { t, i18n } = useTranslation();
   const { user, logout, isAuthenticated } = useAuth();
   const { profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated });
   const userLabel = user?.username || user?.email || "Account";
   const portfolioUrl = profile ? getPortfolioUrl(user) : "";
   const selectedKeys = [pathname];
+  const menuItems = buildMenuItems(t);
+  const currentLang = LANG_OPTIONS.some((option) => option.value === i18n.language)
+    ? i18n.language
+    : "uz";
+
+  const handleLanguageChange = (lng) => {
+    i18n.changeLanguage(lng);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(LANG_STORAGE_KEY, lng);
+    }
+  };
 
   useEffect(() => {
     const handleAuthRequired = (event) => {
@@ -187,7 +211,11 @@ export default function DashboardLayout({ children }) {
     {
       key: user ? "logout" : "login",
       icon: user ? <LogoutOutlined /> : <LoginOutlined />,
-      label: user ? (isLoggingOut ? "Chiqilmoqda..." : "Chiqish") : "Kirish",
+      label: user
+        ? isLoggingOut
+          ? t("sidebar.loggingOut")
+          : t("sidebar.logout")
+        : t("sidebar.login"),
       disabled: isLoggingOut,
     },
   ];
@@ -277,19 +305,26 @@ export default function DashboardLayout({ children }) {
               className="dashboard-menu-button"
               icon={<MenuOutlined />}
               onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="Menyuni ochish"
+              aria-label={t("topbar.menuOpen")}
             />
             <button
               type="button"
               className="dashboard-topbar__mobile-brand"
               onClick={() => router.push(routes.dashboard)}
-              aria-label="Bosh sahifaga qaytish"
+              aria-label={t("topbar.homeLink")}
             >
               <Logo size={30} showText={false} />
             </button>
           </div>
 
           <div className="dashboard-topbar__actions">
+            <Segmented
+              className="dashboard-lang-switcher"
+              size="small"
+              value={currentLang}
+              onChange={handleLanguageChange}
+              options={LANG_OPTIONS}
+            />
             {portfolioUrl ? (
               <Button
                 icon={<ExportOutlined />}
@@ -297,7 +332,7 @@ export default function DashboardLayout({ children }) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Portfolio
+                {t("topbar.portfolio")}
               </Button>
             ) : (
               <Button
@@ -305,7 +340,7 @@ export default function DashboardLayout({ children }) {
                 onClick={() => router.push(routes.dashboardProfile)}
                 loading={isProfileLoading}
               >
-                Profil
+                {t("topbar.profile")}
               </Button>
             )}
             {user ? (
@@ -319,7 +354,7 @@ export default function DashboardLayout({ children }) {
               </Space>
             ) : (
               <Button icon={<LoginOutlined />} type="primary" onClick={() => goToLogin()}>
-                Kirish
+                {t("topbar.login")}
               </Button>
             )}
           </div>
@@ -332,31 +367,31 @@ export default function DashboardLayout({ children }) {
 
       <Modal
         open={Boolean(authPrompt)}
-        title="Ro'yxatdan o'tish"
+        title={t("auth.modal.title")}
         footer={[
           <Button key="later" onClick={() => setAuthPrompt(null)}>
-            Hozir emas
+            {t("auth.modal.later")}
           </Button>,
           <Button key="login" onClick={() => {
             const returnTo = authPrompt?.returnTo || getCurrentLocation();
             setAuthPrompt(null);
             goToLogin(returnTo);
           }}>
-            Kirish
+            {t("auth.modal.login")}
           </Button>,
           <Button key="register" type="primary" onClick={() => {
             const returnTo = authPrompt?.returnTo || getCurrentLocation();
             setAuthPrompt(null);
             goToRegister(returnTo);
           }}>
-            Ro'yxatdan o'tish
+            {t("auth.modal.register")}
           </Button>,
         ]}
         centered
         onCancel={() => setAuthPrompt(null)}
       >
         <Typography.Paragraph style={{ marginBottom: 0 }}>
-          Bu amalni bajarish va ma'lumotlarni saqlash uchun Procraft hisob yarating.
+          {t("auth.modal.description")}
         </Typography.Paragraph>
       </Modal>
     </Layout>

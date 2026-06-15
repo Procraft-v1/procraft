@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Input, Space, Typography, Spin } from "antd";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@procraft/hooks";
 import { getErrorMessage } from "@procraft/i18n";
 import { Logo } from "@procraft/ui";
@@ -11,6 +12,7 @@ import { Logo } from "@procraft/ui";
 export default function Login() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
   const { login, isAuthenticated, isLoading } = useAuth();
 
   const [error, setError] = useState("");
@@ -71,28 +73,28 @@ export default function Login() {
             level={3}
             style={{ marginTop: 24, marginBottom: 4 }}
           >
-            Xush kelibsiz
+            {t("auth.login.title")}
           </Typography.Title>
           <Typography.Text type="secondary">
-            Procraft hisobingizga kiring.
+            {t("auth.login.subtitle")}
           </Typography.Text>
         </div>
 
         <Form layout="vertical" requiredMark={false} onFinish={handleFinish}>
           <Form.Item
-            label="Elektron pochta yoki foydalanuvchi nomi"
+            label={t("auth.login.emailOrUsername")}
             name="emailOrUsername"
             rules={[
-              { required: true, message: "Elektron pochta yoki foydalanuvchi nomini kiriting." },
+              { required: true, message: t("auth.login.emailOrUsernameRequired") },
             ]}
           >
             <Input autoComplete="username" size="large" />
           </Form.Item>
 
           <Form.Item
-            label="Parol"
+            label={t("auth.login.password")}
             name="password"
-            rules={[{ required: true, message: "Parolni kiriting." }]}
+            rules={[{ required: true, message: t("auth.login.passwordRequired") }]}
           >
             <Input.Password autoComplete="current-password" size="large" />
           </Form.Item>
@@ -110,16 +112,16 @@ export default function Login() {
             block
             loading={isSubmitting}
           >
-            Kirish
+            {t("auth.login.submit")}
           </Button>
         </Form>
 
         <Typography.Text type="secondary" style={{ textAlign: "center" }}>
-          <Link href="/reset-password">Parolni unutdingizmi?</Link>
+          <Link href="/reset-password">{t("auth.login.forgotPassword")}</Link>
         </Typography.Text>
 
         <Typography.Text type="secondary" style={{ textAlign: "center" }}>
-          Procraftda yangimisiz? <Link href="/register">Ro'yxatdan o'ting</Link>
+          {t("auth.login.newToProcraft")} <Link href="/register">{t("auth.login.register")}</Link>
         </Typography.Text>
       </Space>
     </main>

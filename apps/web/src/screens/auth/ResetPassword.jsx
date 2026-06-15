@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { Button, Form, Input, Space, Typography, Spin } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuth, useForgotPassword, useResetPassword } from "@procraft/hooks";
 import { getErrorMessage } from "@procraft/i18n";
 import { Logo } from "@procraft/ui";
 
 export default function ResetPassword() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { isAuthenticated, isLoading } = useAuth();
   const forgotPassword = useForgotPassword();
   const resetPassword = useResetPassword();
@@ -44,7 +46,7 @@ export default function ResetPassword() {
         code: values.code,
         newPassword: values.newPassword,
       });
-      setSuccess("Parol yangilandi. Endi yangi parol bilan kirishingiz mumkin.");
+      setSuccess(t("auth.resetPassword.success"));
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -80,14 +82,14 @@ export default function ResetPassword() {
             level={3}
             style={{ marginTop: 24, marginBottom: 4 }}
           >
-            Parolni tiklash
+            {t("auth.resetPassword.title")}
           </Typography.Title>
           <Typography.Text type="secondary">
             {challenge
               ? challenge.telegramLink
-                ? "Telegram botdan tasdiqlash kodini oling va kiriting."
-                : `${challenge.maskedEmail} manziliga yuborilgan kodni kiriting.`
-              : "Emailingizga tasdiqlash kodi yuboramiz."}
+                ? t("auth.resetPassword.subtitleTelegramCode")
+                : t("auth.resetPassword.subtitleEmailCode", { email: challenge.maskedEmail })
+              : t("auth.resetPassword.subtitle")}
           </Typography.Text>
         </div>
 
@@ -100,13 +102,13 @@ export default function ResetPassword() {
         >
           {!challenge ? (
             <Form.Item
-              label="Elektron pochta"
+              label={t("auth.resetPassword.email")}
               name="email"
               rules={[
                 {
                   required: true,
                   type: "email",
-                  message: "To'g'ri elektron pochta manzilini kiriting.",
+                  message: t("auth.resetPassword.emailRequired"),
                 },
               ]}
             >
@@ -124,19 +126,19 @@ export default function ResetPassword() {
                     rel="noopener noreferrer"
                     style={{ background: "#229ED9", borderColor: "#229ED9", color: "#fff", marginBottom: 12 }}
                   >
-                    Telegram botdan kod oling
+                    {t("auth.resetPassword.telegramCodeButton")}
                   </Button>
                   <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                    Botni ochib, yuborilgan 4 ta raqamli kodni quyiga kiriting.
+                    {t("auth.resetPassword.telegramBotHint")}
                   </Typography.Text>
                 </div>
               ) : null}
               <Form.Item
-                label="Tasdiqlash kodi"
+                label={t("auth.resetPassword.verifyCode")}
                 name="code"
                 rules={[
-                  { required: true, message: "4 xonali kodni kiriting." },
-                  { pattern: /^\d{4}$/, message: "Kod 4 ta raqamdan iborat bo'lishi kerak." },
+                  { required: true, message: t("auth.resetPassword.codeRequired") },
+                  { pattern: /^\d{4}$/, message: t("auth.resetPassword.codeLength") },
                 ]}
               >
                 <Input
@@ -148,11 +150,11 @@ export default function ResetPassword() {
               </Form.Item>
 
               <Form.Item
-                label="Yangi parol"
+                label={t("auth.resetPassword.newPassword")}
                 name="newPassword"
                 rules={[
-                  { required: true, message: "Yangi parolni kiriting." },
-                  { min: 8, message: "Parol kamida 8 ta belgidan iborat bo'lishi kerak." },
+                  { required: true, message: t("auth.resetPassword.newPasswordRequired") },
+                  { min: 8, message: t("auth.resetPassword.newPasswordLength") },
                 ]}
               >
                 <Input.Password autoComplete="new-password" size="large" />
@@ -180,7 +182,7 @@ export default function ResetPassword() {
             loading={isSubmitting}
             disabled={Boolean(success)}
           >
-            {challenge ? "Parolni yangilash" : "Kod yuborish"}
+            {challenge ? t("auth.resetPassword.submitUpdate") : t("auth.resetPassword.sendCode")}
           </Button>
 
           {challenge && !success ? (
@@ -194,13 +196,13 @@ export default function ResetPassword() {
               }}
               style={{ marginTop: 8 }}
             >
-              Emailni o'zgartirish
+              {t("auth.resetPassword.changeEmail")}
             </Button>
           ) : null}
         </Form>
 
         <Typography.Text type="secondary" style={{ textAlign: "center" }}>
-          <Link href="/login">Login sahifasiga qaytish</Link>
+          <Link href="/login">{t("auth.resetPassword.backToLogin")}</Link>
         </Typography.Text>
       </Space>
     </main>

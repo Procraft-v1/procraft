@@ -2,13 +2,15 @@
 
 import { Button, Card, Modal, Space, Typography, message } from 'antd';
 import { DownloadOutlined, EyeOutlined, FilePdfOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useDownloadResume, usePreviewResume } from '@procraft/hooks';
 import { getErrorMessage } from '@procraft/i18n';
 
 export default function PdfPage() {
+  const { t } = useTranslation();
   const downloadResume = useDownloadResume({
     onSuccess: () => {
-      message.success('PDF yuklab olish boshlandi');
+      message.success(t('pdf.downloadStart'));
     },
     onError: (error) => {
       message.error(getErrorMessage(error));
@@ -23,9 +25,9 @@ export default function PdfPage() {
   return (
     <section className="dashboard-page">
       <div className="dashboard-page__header">
-        <Typography.Title level={2}>PDF eksport</Typography.Title>
+        <Typography.Title level={2}>{t('pdf.title')}</Typography.Title>
         <Typography.Paragraph type="secondary">
-          Procraft profilingiz asosida ATS uchun qulay resume PDF yuklab oling.
+          {t('pdf.subtitle')}
         </Typography.Paragraph>
       </div>
 
@@ -33,9 +35,9 @@ export default function PdfPage() {
         <Space direction="vertical" size={18}>
           <FilePdfOutlined style={{ color: '#2563EB', fontSize: 34 }} />
           <div>
-            <Typography.Title level={4}>Resume PDF</Typography.Title>
+            <Typography.Title level={4}>{t('pdf.resumeTitle')}</Typography.Title>
             <Typography.Paragraph type="secondary" style={{ maxWidth: 560 }}>
-              Profil ma'lumotlari, tajriba, ta'lim, ko'nikmalar, loyihalar va sertifikatlar toza PDF faylga jamlanadi.
+              {t('pdf.resumeDesc')}
             </Typography.Paragraph>
           </div>
           <Space wrap>
@@ -46,7 +48,7 @@ export default function PdfPage() {
               loading={previewResume.isPending}
               onClick={() => previewResume.mutate()}
             >
-              PDF ko'rish
+              {t('pdf.preview')}
             </Button>
             <Button
               size="large"
@@ -54,7 +56,7 @@ export default function PdfPage() {
               loading={downloadResume.isPending}
               onClick={() => downloadResume.mutate()}
             >
-              PDF yuklab olish
+              {t('pdf.download')}
             </Button>
           </Space>
         </Space>
@@ -62,13 +64,13 @@ export default function PdfPage() {
 
       <Modal
         open={Boolean(previewResume.previewUrl)}
-        title="Resume PDF"
+        title={t('pdf.resumeTitle')}
         footer={[
           <Button key="download" icon={<DownloadOutlined />} loading={downloadResume.isPending} onClick={() => downloadResume.mutate()}>
-            Yuklab olish
+            {t('pdf.downloadButton')}
           </Button>,
           <Button key="close" type="primary" onClick={previewResume.closePreview}>
-            Yopish
+            {t('pdf.close')}
           </Button>,
         ]}
         width="min(1040px, calc(100vw - 32px))"

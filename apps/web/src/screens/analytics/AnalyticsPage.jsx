@@ -20,23 +20,25 @@ import {
   GlobalOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useAnalyticsSummary } from '@procraft/hooks';
 
 function read(data, camelKey, pascalKey, fallback) {
   return data?.[camelKey] ?? data?.[pascalKey] ?? fallback;
 }
 
-function normalizeUnknown(value) {
-  return !value || value === 'Unknown' ? "Noma'lum" : value;
+function normalizeUnknown(value, t) {
+  return !value || value === 'Unknown' ? t('analytics.unknown') : value;
 }
 
-function translateTime(value) {
+function translateTime(value, t) {
   return String(value || '')
-    .replace('minutes ago', 'daqiqa oldin')
-    .replace('minute ago', 'daqiqa oldin');
+    .replace('minutes ago', t('analytics.minutesAgo'))
+    .replace('minute ago', t('analytics.minutesAgo'));
 }
 
 export default function AnalyticsPage() {
+  const { t } = useTranslation();
   const { data, isLoading, isError, error } = useAnalyticsSummary();
 
   if (isLoading) {
@@ -47,8 +49,8 @@ export default function AnalyticsPage() {
     return (
       <Alert
         type="error"
-        message="Analitika yuklanmadi"
-        description={error?.response?.data?.message || "Ma'lumotlarni olishda xatolik yuz berdi."}
+        message={t('analytics.loadError')}
+        description={error?.response?.data?.message || t('errors.generic')}
       />
     );
   }
@@ -63,9 +65,9 @@ export default function AnalyticsPage() {
   return (
     <div className="dashboard-page">
       <div className="dashboard-page__header">
-        <Typography.Title level={2}>Analitika</Typography.Title>
+        <Typography.Title level={2}>{t('analytics.title')}</Typography.Title>
         <Typography.Paragraph type="secondary">
-          Portfolio profilingiz ko'rishlari va tashriflar bo'yicha qisqa hisobot.
+          {t('analytics.subtitle')}
         </Typography.Paragraph>
       </div>
 
@@ -73,7 +75,7 @@ export default function AnalyticsPage() {
         <Col xs={24} md={8}>
           <Card className="dashboard-card">
             <Statistic
-              title="Jami ko'rishlar"
+              title={t('analytics.totalViews')}
               value={totalViews}
               prefix={<EyeOutlined />}
             />
@@ -82,7 +84,7 @@ export default function AnalyticsPage() {
         <Col xs={24} md={8}>
           <Card className="dashboard-card">
             <Statistic
-              title="So'nggi 30 kun"
+              title={t('analytics.last30Days')}
               value={last30DaysViews}
               prefix={<CalendarOutlined />}
             />
@@ -91,7 +93,7 @@ export default function AnalyticsPage() {
         <Col xs={24} md={8}>
           <Card className="dashboard-card">
             <Statistic
-              title="Davlatlar"
+              title={t('analytics.countries')}
               value={topCountries.length}
               prefix={<GlobalOutlined />}
             />
@@ -101,9 +103,9 @@ export default function AnalyticsPage() {
 
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
         <Col xs={24} lg={15}>
-          <Card title="Kunlar bo'yicha ko'rishlar" className="dashboard-card">
+          <Card title={t('analytics.viewsByDate')} className="dashboard-card">
             {viewsByDate.length === 0 ? (
-              <Empty description="Hali ko'rishlar yo'q" />
+              <Empty description={t('analytics.noViews')} />
             ) : (
               <Space direction="vertical" size={12} style={{ width: '100%' }}>
                 {viewsByDate.map((item) => {
@@ -130,16 +132,16 @@ export default function AnalyticsPage() {
         </Col>
 
         <Col xs={24} lg={9}>
-          <Card title="Davlatlar" className="dashboard-card">
+          <Card title={t('analytics.topCountries')} className="dashboard-card">
             {topCountries.length === 0 ? (
-              <Empty description="Hali ma'lumot yo'q" />
+              <Empty description={t('analytics.noCountries')} />
             ) : (
               <List
                 dataSource={topCountries}
                 renderItem={(item) => (
                   <List.Item>
                     <Space style={{ justifyContent: 'space-between', width: '100%' }}>
-                      <Typography.Text>{normalizeUnknown(read(item, 'country', 'Country', ''))}</Typography.Text>
+                      <Typography.Text>{normalizeUnknown(read(item, 'country', 'Country', ''), t)}</Typography.Text>
                       <Tag color="blue">{read(item, 'count', 'Count', 0)}</Tag>
                     </Space>
                   </List.Item>
@@ -150,22 +152,22 @@ export default function AnalyticsPage() {
         </Col>
 
         <Col xs={24}>
-          <Card title="Oxirgi tashriflar" className="dashboard-card">
+          <Card title={t('analytics.recentVisitors')} className="dashboard-card">
             {recentVisitors.length === 0 ? (
-              <Empty description="Hali tashriflar yo'q" />
+              <Empty description={t('analytics.noVisitors')} />
             ) : (
               <List
                 dataSource={recentVisitors}
                 renderItem={(item) => {
-                  const city = normalizeUnknown(read(item, 'city', 'City', ''));
-                  const country = normalizeUnknown(read(item, 'country', 'Country', ''));
+                  const city = normalizeUnknown(read(item, 'city', 'City', ''), t);
+                  const country = normalizeUnknown(read(item, 'country', 'Country', ''), t);
 
                   return (
                     <List.Item>
                       <List.Item.Meta
                         avatar={<TeamOutlined style={{ color: '#2563EB', fontSize: 18 }} />}
                         title={`${city}, ${country}`}
-                        description={translateTime(read(item, 'time', 'Time', ''))}
+                        description={translateTime(read(item, 'time', 'Time', ''), t)}
                       />
                     </List.Item>
                   );
