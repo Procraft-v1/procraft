@@ -307,10 +307,16 @@ export class PdfService {
         doc.font('Helvetica-Bold').fontSize(9.5).fillColor(HEADING_COLOR);
         const rowY = doc.y;
         doc.text(item.position, left, rowY, { width: width - 120 });
+        const afterPosition = doc.y;
 
-        doc.font('Helvetica').fontSize(8).fillColor(MUTED_COLOR);
-        doc.text(dateText, left + width - 120, rowY, { width: 120, align: 'right', lineBreak: false });
+        if (dateText !== '') {
+          doc.font('Helvetica').fontSize(8).fillColor(MUTED_COLOR);
+          doc.text(dateText, left + width - 120, rowY, { width: 120, align: 'right', lineBreak: false });
+        }
 
+        // Restore the cursor below the (possibly wrapped) left column so the
+        // next line never overlaps the title or the right-aligned date.
+        doc.y = afterPosition;
         doc.moveDown(0.2);
         doc.font('Helvetica').fontSize(8.5).fillColor(MUTED_COLOR);
         doc.text(joinNonEmpty(' • ', item.company, formatExperienceType(item.experienceType)), left, doc.y, {
@@ -342,14 +348,22 @@ export class PdfService {
 
         doc.font('Helvetica-Bold').fontSize(9.5).fillColor(HEADING_COLOR);
         doc.text(item.institution, left, rowY, { width: width - 120 });
+        const afterInstitution = doc.y;
 
-        doc.font('Helvetica').fontSize(8).fillColor(MUTED_COLOR);
-        doc.text(formatDateRange(item.startDate, item.endDate), left + width - 120, rowY, {
-          width: 120,
-          align: 'right',
-          lineBreak: false,
-        });
+        const dateText = formatDateRange(item.startDate, item.endDate);
+        if (dateText !== '') {
+          doc.font('Helvetica').fontSize(8).fillColor(MUTED_COLOR);
+          doc.text(dateText, left + width - 120, rowY, {
+            width: 120,
+            align: 'right',
+            lineBreak: false,
+          });
+        }
 
+        // Restore the cursor below the institution line; education dates are
+        // optional, and an empty right-column draw would otherwise pull doc.y
+        // back up and overlap the next line onto the institution name.
+        doc.y = afterInstitution;
         doc.moveDown(0.15);
         doc.font('Helvetica').fontSize(8.5).fillColor(MUTED_COLOR);
         doc.text(
