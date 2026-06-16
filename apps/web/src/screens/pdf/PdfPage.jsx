@@ -3,12 +3,18 @@
 import { Button, Card, Modal, Space, Typography, message } from 'antd';
 import { DownloadOutlined, EyeOutlined, FilePdfOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { useDownloadResume, usePreviewResume } from '@procraft/hooks';
+import { buildResumeFileName, useAuth, useDownloadResume, useProfile, usePreviewResume } from '@procraft/hooks';
 import { getErrorMessage } from '@procraft/i18n';
 
 export default function PdfPage() {
   const { t } = useTranslation();
+  const { user, isAuthenticated } = useAuth();
+  const { profile } = useProfile({ enabled: isAuthenticated });
+  const fileName = buildResumeFileName(
+    profile?.fullName || user?.fullName || user?.username,
+  );
   const downloadResume = useDownloadResume({
+    fileName,
     onSuccess: () => {
       message.success(t('pdf.downloadStart'));
     },
