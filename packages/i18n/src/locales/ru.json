@@ -74,7 +74,7 @@
   "auth.register.codeLength": "Код должен состоять ровно из 4 цифр.",
   "auth.register.verifySubmit": "Подтвердить",
   "auth.register.sendCode": "Отправить код",
-  "auth.register.changeEmail": "Изменить email",
+  "auth.register.changeEmail": "Изменить данные",
   "auth.register.hasAccount": "Уже есть аккаунт?",
   "auth.register.loginLink": "Войти",
   "auth.register.codeNotReceived": "Код регистрации не получен. Обновите страницу и попробуйте снова.",

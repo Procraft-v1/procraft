@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Avatar, Button, Drawer, Layout, Menu, Modal, Segmented, Space, Typography } from "antd";
+import { Avatar, Button, Drawer, Layout, Menu, Modal, Space, Typography } from "antd";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+
+import LanguageDial from "../components/LanguageDial.jsx";
 
 import {
   BarChartOutlined,
@@ -22,13 +24,6 @@ import {
 import { PROCRAFT_CONTACT_LINKS, routes } from "@procraft/config";
 import { useAuth, useProfile } from "@procraft/hooks";
 import { Logo } from "@procraft/ui";
-
-const LANG_STORAGE_KEY = "procraft_lang";
-const LANG_OPTIONS = [
-  { label: "UZ", value: "uz" },
-  { label: "EN", value: "en" },
-  { label: "RU", value: "ru" },
-];
 
 function buildMenuItems(t) {
   return [
@@ -120,23 +115,13 @@ export default function DashboardLayout({ children }) {
   const [isHeaderShrunk, setIsHeaderShrunk] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user, logout, isAuthenticated } = useAuth();
   const { profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated });
   const userLabel = user?.username || user?.email || "Account";
   const portfolioUrl = profile ? getPortfolioUrl(user) : "";
   const selectedKeys = [pathname];
   const menuItems = buildMenuItems(t);
-  const currentLang = LANG_OPTIONS.some((option) => option.value === i18n.language)
-    ? i18n.language
-    : "uz";
-
-  const handleLanguageChange = (lng) => {
-    i18n.changeLanguage(lng);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(LANG_STORAGE_KEY, lng);
-    }
-  };
 
   useEffect(() => {
     const handleAuthRequired = (event) => {
@@ -318,13 +303,7 @@ export default function DashboardLayout({ children }) {
           </div>
 
           <div className="dashboard-topbar__actions">
-            <Segmented
-              className="dashboard-lang-switcher"
-              size="small"
-              value={currentLang}
-              onChange={handleLanguageChange}
-              options={LANG_OPTIONS}
-            />
+            <LanguageDial />
             {portfolioUrl ? (
               <Button
                 icon={<ExportOutlined />}

@@ -118,20 +118,6 @@ export default function Register() {
           {!challenge ? (
             <>
               <Form.Item
-                label={t("auth.register.email")}
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    type: "email",
-                    message: t("auth.register.emailRequired"),
-                  },
-                ]}
-              >
-                <Input autoComplete="email" size="large" />
-              </Form.Item>
-
-              <Form.Item
                 label={t("auth.register.fullName")}
                 name="fullname"
                 rules={[{ required: true, message: t("auth.register.fullNameRequired") }]}

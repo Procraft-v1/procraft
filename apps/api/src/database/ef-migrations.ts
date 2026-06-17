@@ -412,6 +412,18 @@ const MIGRATIONS: EfMigration[] = [
        ON CONFLICT ("Kind", "Name") DO NOTHING`,
     ],
   },
+  {
+    // Email is now optional: registration happens without it (Telegram verifies),
+    // users add an email later in settings. The UNIQUE index on Email still works —
+    // Postgres treats NULLs as distinct, so multiple email-less accounts are allowed.
+    // Additive/relaxing only — .NET rollback ignores it (its model still has NOT NULL
+    // but the looser DB column satisfies inserts that include email).
+    id: '20260617120000_MakeEmailOptional',
+    statements: [
+      `ALTER TABLE users ALTER COLUMN "Email" DROP NOT NULL`,
+      `ALTER TABLE pending_registrations ALTER COLUMN "Email" DROP NOT NULL`,
+    ],
+  },
 ];
 
 const MIGRATION_LOCK_KEY = 859435400;

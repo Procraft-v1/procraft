@@ -18,8 +18,8 @@ export class UserEntity {
   @PrimaryColumn('uuid', { name: 'Id' })
   id: string;
 
-  @Column('character varying', { name: 'Email', length: 320 })
-  email: string;
+  @Column('character varying', { name: 'Email', length: 320, nullable: true })
+  email: string | null;
 
   @Column('character varying', { name: 'Username', length: 30 })
   username: string;
@@ -230,8 +230,8 @@ export class PendingRegistrationEntity {
   @PrimaryColumn('uuid', { name: 'Id' })
   id: string;
 
-  @Column('character varying', { name: 'Email', length: 320 })
-  email: string;
+  @Column('character varying', { name: 'Email', length: 320, nullable: true })
+  email: string | null;
 
   @Column('character varying', { name: 'Username', length: 30 })
   username: string;

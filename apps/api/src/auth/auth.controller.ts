@@ -54,7 +54,12 @@ function str(value: unknown): string | null {
 function validateEmailUsernamePassword(body: RegisterBody, includePassword: boolean): void {
   const validator = new Validator();
 
-  validator.ruleFor('Email', str(body.email)).notEmpty().emailAddress();
+  // Email is optional now (Telegram-verified signup); validate format only
+  // when one is actually provided — here at registration or later in settings.
+  const emailValue = str(body.email);
+  if (emailValue && emailValue.trim() !== '') {
+    validator.ruleFor('Email', emailValue).emailAddress();
+  }
 
   validator
     .ruleFor('Username', str(body.username))
@@ -116,7 +121,7 @@ export class AuthController {
 
     const result = await this.authService.register(
       req,
-      body.email!,
+      str(body.email),
       body.username!,
       body.password!,
       str(body.phoneNumber),
@@ -252,7 +257,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async updateAccount(@ReqUser() current: CurrentUser, @Body() body: UpdateAccountBody) {
     validateEmailUsernamePassword(body as RegisterBody, false);
-    const user = await this.authService.updateAccount(current, body.email!, body.username!, str(body.phoneNumber));
+    const user = await this.authService.updateAccount(current, str(body.email), body.username!, str(body.phoneNumber));
     return { user };
   }
 }

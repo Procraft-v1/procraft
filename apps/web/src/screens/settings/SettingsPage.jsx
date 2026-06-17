@@ -11,7 +11,6 @@ import {
   Input,
   Modal,
   Row,
-  Select,
   Space,
   Tag,
   Typography,
@@ -21,7 +20,6 @@ import {
   DeleteOutlined,
   ExclamationCircleOutlined,
   ExportOutlined,
-  GlobalOutlined,
   LinkOutlined,
   QuestionCircleOutlined,
   UserOutlined,
@@ -51,7 +49,7 @@ export default function SettingsPage() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [isSavingAccount, setIsSavingAccount] = useState(false);
   const { profile, isLoading: isProfileLoading } = useProfile({ enabled: isAuthenticated });
-  const email = read(user, 'email', 'Email', '-');
+  const email = read(user, 'email', 'Email', '');
   const username = read(user, 'username', 'Username', '-');
   const phoneNumber = read(user, 'phoneNumber', 'PhoneNumber', '');
   const isEmailConfirmed = Boolean(read(user, 'isEmailConfirmed', 'IsEmailConfirmed', false));
@@ -170,10 +168,10 @@ export default function SettingsPage() {
                     label={t('settings.account.email')}
                     name="email"
                     rules={[
-                      { required: true, type: 'email', message: t('settings.account.emailRequired') },
+                      { type: 'email', message: t('settings.account.emailRequired') },
                     ]}
                   >
-                    <Input autoComplete="email" />
+                    <Input autoComplete="email" placeholder="email@example.com" />
                   </Form.Item>
                 </Col>
                 <Col xs={24} md={12}>
@@ -243,29 +241,6 @@ export default function SettingsPage() {
             className="dashboard-card"
             title={(
               <Space>
-                <GlobalOutlined />
-                <span>{t('settings.interface.title')}</span>
-                <Tag>V2</Tag>
-              </Space>
-            )}
-          >
-            <Select
-              disabled
-              value="uz"
-              style={{ width: '100%' }}
-              options={[
-                { value: 'uz', label: "O'zbekcha" },
-                { value: 'ru', label: 'Русский' },
-                { value: 'en', label: 'English' },
-              ]}
-            />
-          </Card>
-
-          <Card
-            className="dashboard-card"
-            style={{ marginTop: 16 }}
-            title={(
-              <Space>
                 <QuestionCircleOutlined />
                 <span>{t('settings.help.title')}</span>
               </Space>
@@ -285,11 +260,10 @@ export default function SettingsPage() {
               </Button>
             </Space>
           </Card>
-        </Col>
 
-        <Col xs={24}>
           <Card
             className="dashboard-card settings-danger-card"
+            style={{ marginTop: 16 }}
             title={(
               <Space>
                 <DeleteOutlined />

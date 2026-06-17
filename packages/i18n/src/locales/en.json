@@ -74,7 +74,7 @@
   "auth.register.codeLength": "Code must be exactly 4 digits.",
   "auth.register.verifySubmit": "Verify",
   "auth.register.sendCode": "Send code",
-  "auth.register.changeEmail": "Change email",
+  "auth.register.changeEmail": "Edit details",
   "auth.register.hasAccount": "Already have an account?",
   "auth.register.loginLink": "Sign in",
   "auth.register.codeNotReceived": "Registration code not received. Refresh and try again.",

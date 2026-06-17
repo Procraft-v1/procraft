@@ -34,7 +34,7 @@ export class TokenService {
     const payload: AccessTokenPayload = {
       sub: user.id,
       nameid: user.id,
-      email: user.email,
+      email: user.email ?? '',
       preferred_username: user.username,
       unique_name: user.username,
     };

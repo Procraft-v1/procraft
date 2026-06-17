@@ -31,7 +31,7 @@ const MAX_ATTEMPTS = 5;
 
 export interface AuthUserDto {
   id: string;
-  email: string;
+  email: string | null;
   username: string;
   phoneNumber: string | null;
   isEmailConfirmed: boolean;
@@ -47,7 +47,10 @@ function toAuthUserDto(user: UserEntity): AuthUserDto {
   };
 }
 
-function maskEmail(email: string): string {
+function maskEmail(email: string | null): string {
+  if (!email) {
+    return '';
+  }
   const at = email.indexOf('@');
   if (at <= 1) {
     return email;
@@ -84,18 +87,18 @@ export class AuthService {
   /** RegisterCommandHandler port: pending registration + emailed 4-digit code. */
   async register(
     req: Request,
-    email: string,
+    email: string | null,
     username: string,
     password: string,
     phoneNumber: string | null,
   ): Promise<{ verificationId: string; maskedEmail: string; expiresAt: Date; codeLength: number; telegramLink: string | null }> {
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = email && email.trim() !== '' ? email.trim().toLowerCase() : null;
     const normalizedUsername = username.trim().toLowerCase();
     const normalizedPhone = normalizePhoneNumber(phoneNumber);
 
     const users = this.dataSource.getRepository(UserEntity);
 
-    if (await users.exists({ where: { email: normalizedEmail } })) {
+    if (normalizedEmail && (await users.exists({ where: { email: normalizedEmail } }))) {
       throw new ConflictException({ email: ['Email is already taken'] });
     }
 
@@ -145,13 +148,16 @@ export class AuthService {
           normalizedPhone,
           `Procraft tasdiqlash kodi: ${code}. Kod ${CODE_EXPIRES_IN_MINUTES} daqiqa amal qiladi.`,
         );
-      } else {
+      } else if (normalizedEmail) {
         await this.emailService.send(
           normalizedEmail,
           "Procraft ro'yxatdan o'tish kodi",
           `Procraft account yaratish kodi: ${code}\nKod ${CODE_EXPIRES_IN_MINUTES} daqiqa amal qiladi.`,
         );
       }
+      // No channel (no Telegram, phone, or email) — the code is only retrievable
+      // from server logs; production has the Telegram bot configured so this
+      // branch is unreachable there.
     }
 
     return {
@@ -194,7 +200,7 @@ export class AuthService {
 
     const users = this.dataSource.getRepository(UserEntity);
 
-    if (await users.exists({ where: { email: registration.email } })) {
+    if (registration.email && (await users.exists({ where: { email: registration.email } }))) {
       await registrations.update({ id: registration.id }, { consumedAt: now, updatedAt: now });
       throw new ConflictException({ email: ['Email is already taken'] });
     }
@@ -344,7 +350,7 @@ export class AuthService {
         });
       });
 
-      if (!telegramLink) {
+      if (!telegramLink && user.email) {
         await this.emailService.send(
           user.email,
           'Procraft parolni tiklash kodi',
@@ -588,7 +594,7 @@ export class AuthService {
   /** UpdateAccountCommandHandler port. */
   async updateAccount(
     current: CurrentUser,
-    email: string,
+    email: string | null,
     username: string,
     phoneNumber: string | null,
   ): Promise<AuthUserDto> {
@@ -599,16 +605,18 @@ export class AuthService {
       throw new UnauthorizedException('Not authenticated.');
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = email && email.trim() !== '' ? email.trim().toLowerCase() : null;
     const normalizedUsername = username.trim().toLowerCase();
     const normalizedPhone = normalizePhoneNumber(phoneNumber);
 
-    const emailTaken = await users
-      .createQueryBuilder('u')
-      .where('u."Id" != :id AND u."Email" = :email', { id: user.id, email: normalizedEmail })
-      .getExists();
-    if (emailTaken) {
-      throw new ConflictException({ email: ['Email is already taken'] });
+    if (normalizedEmail) {
+      const emailTaken = await users
+        .createQueryBuilder('u')
+        .where('u."Id" != :id AND u."Email" = :email', { id: user.id, email: normalizedEmail })
+        .getExists();
+      if (emailTaken) {
+        throw new ConflictException({ email: ['Email is already taken'] });
+      }
     }
 
     const usernameTaken = await users

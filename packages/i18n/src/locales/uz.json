@@ -74,7 +74,7 @@
   "auth.register.codeLength": "Kod 4 ta raqamdan iborat bo'lishi kerak.",
   "auth.register.verifySubmit": "Tasdiqlash",
   "auth.register.sendCode": "Kod yuborish",
-  "auth.register.changeEmail": "Emailni o'zgartirish",
+  "auth.register.changeEmail": "Ma'lumotlarni o'zgartirish",
   "auth.register.hasAccount": "Hisobingiz bormi?",
   "auth.register.loginLink": "Kirish",
   "auth.register.codeNotReceived": "Ro'yxatdan o'tish kodi olinmadi. Backendni yangilab qayta urinib ko'ring.",
