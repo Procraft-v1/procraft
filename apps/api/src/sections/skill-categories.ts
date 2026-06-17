@@ -9,6 +9,7 @@ import { GuidRouteParam } from '../common/guid-param.pipe';
 import { Validator } from '../common/validation';
 import { SkillCategoryEntity } from '../database/entities';
 import { ProfileService } from '../profile/profile.service';
+import { SkillCatalogService } from './skill-catalog';
 
 interface SkillCategoryBody {
   name?: string;
@@ -37,6 +38,7 @@ export class SkillCategoriesController {
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly profileService: ProfileService,
+    private readonly catalog: SkillCatalogService,
   ) {}
 
   @Get()
@@ -58,6 +60,8 @@ export class SkillCategoriesController {
     const repository = this.dataSource.getRepository(SkillCategoryEntity);
 
     const name = body.name!.trim();
+    await this.catalog.record('category', name);
+
     const existing = await repository.findOne({ where: { profileId, name } });
     if (existing) {
       return toDto(existing);

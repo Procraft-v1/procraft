@@ -9,6 +9,7 @@ import { GuidRouteParam } from '../common/guid-param.pipe';
 import { Validator } from '../common/validation';
 import { SkillEntity } from '../database/entities';
 import { ProfileService } from '../profile/profile.service';
+import { SkillCatalogService } from './skill-catalog';
 
 interface SkillBody {
   name?: string;
@@ -51,6 +52,7 @@ export class SkillsController {
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly profileService: ProfileService,
+    private readonly catalog: SkillCatalogService,
   ) {}
 
   @Get()
@@ -81,6 +83,8 @@ export class SkillsController {
     };
 
     await this.dataSource.getRepository(SkillEntity).insert(item);
+    await this.catalog.record('skill', item.name);
+    await this.catalog.record('category', item.category);
     return toDto(item);
   }
 
@@ -116,6 +120,8 @@ export class SkillsController {
       },
     );
 
+    await this.catalog.record('skill', item.name);
+    await this.catalog.record('category', item.category);
     return toDto(item);
   }
 

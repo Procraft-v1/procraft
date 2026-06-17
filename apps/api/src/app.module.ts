@@ -23,6 +23,7 @@ import { CustomSectionsController } from './sections/custom-sections';
 import { EducationsController } from './sections/educations';
 import { ExperiencesController } from './sections/experiences';
 import { ProjectsController } from './sections/projects';
+import { SkillCatalogController, SkillCatalogService } from './sections/skill-catalog';
 import { SkillCategoriesController } from './sections/skill-categories';
 import { SkillsController } from './sections/skills';
 import { SocialLinksController } from './sections/social-links';
@@ -69,6 +70,7 @@ import { TemplatesController } from './templates/templates.controller';
     // literal segments win over the public-profile :username catch-all.
     SkillsController,
     SkillCategoriesController,
+    SkillCatalogController,
     ProjectsController,
     ExperiencesController,
     EducationsController,
@@ -87,6 +89,7 @@ import { TemplatesController } from './templates/templates.controller';
     PasswordHasher,
     PdfService,
     ProfileService,
+    SkillCatalogService,
     TelegramBotService,
     TokenService,
     ...StorageModuleServices,

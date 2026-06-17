@@ -4,6 +4,7 @@ export * from './templates.service.js';
 export * from './analytics.service.js';
 export * from './pdf.service.js';
 export * from './subscription.service.js';
+export * from './skill-catalog.service.js';
 export * as skillsService from './skills.service.js';
 export * as skillCategoriesService from './skill-categories.service.js';
 export * as projectsService from './projects.service.js';

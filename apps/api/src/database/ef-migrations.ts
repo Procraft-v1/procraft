@@ -382,6 +382,36 @@ const MIGRATIONS: EfMigration[] = [
          "UpdatedAt" = TIMESTAMPTZ '2026-05-22 11:00:00+00'`,
     ],
   },
+  {
+    // Global, cross-profile suggestion catalog for skill names + categories.
+    // Additive only (new table) — .NET rollback ignores the extra table/history
+    // row, so the documented rollback path keeps working.
+    id: '20260613120000_CreateSkillCatalog',
+    statements: [
+      `CREATE TABLE skill_catalog_entries (
+        "Id" uuid NOT NULL,
+        "Kind" character varying(20) NOT NULL,
+        "Name" character varying(120) NOT NULL,
+        "CreatedAt" timestamp with time zone NOT NULL,
+        "UpdatedAt" timestamp with time zone,
+        CONSTRAINT "PK_skill_catalog_entries" PRIMARY KEY ("Id"))`,
+      `CREATE UNIQUE INDEX "IX_skill_catalog_entries_Kind_Name" ON skill_catalog_entries ("Kind", "Name")`,
+      // Seed categories from every existing per-profile category + skill.Category.
+      `INSERT INTO skill_catalog_entries ("Id", "Kind", "Name", "CreatedAt", "UpdatedAt")
+       SELECT gen_random_uuid(), 'category', src."Name", now(), NULL
+       FROM (
+         SELECT DISTINCT btrim("Name") AS "Name" FROM skill_categories WHERE btrim("Name") <> ''
+         UNION
+         SELECT DISTINCT btrim("Category") AS "Name" FROM skills WHERE "Category" IS NOT NULL AND btrim("Category") <> ''
+       ) src
+       ON CONFLICT ("Kind", "Name") DO NOTHING`,
+      // Seed skill names from every existing skill.
+      `INSERT INTO skill_catalog_entries ("Id", "Kind", "Name", "CreatedAt", "UpdatedAt")
+       SELECT gen_random_uuid(), 'skill', src."Name", now(), NULL
+       FROM (SELECT DISTINCT btrim("Name") AS "Name" FROM skills WHERE btrim("Name") <> '') src
+       ON CONFLICT ("Kind", "Name") DO NOTHING`,
+    ],
+  },
 ];
 
 const MIGRATION_LOCK_KEY = 859435400;

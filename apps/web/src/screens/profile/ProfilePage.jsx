@@ -31,6 +31,7 @@ import {
   useExperiences,
   useProfile,
   useProjects,
+  useSkillCatalog,
   useSkillCategories,
   useSkills,
   useSocialLinks,
@@ -97,12 +98,14 @@ function getProfileInitials(profile) {
     .join("");
 }
 
-function buildSkillFields(categoryOptions, t) {
+function buildSkillFields(categoryOptions, nameOptions, t) {
   return [
     {
       name: "name",
       label: t("sections.skills.name"),
       placeholder: t("sections.skills.namePlaceholder"),
+      type: "skillAutocomplete",
+      options: nameOptions,
       rules: [{ required: true, message: t("sections.skills.nameRequired") }],
     },
     {
@@ -312,6 +315,10 @@ function renderField(field, form) {
     );
   }
 
+  if (field.type === "skillAutocomplete") {
+    return <SkillNameAutoComplete field={field} />;
+  }
+
   if (field.type === "select") {
     return <Select options={field.options} allowClear placeholder={field.placeholder} />;
   }
@@ -456,6 +463,21 @@ function AvatarCard({ profile, uploadAvatar, deleteAvatar }) {
         </div>
       </Space>
     </Card>
+  );
+}
+
+function SkillNameAutoComplete({ field, value, onChange }) {
+  // Free-text input with global catalog suggestions; any name is allowed.
+  return (
+    <AutoComplete
+      value={value}
+      options={field.options ?? []}
+      placeholder={field.placeholder}
+      onChange={(nextValue) => onChange?.(nextValue)}
+      filterOption={(inputValue, option) =>
+        option?.value?.toLowerCase().includes(inputValue.toLowerCase())
+      }
+    />
   );
 }
 
@@ -707,6 +729,7 @@ export default function ProfilePage() {
   const sectionQueryOptions = { query: { enabled: Boolean(profile) } };
   const skills = useSkills(sectionQueryOptions);
   const skillCategories = useSkillCategories(sectionQueryOptions);
+  const skillCatalog = useSkillCatalog({ enabled: Boolean(profile) });
   const projects = useProjects(sectionQueryOptions);
   const experiences = useExperiences(sectionQueryOptions);
   const educations = useEducations(sectionQueryOptions);
@@ -715,6 +738,14 @@ export default function ProfilePage() {
 
   const skillCategoryFieldOptions = useMemo(() => {
     const values = new Set(skillCategoryOptions.map((option) => option.value));
+
+    // Global catalog (cross-profile) suggestions.
+    for (const category of skillCatalog.catalogCategories ?? []) {
+      const name = typeof category === "string" ? category.trim() : "";
+      if (name) {
+        values.add(name);
+      }
+    }
 
     for (const category of skillCategories.skillCategories ?? []) {
       const name = typeof category.name === "string" ? category.name.trim() : "";
@@ -733,7 +764,30 @@ export default function ProfilePage() {
     return Array.from(values)
       .sort((a, b) => a.localeCompare(b))
       .map((value) => ({ label: value, value }));
-  }, [skillCategories.skillCategories, skills.skills]);
+  }, [skillCatalog.catalogCategories, skillCategories.skillCategories, skills.skills]);
+
+  const skillNameFieldOptions = useMemo(() => {
+    const values = new Set();
+
+    // Global catalog skill names + this profile's own skills.
+    for (const name of skillCatalog.catalogSkills ?? []) {
+      const clean = typeof name === "string" ? name.trim() : "";
+      if (clean) {
+        values.add(clean);
+      }
+    }
+
+    for (const skill of skills.skills ?? []) {
+      const clean = typeof skill.name === "string" ? skill.name.trim() : "";
+      if (clean) {
+        values.add(clean);
+      }
+    }
+
+    return Array.from(values)
+      .sort((a, b) => a.localeCompare(b))
+      .map((value) => ({ label: value, value }));
+  }, [skillCatalog.catalogSkills, skills.skills]);
 
   const ensureSkillCategory = useCallback(async (values) => {
     const category = typeof values.category === "string" ? values.category.trim() : "";
@@ -759,7 +813,7 @@ export default function ProfilePage() {
         title: t("sections.skills.title"),
         hook: skills,
         items: skills.skills,
-        fields: buildSkillFields(skillCategoryFieldOptions, t),
+        fields: buildSkillFields(skillCategoryFieldOptions, skillNameFieldOptions, t),
         beforeSave: ensureSkillCategory,
         renderItem: (item) => (
           <List.Item.Meta
@@ -910,7 +964,7 @@ export default function ProfilePage() {
         ),
       },
     ],
-    [certificates, educations, ensureSkillCategory, experiences, projects, skills, skillCategoryFieldOptions, socialLinks, sectionFields, experienceTypeLabels, educationTypeLabels, t],
+    [certificates, educations, ensureSkillCategory, experiences, projects, skills, skillCategoryFieldOptions, skillNameFieldOptions, socialLinks, sectionFields, experienceTypeLabels, educationTypeLabels, t],
   );
 
   useEffect(() => {

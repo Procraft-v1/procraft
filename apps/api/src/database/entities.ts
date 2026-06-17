@@ -315,6 +315,25 @@ export class SkillCategoryEntity {
   updatedAt: Date | null;
 }
 
+@Entity('skill_catalog_entries')
+export class SkillCatalogEntryEntity {
+  @PrimaryColumn('uuid', { name: 'Id' })
+  id: string;
+
+  // 'skill' | 'category' — one global, cross-profile suggestion taxonomy.
+  @Column('character varying', { name: 'Kind', length: 20 })
+  kind: string;
+
+  @Column('character varying', { name: 'Name', length: 120 })
+  name: string;
+
+  @Column('timestamp with time zone', { name: 'CreatedAt' })
+  createdAt: Date;
+
+  @Column('timestamp with time zone', { name: 'UpdatedAt', nullable: true })
+  updatedAt: Date | null;
+}
+
 @Entity('projects')
 export class ProjectEntity {
   @PrimaryColumn('uuid', { name: 'Id' })
@@ -612,6 +631,7 @@ export const ALL_ENTITIES = [
   PendingRegistrationEntity,
   SkillEntity,
   SkillCategoryEntity,
+  SkillCatalogEntryEntity,
   ProjectEntity,
   WorkExperienceEntity,
   EducationEntity,
