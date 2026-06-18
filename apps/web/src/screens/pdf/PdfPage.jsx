@@ -7,7 +7,7 @@ import { buildResumeFileName, useAuth, useDownloadResume, useProfile, usePreview
 import { getErrorMessage } from '@procraft/i18n';
 
 export default function PdfPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   const { profile } = useProfile({ enabled: isAuthenticated });
   const fileName = buildResumeFileName(
@@ -52,7 +52,7 @@ export default function PdfPage() {
               size="large"
               icon={<EyeOutlined />}
               loading={previewResume.isPending}
-              onClick={() => previewResume.mutate()}
+              onClick={() => previewResume.mutate(i18n.language)}
             >
               {t('pdf.preview')}
             </Button>
@@ -60,7 +60,7 @@ export default function PdfPage() {
               size="large"
               icon={<DownloadOutlined />}
               loading={downloadResume.isPending}
-              onClick={() => downloadResume.mutate()}
+              onClick={() => downloadResume.mutate(i18n.language)}
             >
               {t('pdf.download')}
             </Button>
@@ -72,7 +72,7 @@ export default function PdfPage() {
         open={Boolean(previewResume.previewUrl)}
         title={t('pdf.resumeTitle')}
         footer={[
-          <Button key="download" icon={<DownloadOutlined />} loading={downloadResume.isPending} onClick={() => downloadResume.mutate()}>
+          <Button key="download" icon={<DownloadOutlined />} loading={downloadResume.isPending} onClick={() => downloadResume.mutate(i18n.language)}>
             {t('pdf.downloadButton')}
           </Button>,
           <Button key="close" type="primary" onClick={previewResume.closePreview}>

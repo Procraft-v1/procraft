@@ -37,7 +37,8 @@ export function useDownloadResume(options = {}) {
 
   return useMutation({
     ...mutationOptions,
-    mutationFn: () => downloadResume().then((res) => res.data),
+    mutationFn: (lang) =>
+      downloadResume(lang ? { params: { lang } } : undefined).then((res) => res.data),
     onSuccess: (blob, ...args) => {
       saveBlob(blob, fileName);
       mutationOptions.onSuccess?.(blob, ...args);
@@ -67,7 +68,8 @@ export function usePreviewResume(options) {
 
   const mutation = useMutation({
     ...options,
-    mutationFn: () => downloadResume().then((res) => res.data),
+    mutationFn: (lang) =>
+      downloadResume(lang ? { params: { lang } } : undefined).then((res) => res.data),
     onSuccess: (blob, ...args) => {
       const url = URL.createObjectURL(blob);
       setPreviewUrl((current) => {

@@ -27,6 +27,7 @@ export class PdfController {
     @Req() req: Request,
     @Res() res: Response,
     @Query('templateSlug') templateSlug?: string,
+    @Query('lang') lang?: string,
   ): Promise<void> {
     const profile = await this.dataSource
       .getRepository(ProfileEntity)
@@ -80,6 +81,7 @@ export class PdfController {
       })),
       socialLinks: sections.socialLinks.map((link) => ({ platform: link.platform, url: link.url })),
       templateSlug: templateSlug ?? profile.template?.slug ?? null,
+      lang: lang ?? null,
     });
 
     res.setHeader('Content-Type', 'application/pdf');
