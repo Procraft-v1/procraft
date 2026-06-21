@@ -15,7 +15,7 @@ export async function seedTemplates(dataSource: DataSource): Promise<void> {
       name: 'Editorial',
       slug: 'editorial',
       description: 'Magazine-style editorial portfolio.',
-      previewUrl: '/templates/editorial.svg',
+      previewUrl: '/templates/editorial.jpg',
     },
     {
       name: 'Developer',
