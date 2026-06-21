@@ -14,8 +14,13 @@ const TEMPLATE_COPY_KEYS = {
   developer: 'templates.developer',
 };
 
+// Bump ?v= when a template thumbnail image is regenerated so browsers and the
+// CDN fetch the fresh file instead of a cached copy at the same URL.
+const TEMPLATE_PREVIEW_VERSION = '2';
+
 function getTemplatePreviewUrl(template) {
-  return template.previewUrl || `/templates/${template.slug}.jpg`;
+  const base = template.previewUrl || `/templates/${template.slug}.jpg`;
+  return `${base}?v=${TEMPLATE_PREVIEW_VERSION}`;
 }
 
 export default function TemplatesPage() {
