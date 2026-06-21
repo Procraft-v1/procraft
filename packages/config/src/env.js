@@ -97,3 +97,37 @@ export function resolveAssetUrl(value) {
 export function getAppName() {
   return readVite('VITE_APP_NAME', 'Procraft');
 }
+
+const SAFE_HREF_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
+
+/**
+ * Defense-in-depth sanitiser for user-supplied link targets rendered into an
+ * anchor `href`. Returns the value only when it is a rooted relative path or an
+ * allow-listed protocol (http/https/mailto/tel); anything else — notably
+ * `javascript:`, `data:`, `vbscript:` — yields `undefined` so the anchor has no
+ * href and cannot execute. The API already rejects these on write; this guards
+ * legacy rows and any future write path.
+ */
+export function safeHref(value) {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  if (trimmed === '') {
+    return undefined;
+  }
+
+  // Rooted relative path (but never protocol-relative "//host").
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
+    return trimmed;
+  }
+
+  try {
+    const url = new URL(trimmed);
+    return SAFE_HREF_PROTOCOLS.includes(url.protocol) ? trimmed : undefined;
+  } catch {
+    // Not parseable as an absolute URL and not a rooted path — reject.
+    return undefined;
+  }
+}

@@ -214,6 +214,43 @@ export class RuleBuilder {
     return this;
   }
 
+  /**
+   * Image/asset URL guard for fields that may hold either a relative upload
+   * path ("/uploads/...") or an absolute http/https URL. Rejects any scheme'd
+   * value that is not http/https (javascript:, data:, vbscript:, blob:, …) and
+   * protocol-relative ("//host") values, while leaving rooted relative paths
+   * untouched. Null/empty passes (combine with notEmpty() where required).
+   */
+  safeUrl(): this {
+    const v = this.value;
+    if (v === null || v === undefined) {
+      this.rulePassed();
+      return this;
+    }
+    const s = String(v).trim();
+    if (s === '') {
+      this.rulePassed();
+      return this;
+    }
+
+    let ok: boolean;
+    try {
+      const url = new URL(s);
+      // Any parseable scheme must be http/https.
+      ok = url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      // No scheme — accept only a rooted relative path, never "//host".
+      ok = s.startsWith('/') && !s.startsWith('//');
+    }
+
+    if (!ok) {
+      this.ruleFailed(`'${this.display}' must be a valid http or https URL.`);
+    } else {
+      this.rulePassed();
+    }
+    return this;
+  }
+
   /** A GUID property bound from JSON: invalid uuid strings fail format validation. */
   guid(): this {
     const v = this.value;

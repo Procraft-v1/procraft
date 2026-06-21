@@ -12,7 +12,9 @@ import { CookieService } from './auth/cookie.service';
 import { csrfMiddleware, issueCsrfAfterAuthMiddleware } from './auth/csrf.middleware';
 import { PasswordHasher } from './auth/password-hasher';
 import { GlobalExceptionFilter } from './common/http-exception.filter';
+import { rateLimitMiddleware } from './common/rate-limit.middleware';
 import { requestLoggingMiddleware } from './common/request-logging.middleware';
+import { securityHeadersMiddleware } from './common/security-headers.middleware';
 import { getConfig } from './config/env';
 import { runEfCompatibleMigrations } from './database/ef-migrations';
 import { seedStaticAccount, seedTemplates } from './database/seed';
@@ -35,10 +37,12 @@ export async function createConfiguredApp(): Promise<NestExpressApplication> {
   expressApp.set('trust proxy', true);
   expressApp.disable('x-powered-by');
 
+  app.use(securityHeadersMiddleware);
   app.use(requestLoggingMiddleware);
   app.use(express.json({ limit: '30mb' }));
   app.use(express.urlencoded({ extended: true, limit: '30mb' }));
   app.use(cookieParser());
+  app.use(rateLimitMiddleware);
 
   const uploadsRoot = path.resolve(config.uploads.rootPath);
   fs.mkdirSync(uploadsRoot, { recursive: true });

@@ -51,7 +51,10 @@ export class AnalyticsController {
     }
 
     const now = new Date();
-    const referer = typeof body.referer === 'string' ? body.referer : null;
+    // Cap the stored referer so a scripted caller cannot bloat rows with
+    // megabyte-long values (body limit is 30mb); 2048 covers any real URL.
+    const rawReferer = typeof body.referer === 'string' ? body.referer : null;
+    const referer = rawReferer !== null && rawReferer.length > 2048 ? rawReferer.slice(0, 2048) : rawReferer;
 
     const metadata: AnalyticsMetadata = {
       Ip: getClientIp(req),

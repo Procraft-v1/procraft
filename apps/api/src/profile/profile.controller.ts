@@ -35,7 +35,7 @@ function validateProfileBody(body: ProfileBody): void {
   validator.ruleFor('Title', str(body.title)).maximumLength(100);
   validator.ruleFor('Bio', str(body.bio)).maximumLength(1000);
   validator.ruleFor('Location', str(body.location)).maximumLength(160);
-  validator.ruleFor('AvatarUrl', str(body.avatarUrl)).maximumLength(2048);
+  validator.ruleFor('AvatarUrl', str(body.avatarUrl)).maximumLength(2048).safeUrl();
   validator.throwIfInvalid();
 }
 

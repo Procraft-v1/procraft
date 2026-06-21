@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography } from 'antd';
-import { PROCRAFT_CONTACT_LINKS, resolveAssetUrl } from '@procraft/config';
+import { PROCRAFT_CONTACT_LINKS, resolveAssetUrl, safeHref } from '@procraft/config';
 import './MinimalTemplate.css';
 
 function hasItems(items) {
@@ -36,12 +36,13 @@ function groupByCategory(skills, fallback) {
 }
 
 function ExternalLink({ href, children }) {
-  if (!href) {
+  const safe = safeHref(href);
+  if (!safe) {
     return null;
   }
 
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer">
+    <a href={safe} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );

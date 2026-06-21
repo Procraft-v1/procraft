@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { PROCRAFT_CONTACT_LINKS, resolveAssetUrl } from '@procraft/config';
+import { PROCRAFT_CONTACT_LINKS, resolveAssetUrl, safeHref } from '@procraft/config';
 import './DeveloperTemplate.css';
 
 function hasItems(items) {
@@ -23,12 +23,13 @@ function dateRange(startDate, endDate, isCurrent, present) {
 }
 
 function ExternalLink({ href, children, className }) {
-  if (!href) {
+  const safe = safeHref(href);
+  if (!safe) {
     return null;
   }
 
   return (
-    <a className={className} href={href} target="_blank" rel="noopener noreferrer">
+    <a className={className} href={safe} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Typography } from "antd";
-import { resolveAssetUrl } from "@procraft/config";
+import { resolveAssetUrl, safeHref } from "@procraft/config";
 import "./ModernTemplate.css";
 
 function hasItems(items) {
@@ -23,9 +23,10 @@ function initials(profile) {
 }
 
 function ExternalLink({ href, children, className }) {
-  if (!href) return null;
+  const safe = safeHref(href);
+  if (!safe) return null;
   return (
-    <a className={className} href={href} target="_blank" rel="noopener noreferrer">
+    <a className={className} href={safe} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );
