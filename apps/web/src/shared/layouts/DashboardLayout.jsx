@@ -17,7 +17,6 @@ import {
   LinkOutlined,
   LogoutOutlined,
   MenuOutlined,
-  ThunderboltOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
@@ -39,12 +38,6 @@ function buildMenuItems(t) {
       label: t("sidebar.analytics"),
     },
     { key: routes.dashboardPdf, icon: <FilePdfOutlined />, label: t("sidebar.pdf") },
-    {
-      key: routes.dashboardSubscription,
-      icon: <ThunderboltOutlined />,
-      label: t("sidebar.subscription"),
-      disabled: true,
-    },
     {
       key: routes.dashboardSettings,
       icon: <IdcardOutlined />,
