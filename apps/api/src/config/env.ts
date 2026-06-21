@@ -200,6 +200,7 @@ export class AppConfig {
     botToken: env('Telegram__BotToken') ?? '',
     botUsername: env('Telegram__BotUsername') ?? '',
     webhookUrl: env('Telegram__WebhookUrl') ?? '',
+    webhookSecret: env('Telegram__WebhookSecret') ?? '',
   };
 
   readonly admin = {

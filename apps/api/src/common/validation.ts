@@ -187,6 +187,33 @@ export class RuleBuilder {
     return this;
   }
 
+  /** Rejects any URL whose protocol is not http: or https:. Null/empty passes (use notEmpty() separately). */
+  httpOrHttpsUrl(): this {
+    const v = this.value;
+    if (v === null || v === undefined) {
+      this.rulePassed();
+      return this;
+    }
+    const s = String(v).trim();
+    if (s === '') {
+      this.rulePassed();
+      return this;
+    }
+    let ok = false;
+    try {
+      const url = new URL(s);
+      ok = url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      ok = false;
+    }
+    if (!ok) {
+      this.ruleFailed(`'${this.display}' must be a valid http or https URL.`);
+    } else {
+      this.rulePassed();
+    }
+    return this;
+  }
+
   /** A GUID property bound from JSON: invalid uuid strings fail format validation. */
   guid(): this {
     const v = this.value;

@@ -90,7 +90,7 @@ function parseRequest(body: CertificateBody): ParsedCertificateRequest {
   validator.ruleFor('Issuer', issuer).maximumLength(100);
 
   const url = typeof body.url === 'string' ? body.url : null;
-  validator.ruleFor('Url', url).maximumLength(255);
+  validator.ruleFor('Url', url).maximumLength(255).httpOrHttpsUrl();
 
   let issuedOn: string | null = null;
   if (typeof body.issuedOn === 'string' && body.issuedOn !== '') {

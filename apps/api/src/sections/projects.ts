@@ -42,8 +42,8 @@ function validateBody(body: ProjectBody): void {
   const validator = new Validator();
   validator.ruleFor('Name', typeof body.name === 'string' ? body.name : null).notEmpty().maximumLength(200);
   validator.ruleFor('Description', typeof body.description === 'string' ? body.description : null).maximumLength(1000);
-  validator.ruleFor('GithubUrl', typeof body.githubUrl === 'string' ? body.githubUrl : null).maximumLength(255);
-  validator.ruleFor('LiveUrl', typeof body.liveUrl === 'string' ? body.liveUrl : null).maximumLength(255);
+  validator.ruleFor('GithubUrl', typeof body.githubUrl === 'string' ? body.githubUrl : null).maximumLength(255).httpOrHttpsUrl();
+  validator.ruleFor('LiveUrl', typeof body.liveUrl === 'string' ? body.liveUrl : null).maximumLength(255).httpOrHttpsUrl();
   validator.throwIfInvalid();
 }
 

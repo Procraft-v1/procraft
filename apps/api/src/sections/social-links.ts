@@ -30,7 +30,7 @@ function toDto(item: SocialLinkEntity) {
 function validateBody(body: SocialLinkBody): void {
   const validator = new Validator();
   validator.ruleFor('Platform', typeof body.platform === 'string' ? body.platform : null).notEmpty().maximumLength(100);
-  validator.ruleFor('Url', typeof body.url === 'string' ? body.url : null).notEmpty().maximumLength(255);
+  validator.ruleFor('Url', typeof body.url === 'string' ? body.url : null).notEmpty().maximumLength(255).httpOrHttpsUrl();
   validator.throwIfInvalid();
 }
 

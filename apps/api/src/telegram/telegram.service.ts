@@ -31,7 +31,12 @@ export class TelegramBotService implements OnModuleInit {
     }
 
     try {
-      await this.callApi('setWebhook', { url: webhookUrl });
+      const webhookSecret = getConfig().telegram.webhookSecret;
+      const webhookPayload: Record<string, unknown> = { url: webhookUrl };
+      if (webhookSecret) {
+        webhookPayload.secret_token = webhookSecret;
+      }
+      await this.callApi('setWebhook', webhookPayload);
       this.logger.log(`Telegram webhook registered: ${webhookUrl}`);
     } catch (err) {
       this.logger.error('Failed to register Telegram webhook', err);
