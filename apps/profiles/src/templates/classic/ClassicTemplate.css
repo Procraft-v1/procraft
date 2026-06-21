@@ -255,7 +255,9 @@
   grid-template-columns: minmax(0, 1fr) minmax(266px, 340px);
   gap: clamp(20px, 3vw, 32px);
   width: min(100%, 1080px);
-  margin: clamp(20px, 3vw, 32px) auto 0;
+  /* bottom margin leaves a gap above the footer on long pages, while the
+     footer's margin-top:auto still pins it to the bottom on short ones */
+  margin: clamp(20px, 3vw, 32px) auto clamp(22px, 3.5vw, 36px);
 }
 
 .classic-main,
@@ -435,16 +437,35 @@
 /* skills grouped by category */
 .classic-skill-groups {
   display: grid;
-  gap: 16px;
+  gap: 18px;
+}
+
+/* divider + accent dot make each category clearly its own block */
+.classic-skill-group + .classic-skill-group {
+  padding-top: 18px;
+  border-top: 1px solid var(--sp-hairline);
 }
 
 .classic-skill-group h4 {
-  margin: 0 0 9px;
-  color: var(--sp-muted);
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 11px;
+  color: var(--sp-ink);
+  font-size: 12.5px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.classic-skill-group h4::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(150deg, var(--sp-accent), var(--sp-accent-2));
+  box-shadow: 0 1px 3px rgba(91, 108, 255, 0.5);
 }
 
 .classic-skills {
@@ -509,7 +530,7 @@
   /* auto top margin pins the bar to the bottom on short profiles */
   margin: auto auto 0;
   padding: 12px 22px;
-  border-radius: 999px 999px 0 0;
+  border-radius: 16px 16px 0 0;
   box-shadow: var(--sp-shadow), inset 0 1px 0 var(--sp-edge);
 }
 
