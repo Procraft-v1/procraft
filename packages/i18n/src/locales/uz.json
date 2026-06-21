@@ -241,10 +241,10 @@
   "templates.select": "Shablonni tanlash",
   "templates.selectSuccess": "Shablon tanlandi",
   "templates.default": "Toza ommaviy profil shabloni.",
-  "templates.minimal": "Oddiy, oq va o'qilishi qulay resume ko'rinishi.",
+  "templates.minimal": "Yumshoq material va chuqurlik bilan tactile minimalist ko'rinish.",
   "templates.modern": "Moviy va cyan urg'ular bilan zamonaviy kartali ko'rinish.",
-  "templates.classic": "Rasmiy, markazlangan va klassik professional ko'rinish.",
-  "templates.editorial": "Katta tipografiya va jurnal uslubidagi premium portfolio.",
+  "templates.classic": "Frosted-glass panellar va yumshoq gradient — spatial UI ko'rinish.",
+  "templates.editorial": "Qalin chiziqlar, kuchli kontrast va jasur tipografiya — brutalist uslub.",
   "templates.developer": "Dark terminal, code editor va dashboard uslubidagi developer portfolio.",
 
   "analytics.title": "Analitika",

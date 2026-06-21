@@ -241,10 +241,10 @@
   "templates.select": "Select template",
   "templates.selectSuccess": "Template selected",
   "templates.default": "Clean public profile template.",
-  "templates.minimal": "Simple, clean and easy-to-read resume appearance.",
+  "templates.minimal": "Tactile, soft-material minimalism with real depth.",
   "templates.modern": "Modern card view with blue and cyan highlights.",
-  "templates.classic": "Formal, centered and classic professional appearance.",
-  "templates.editorial": "Large typography and magazine-style premium portfolio.",
+  "templates.classic": "Frosted-glass panels over a soft gradient — spatial UI.",
+  "templates.editorial": "Thick rules, strong contrast and bold type — brutalist style.",
   "templates.developer": "Dark terminal, code editor and dashboard style developer portfolio.",
 
   "analytics.title": "Analytics",
