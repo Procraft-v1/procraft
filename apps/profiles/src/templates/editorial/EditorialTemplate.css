@@ -535,29 +535,20 @@
   /* auto top margin pins the bar to the bottom on short profiles; negative
      inline margins bleed it edge-to-edge so it reads as attached */
   margin: auto calc(-1 * clamp(18px, 5vw, 72px)) 0;
-  padding: 18px max(clamp(18px, 5vw, 72px), calc((100% - 1180px) / 2));
+  padding: 9px max(clamp(18px, 5vw, 72px), calc((100% - 1180px) / 2));
   background: var(--bru-ink);
   color: var(--bru-paper);
-  border-top: 5px solid var(--bru-accent);
+  border-top: 4px solid var(--bru-accent);
 }
 
 .editorial-footer__brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   font-weight: 900;
-  font-size: 15px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.01em;
   white-space: nowrap;
-}
-
-.editorial-footer__brand::before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  background: var(--bru-hot);
-  border: 2px solid var(--bru-paper);
 }
 
 .editorial-footer nav {
@@ -567,10 +558,10 @@
 }
 
 .editorial-footer nav a {
-  padding: 6px 12px;
+  padding: 4px 11px;
   color: var(--bru-paper);
   font-family: var(--bru-mono);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   white-space: nowrap;
