@@ -212,7 +212,7 @@ export default function DashboardLayout({ children }) {
         collapsedWidth={0}
         width={264}
         className="dashboard-sidebar"
-        style={{ background: "transparent" }}
+        style={{ background: "#0D1B2A" }}
       >
         <button
           type="button"
@@ -249,8 +249,8 @@ export default function DashboardLayout({ children }) {
         onClose={() => setIsMobileMenuOpen(false)}
         closable={false}
         styles={{
-          body: { padding: 0, background: "transparent" },
-          content: { background: "transparent" },
+          body: { padding: 0, background: "#0D1B2A" },
+          content: { background: "#0D1B2A" },
         }}
       >
         <button
