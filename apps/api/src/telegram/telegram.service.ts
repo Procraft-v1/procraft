@@ -101,9 +101,45 @@ export class TelegramBotService implements OnModuleInit {
     }
   }
 
+  /** Bot must be admin in both channels for getChatMember to work. */
+  private async checkChannelMembership(chatId: number): Promise<{ subscribed: boolean; missing: string[] }> {
+    const channels = [
+      { username: '@ProcraftUz', url: 'https://t.me/ProcraftUz' },
+      { username: '@RaximjonTulaganov', url: 'https://t.me/RaximjonTulaganov' },
+    ];
+    const missing: string[] = [];
+
+    for (const channel of channels) {
+      try {
+        const res = (await this.callApi('getChatMember', {
+          chat_id: channel.username,
+          user_id: chatId,
+        })) as { result?: { status: string } };
+        const status = res.result?.status;
+        if (!status || status === 'left' || status === 'kicked') {
+          missing.push(channel.url);
+        }
+      } catch {
+        missing.push(channel.url);
+      }
+    }
+
+    return { subscribed: missing.length === 0, missing };
+  }
+
   private async handleRegistration(chatId: number, verificationId: string): Promise<void> {
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(verificationId)) {
       await this.sendMessage(chatId, "Noto'g'ri link. Procraft saytidan qayta ro'yxatdan o'ting.");
+      return;
+    }
+
+    const membership = await this.checkChannelMembership(chatId);
+    if (!membership.subscribed) {
+      const links = membership.missing.join('\n');
+      await this.sendMessage(
+        chatId,
+        `Tasdiqlash kodini olish uchun avval quyidagi kanallarga obuna bo'ling:\n\n${links}\n\nObuna bo'lgach, havolani qayta bosing.`,
+      );
       return;
     }
 
@@ -139,6 +175,16 @@ export class TelegramBotService implements OnModuleInit {
   private async handlePasswordReset(chatId: number, resetId: string): Promise<void> {
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(resetId)) {
       await this.sendMessage(chatId, "Noto'g'ri link. Procraft saytidan qayta parol tiklash so'rovini yuboring.");
+      return;
+    }
+
+    const membership = await this.checkChannelMembership(chatId);
+    if (!membership.subscribed) {
+      const links = membership.missing.join('\n');
+      await this.sendMessage(
+        chatId,
+        `Tasdiqlash kodini olish uchun avval quyidagi kanallarga obuna bo'ling:\n\n${links}\n\nObuna bo'lgach, havolani qayta bosing.`,
+      );
       return;
     }
 
