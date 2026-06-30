@@ -57,6 +57,7 @@ services:
       Eskiz__Email: ${Eskiz__Email:-}
       Eskiz__Password: ${Eskiz__Password:-}
       Eskiz__Sender: ${Eskiz__Sender:-4546}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://procraft.uz,https://www.procraft.uz,https://dashboard.procraft.uz,https://admin.procraft.uz}
       UPLOADS_ROOT: /app/uploads
     volumes:

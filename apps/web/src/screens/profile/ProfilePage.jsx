@@ -23,6 +23,7 @@ import {
 } from "antd";
 import { DeleteOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import GithubImport from "./GithubImport";
 import { resolveAssetUrl } from "@procraft/config";
 import { getErrorMessage } from "@procraft/i18n";
 import {
@@ -1004,6 +1005,8 @@ export default function ProfilePage() {
           {t("profile.subtitle")}
         </Typography.Paragraph>
       </div>
+
+      <GithubImport />
 
       <AvatarCard
         profile={profile}

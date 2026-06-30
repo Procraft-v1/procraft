@@ -203,6 +203,15 @@ export class AppConfig {
     webhookSecret: env('Telegram__WebhookSecret') ?? '',
   };
 
+  /**
+   * Read-only token (public data only) used to raise GitHub's anonymous 60/hr
+   * rate limit to 5,000/hr for the profile-import preview. Optional — without it
+   * previews still work but share the low anonymous limit.
+   */
+  readonly github = {
+    token: env('GITHUB_TOKEN') ?? env('Github__Token') ?? '',
+  };
+
   readonly admin = {
     username: env('Admin__Username') ?? env('ADMIN_USERNAME') ?? '',
     password: env('Admin__Password') ?? env('ADMIN_PASSWORD') ?? '',

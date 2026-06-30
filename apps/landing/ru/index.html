@@ -203,6 +203,27 @@
             </a>
             <a class="btn-ghost" href="#templates">Смотреть шаблоны</a>
           </div>
+
+          <form class="gh-magnet" id="ghForm" autocomplete="off">
+            <div class="gh-input-wrap">
+              <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/>
+              </svg>
+              <input
+                id="ghUsername"
+                type="text"
+                name="github"
+                placeholder="Ваш GitHub username"
+                aria-label="GitHub username"
+                spellcheck="false"
+                maxlength="39"
+              />
+              <button class="gh-go" type="submit">Посмотреть профиль</button>
+            </div>
+            <p class="gh-hint">
+              Готовое портфолио из ваших GitHub-проектов за 3 секунды — печатать ничего не нужно.
+            </p>
+          </form>
         </div>
 
         <div class="scroll-hint" aria-hidden="true">
@@ -210,6 +231,8 @@
           Вниз
         </div>
       </section>
+
+      <div class="gh-result" id="ghResult" hidden></div>
 
       <div class="stats reveal" aria-label="Статистика Procraft">
         <div class="stat-item">
@@ -663,6 +686,57 @@
         mobileMenuQuery.addEventListener("change", closeMenu);
         overlayLinks.forEach((link) => { link.addEventListener("click", closeMenu); });
       }
+
+      /* GITHUB PORTFOLIO MAGNET */
+      (function () {
+        const form = document.getElementById("ghForm");
+        if (!form) return;
+        const input = document.getElementById("ghUsername");
+        const button = form.querySelector(".gh-go");
+        const result = document.getElementById("ghResult");
+        const apiBase = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+          ? "http://localhost:8080/api"
+          : "https://api.procraft.uz/api";
+        const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+        function show(html) { result.hidden = false; result.innerHTML = html; result.scrollIntoView({ behavior: "smooth", block: "center" }); }
+        function renderLoading() {
+          show('<div class="gh-card gh-skeleton"><div class="gh-shimmer" style="height:72px;width:72px;border-radius:50%"></div><div class="gh-shimmer" style="height:18px;width:60%;margin-top:18px"></div><div class="gh-shimmer" style="height:14px;width:90%;margin-top:12px"></div><div class="gh-shimmer" style="height:14px;width:75%;margin-top:8px"></div></div>');
+        }
+        function renderError(m) { show('<div class="gh-card gh-error">' + esc(m) + "</div>"); }
+        function renderPreview(data, username) {
+          const p = data.profile || {};
+          const projects = (data.projects || []).map((pr) =>
+            '<a class="gh-proj" href="' + esc(pr.githubUrl) + '" target="_blank" rel="noopener noreferrer"><span class="gh-proj-name">' + esc(pr.name) + "</span>" +
+            (pr.description ? '<span class="gh-proj-desc">' + esc(pr.description) + "</span>" : "") +
+            '<span class="gh-proj-meta">' + (pr.language ? "<span>" + esc(pr.language) + "</span>" : "") + (pr.stars ? "<span>★ " + esc(pr.stars) + "</span>" : "") + "</span></a>").join("");
+          const skills = (data.skills || []).map((s) => '<span class="gh-chip">' + esc(s.name) + "</span>").join("");
+          const handle = esc(username.toLowerCase());
+          show('<div class="gh-card"><div class="gh-head">' +
+            (p.avatarUrl ? '<img class="gh-avatar" src="' + esc(p.avatarUrl) + '" alt="" loading="lazy" />' : "") +
+            '<div class="gh-id"><div class="gh-name">' + esc(p.fullName || username) + "</div>" +
+            (p.location ? '<div class="gh-loc">' + esc(p.location) + "</div>" : "") +
+            (p.bio ? '<p class="gh-bio">' + esc(p.bio) + "</p>" : "") + "</div></div>" +
+            (skills ? '<div class="gh-chips">' + skills + "</div>" : "") +
+            (projects ? '<div class="gh-projects">' + projects + "</div>" : "") +
+            '<div class="gh-cta"><span class="gh-link"><strong>' + handle + "</strong>.procraft.uz</span>" +
+            '<a class="btn-primary" href="https://dashboard.procraft.uz/profile?github=' + encodeURIComponent(handle) + '" target="_blank" rel="noopener noreferrer">Сохранить этот профиль</a></div></div>');
+        }
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = input.value.trim().replace(/^@/, "");
+          if (!username) { input.focus(); return; }
+          button.disabled = true;
+          renderLoading();
+          try {
+            const res = await fetch(apiBase + "/github/preview/" + encodeURIComponent(username));
+            if (res.status === 404) renderError("Пользователь GitHub не найден.");
+            else if (res.status === 429 || res.status === 503) renderError("Сейчас немного занято — подождите немного и попробуйте снова.");
+            else if (!res.ok) renderError("Произошла ошибка. Попробуйте снова.");
+            else renderPreview(await res.json(), username);
+          } catch (err) { renderError("Проблема с подключением. Попробуйте снова."); }
+          finally { button.disabled = false; }
+        });
+      })();
     </script>
   </body>
 </html>

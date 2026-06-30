@@ -13,6 +13,8 @@ export * as educationService from './education.service.js';
 export * as certificatesService from './certificates.service.js';
 export * as socialLinksService from './social-links.service.js';
 export * as customSectionsService from './custom-sections.service.js';
+export * as githubService from './github.service.js';
+export { previewGithub, importGithub } from './github.service.js';
 export {
   listSkills,
   createSkill,

@@ -13,6 +13,8 @@ import { TokenService } from './auth/token.service';
 import { GuidRouteParam } from './common/guid-param.pipe';
 import { EmailService } from './email/email.service';
 import { SmsService } from './sms/sms.service';
+import { GithubController } from './github/github.controller';
+import { GithubService } from './github/github.service';
 import { HealthController } from './health/health.controller';
 import { PdfController } from './pdf/pdf.controller';
 import { PdfService } from './pdf/pdf.service';
@@ -66,6 +68,7 @@ import { TemplatesController } from './templates/templates.controller';
     TemplatesController,
     SubscriptionsController,
     PdfController,
+    GithubController,
     // Section controllers must register before ProfileController so their
     // literal segments win over the public-profile :username catch-all.
     SkillsController,
@@ -84,6 +87,7 @@ import { TemplatesController } from './templates/templates.controller';
     CookieService,
     EmailService,
     SmsService,
+    GithubService,
     GuidRouteParam,
     JwtAuthGuard,
     PasswordHasher,

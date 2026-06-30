@@ -40,6 +40,8 @@ const RULES: RateRule[] = [
   { prefix: '/api/auth/password/reset', methods: ['POST'], limit: 20, windowMs: 10 * MINUTE },
   // Public, unauthenticated view tracking: cap insert spam.
   { prefix: '/api/analytics/track', methods: ['POST'], limit: 120, windowMs: MINUTE },
+  // Public GitHub import preview: stop using us as a GitHub scraping proxy.
+  { prefix: '/api/github/preview', methods: ['GET'], limit: 60, windowMs: MINUTE },
 ];
 
 interface Counter {
