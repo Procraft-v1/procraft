@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Button, Card, Input, Space, Typography, message } from "antd";
+import { Card, Input, Space, Typography, message } from "antd";
 import { GithubOutlined } from "@ant-design/icons";
 import { importGithub } from "@procraft/services";
 import { getErrorMessage } from "@procraft/i18n";
@@ -61,20 +61,18 @@ export default function GithubImport() {
           GitHub username&apos;ingizni kiriting — loyihalar, ko&apos;nikmalar va profil
           ma&apos;lumotlari avtomatik to&apos;ldiriladi.
         </Text>
-        <Space.Compact style={{ width: "100%", maxWidth: 420 }}>
-          <Input
-            placeholder="GitHub username"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            onPressEnter={() => runImport(username)}
-            disabled={loading}
-            maxLength={39}
-            allowClear
-          />
-          <Button type="primary" loading={loading} onClick={() => runImport(username)}>
-            Import qilish
-          </Button>
-        </Space.Compact>
+        <Input.Search
+          placeholder="GitHub username"
+          enterButton="Import qilish"
+          size="large"
+          value={username}
+          onChange={(event) => setUsername(event.target.value)}
+          onSearch={(value) => runImport(value)}
+          loading={loading}
+          maxLength={39}
+          allowClear
+          style={{ maxWidth: 420 }}
+        />
       </Space>
     </Card>
   );
