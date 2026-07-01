@@ -299,6 +299,7 @@ body::after {
 }
 .hero-copy {
   min-width: 0;
+  container-type: inline-size;
 }
 .hero-content > .gh-magnet {
   margin-top: 0;
@@ -354,7 +355,9 @@ body::after {
 
 .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(58px, 9.5vw, 136px);
+  /* Sized to the copy column (cqi), not the viewport, so the long word
+     "Professional" never overflows/clips when the widget sits beside it. */
+  font-size: clamp(42px, 15.5cqi, 136px);
   font-weight: 400;
   line-height: 0.93;
   letter-spacing: -0.03em;
