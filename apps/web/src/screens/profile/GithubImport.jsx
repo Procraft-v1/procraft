@@ -23,15 +23,61 @@ import { getErrorMessage } from "@procraft/i18n";
 const { Text, Title, Paragraph } = Typography;
 const { TextArea } = Input;
 
+const STEP_PROFILE = 0;
+const STEP_SKILLS = 1;
+const STEP_SOCIALS = 2;
+const STEP_REPOS = 3;
+
 /** A repo is a good default-checked candidate: it's not a fork, and has stars or a description. */
 function isSuggested(project) {
   return !project.fork && (project.stars > 0 || !!project.description);
 }
 
+function toggleInSet(setter, key, checked) {
+  setter((current) => {
+    const next = new Set(current);
+    if (checked) {
+      next.add(key);
+    } else {
+      next.delete(key);
+    }
+    return next;
+  });
+}
+
+/** One checkbox-per-row list used for skills/socials/repos review steps. */
+function ChecklistStep({ items, selected, onToggle, getKey, renderRow, emptyText, hint }) {
+  if (items.length === 0) {
+    return <Empty description={emptyText} />;
+  }
+  return (
+    <>
+      <Text type="secondary">{hint}</Text>
+      <div style={{ maxHeight: 360, overflowY: "auto", paddingRight: 4 }}>
+        <Space direction="vertical" size={8} style={{ width: "100%" }}>
+          {items.map((item) => {
+            const key = getKey(item);
+            return (
+              <Card key={key} size="small" styles={{ body: { padding: 10 } }}>
+                <Checkbox
+                  checked={selected.has(key)}
+                  onChange={(event) => onToggle(key, event.target.checked)}
+                >
+                  {renderRow(item)}
+                </Checkbox>
+              </Card>
+            );
+          })}
+        </Space>
+      </div>
+    </>
+  );
+}
+
 /**
  * GitHub import card. Lets a logged-in user pull their GitHub username into a
- * review modal — confirm/edit profile fields, then check off which repos
- * become projects — before anything is written to their profile.
+ * review modal — confirm/edit profile fields, then check off which skills,
+ * social links and repos actually get written to their profile.
  */
 export default function GithubImport() {
   const [username, setUsername] = useState("");
@@ -39,9 +85,11 @@ export default function GithubImport() {
   const [previewError, setPreviewError] = useState(null);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(STEP_PROFILE);
   const [preview, setPreview] = useState(null);
   const [profileDraft, setProfileDraft] = useState({ fullName: "", bio: "", location: "" });
+  const [selectedSkills, setSelectedSkills] = useState(new Set());
+  const [selectedSocials, setSelectedSocials] = useState(new Set());
   const [selectedRepos, setSelectedRepos] = useState(new Set());
   const [importing, setImporting] = useState(false);
   const [importError, setImportError] = useState(null);
@@ -65,9 +113,12 @@ export default function GithubImport() {
         bio: data.profile.bio ?? "",
         location: data.profile.location ?? "",
       });
+      // Everything GitHub actually has data for starts confirmed; the user unchecks what they don't want.
+      setSelectedSkills(new Set(data.skills.map((skill) => skill.name)));
+      setSelectedSocials(new Set(data.socialLinks.map((link) => link.platform)));
       setSelectedRepos(new Set(data.projects.filter(isSuggested).map((project) => project.name)));
       setImportError(null);
-      setStep(0);
+      setStep(STEP_PROFILE);
       setModalOpen(true);
     } catch (error) {
       setPreviewError(getErrorMessage(error));
@@ -76,24 +127,14 @@ export default function GithubImport() {
     }
   }
 
-  function toggleRepo(name, checked) {
-    setSelectedRepos((current) => {
-      const next = new Set(current);
-      if (checked) {
-        next.add(name);
-      } else {
-        next.delete(name);
-      }
-      return next;
-    });
-  }
-
   async function submitImport() {
     setImporting(true);
     setImportError(null);
     try {
       const { data } = await importGithub(username, {
         profile: profileDraft,
+        selectedSkillNames: [...selectedSkills],
+        selectedSocialPlatforms: [...selectedSocials],
         selectedRepoNames: [...selectedRepos],
       });
       message.success(
@@ -135,7 +176,7 @@ export default function GithubImport() {
         </Title>
         <Text type="secondary">
           GitHub username&apos;ingizni kiriting — avval ma&apos;lumotlarni ko&apos;rib chiqasiz, keyin
-          qaysi loyihalarni qo&apos;shishni o&apos;zingiz tanlaysiz.
+          nimani qo&apos;shishni o&apos;zingiz tanlaysiz.
         </Text>
         <Input.Search
           placeholder="GitHub username"
@@ -166,10 +207,15 @@ export default function GithubImport() {
             <Steps
               size="small"
               current={step}
-              items={[{ title: "Profil" }, { title: "Repozitoriyalar" }]}
+              items={[
+                { title: "Profil" },
+                { title: "Ko'nikmalar" },
+                { title: "Havolalar" },
+                { title: "Repozitoriyalar" },
+              ]}
             />
 
-            {step === 0 && (
+            {step === STEP_PROFILE && (
               <Space direction="vertical" size={14} style={{ width: "100%" }}>
                 <Space align="center" size={12}>
                   <Avatar size={56} src={preview.profile.avatarUrl} icon={<GithubOutlined />} />
@@ -215,60 +261,102 @@ export default function GithubImport() {
 
                 <Space style={{ justifyContent: "flex-end", width: "100%" }}>
                   <Button onClick={closeModal}>Bekor qilish</Button>
-                  <Button type="primary" onClick={() => setStep(1)}>
+                  <Button type="primary" onClick={() => setStep(STEP_SKILLS)}>
                     Davom etish
                   </Button>
                 </Space>
               </Space>
             )}
 
-            {step === 1 && (
+            {step === STEP_SKILLS && (
               <Space direction="vertical" size={14} style={{ width: "100%" }}>
-                {preview.projects.length === 0 ? (
-                  <Empty description="Ochiq repozitoriyalar topilmadi" />
-                ) : (
-                  <>
-                    <Text type="secondary">
-                      Profilga qo&apos;shmoqchi bo&apos;lgan repolarni belgilang ({selectedRepos.size} ta
-                      tanlandi).
-                    </Text>
-                    <div style={{ maxHeight: 360, overflowY: "auto", paddingRight: 4 }}>
-                      <Space direction="vertical" size={8} style={{ width: "100%" }}>
-                        {preview.projects.map((project) => (
-                          <Card key={project.name} size="small" styles={{ body: { padding: 10 } }}>
-                            <Checkbox
-                              checked={selectedRepos.has(project.name)}
-                              onChange={(event) => toggleRepo(project.name, event.target.checked)}
-                            >
-                              <Space direction="vertical" size={0} style={{ marginLeft: 4 }}>
-                                <Space size={6} wrap>
-                                  <Text strong>{project.name}</Text>
-                                  {project.fork && <Tag>fork</Tag>}
-                                  {project.language && <Tag color="blue">{project.language}</Tag>}
-                                  {project.stars > 0 && (
-                                    <Tag icon={<StarFilled />} color="gold">
-                                      {project.stars}
-                                    </Tag>
-                                  )}
-                                </Space>
-                                {project.description && (
-                                  <Paragraph type="secondary" style={{ margin: 0 }}>
-                                    {project.description}
-                                  </Paragraph>
-                                )}
-                              </Space>
-                            </Checkbox>
-                          </Card>
-                        ))}
+                <ChecklistStep
+                  items={preview.skills}
+                  selected={selectedSkills}
+                  onToggle={(key, checked) => toggleInSet(setSelectedSkills, key, checked)}
+                  getKey={(skill) => skill.name}
+                  emptyText="GitHub repolaringizda dasturlash tili aniqlanmadi"
+                  hint={`Profilga qo'shmoqchi bo'lgan ko'nikmalarni belgilang (${selectedSkills.size} ta tanlandi).`}
+                  renderRow={(skill) => (
+                    <Space size={6} wrap style={{ marginLeft: 4 }}>
+                      <Text strong>{skill.name}</Text>
+                      <Tag color="blue">{skill.category}</Tag>
+                      <Tag>{skill.level}/5</Tag>
+                    </Space>
+                  )}
+                />
+
+                <Space style={{ justifyContent: "flex-end", width: "100%" }}>
+                  <Button onClick={() => setStep(STEP_PROFILE)}>Orqaga</Button>
+                  <Button type="primary" onClick={() => setStep(STEP_SOCIALS)}>
+                    Davom etish
+                  </Button>
+                </Space>
+              </Space>
+            )}
+
+            {step === STEP_SOCIALS && (
+              <Space direction="vertical" size={14} style={{ width: "100%" }}>
+                <ChecklistStep
+                  items={preview.socialLinks}
+                  selected={selectedSocials}
+                  onToggle={(key, checked) => toggleInSet(setSelectedSocials, key, checked)}
+                  getKey={(link) => link.platform}
+                  emptyText="Ijtimoiy tarmoq havolalari topilmadi"
+                  hint={`Profilga qo'shmoqchi bo'lgan havolalarni belgilang (${selectedSocials.size} ta tanlandi).`}
+                  renderRow={(link) => (
+                    <Space direction="vertical" size={0} style={{ marginLeft: 4 }}>
+                      <Text strong style={{ textTransform: "capitalize" }}>
+                        {link.platform}
+                      </Text>
+                      <Text type="secondary">{link.url}</Text>
+                    </Space>
+                  )}
+                />
+
+                <Space style={{ justifyContent: "flex-end", width: "100%" }}>
+                  <Button onClick={() => setStep(STEP_SKILLS)}>Orqaga</Button>
+                  <Button type="primary" onClick={() => setStep(STEP_REPOS)}>
+                    Davom etish
+                  </Button>
+                </Space>
+              </Space>
+            )}
+
+            {step === STEP_REPOS && (
+              <Space direction="vertical" size={14} style={{ width: "100%" }}>
+                <ChecklistStep
+                  items={preview.projects}
+                  selected={selectedRepos}
+                  onToggle={(key, checked) => toggleInSet(setSelectedRepos, key, checked)}
+                  getKey={(project) => project.name}
+                  emptyText="Ochiq repozitoriyalar topilmadi"
+                  hint={`Profilga qo'shmoqchi bo'lgan repolarni belgilang (${selectedRepos.size} ta tanlandi).`}
+                  renderRow={(project) => (
+                    <Space direction="vertical" size={0} style={{ marginLeft: 4 }}>
+                      <Space size={6} wrap>
+                        <Text strong>{project.name}</Text>
+                        {project.fork && <Tag>fork</Tag>}
+                        {project.language && <Tag color="blue">{project.language}</Tag>}
+                        {project.stars > 0 && (
+                          <Tag icon={<StarFilled />} color="gold">
+                            {project.stars}
+                          </Tag>
+                        )}
                       </Space>
-                    </div>
-                  </>
-                )}
+                      {project.description && (
+                        <Paragraph type="secondary" style={{ margin: 0 }}>
+                          {project.description}
+                        </Paragraph>
+                      )}
+                    </Space>
+                  )}
+                />
 
                 {importError && <Alert type="error" showIcon message={importError} />}
 
                 <Space style={{ justifyContent: "flex-end", width: "100%" }}>
-                  <Button onClick={() => setStep(0)} disabled={importing}>
+                  <Button onClick={() => setStep(STEP_SOCIALS)} disabled={importing}>
                     Orqaga
                   </Button>
                   <Button type="primary" onClick={submitImport} loading={importing}>

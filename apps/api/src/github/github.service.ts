@@ -136,14 +136,17 @@ export class GithubService {
   /**
    * Authenticated path: map GitHub data into the current user's profile.
    * `profileOverrides` carries the user's edits from the review step (fill-empty only,
-   * same as GitHub-sourced fields); `selectedRepoNames` restricts which repos become
-   * projects — unknown names are ignored rather than rejected (stale client state).
+   * same as GitHub-sourced fields); `selectedRepoNames`/`selectedSkillNames`/
+   * `selectedSocialPlatforms` restrict which repos, skills and social links get
+   * written — unknown names are ignored rather than rejected (stale client state).
    */
   async importForUser(
     current: CurrentUser,
     rawUsername: string,
     profileOverrides: { fullName?: string; bio?: string; location?: string } | undefined,
     selectedRepoNames: string[],
+    selectedSkillNames: string[],
+    selectedSocialPlatforms: string[],
   ): Promise<GithubImportResult> {
     const preview = await this.fetchPreview(rawUsername);
     const now = new Date();
@@ -154,15 +157,21 @@ export class GithubService {
       if (profileOverrides.location?.trim()) preview.profile.location = truncate(profileOverrides.location, 160);
     }
 
-    const selected = new Set((selectedRepoNames ?? []).map((name) => name.toLowerCase()));
-    const selectedProjects = preview.projects.filter((project) => selected.has(project.name.toLowerCase()));
+    const selectedRepos = new Set((selectedRepoNames ?? []).map((name) => name.toLowerCase()));
+    const selectedProjects = preview.projects.filter((project) => selectedRepos.has(project.name.toLowerCase()));
+
+    const selectedSkills = new Set((selectedSkillNames ?? []).map((name) => name.toLowerCase()));
+    const filteredSkills = preview.skills.filter((skill) => selectedSkills.has(skill.name.toLowerCase()));
+
+    const selectedSocials = new Set((selectedSocialPlatforms ?? []).map((platform) => platform.toLowerCase()));
+    const filteredSocialLinks = preview.socialLinks.filter((link) => selectedSocials.has(link.platform.toLowerCase()));
 
     const counts = await this.dataSource.transaction(async (manager) => {
       const profileId = await this.resolveOrCreateProfile(manager, current.userId, preview, now);
 
       const projectsAdded = await this.insertProjects(manager, profileId, selectedProjects, now);
-      const skillsAdded = await this.insertSkills(manager, profileId, preview.skills, now);
-      const socialLinksAdded = await this.insertSocialLinks(manager, profileId, preview.socialLinks, now);
+      const skillsAdded = await this.insertSkills(manager, profileId, filteredSkills, now);
+      const socialLinksAdded = await this.insertSocialLinks(manager, profileId, filteredSocialLinks, now);
 
       return { projectsAdded, skillsAdded, socialLinksAdded };
     });
