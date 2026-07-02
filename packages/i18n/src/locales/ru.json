@@ -366,5 +366,9 @@
   "errors.notFound": "Данные не найдены.",
   "errors.conflict": "Эти данные уже существуют.",
   "errors.fileTooLarge": "Файл слишком большой. Максимальный размер для сертификатов — 10MB.",
-  "errors.server": "Произошла ошибка сервера. Попробуйте позже."
+  "errors.server": "Произошла ошибка сервера. Попробуйте позже.",
+  "errors.githubUserNotFound": "Пользователь GitHub не найден.",
+  "errors.githubUsernameFormat": "Неверный формат имени пользователя GitHub.",
+  "errors.githubRateLimit": "Превышен лимит запросов GitHub. Повторите попытку позже.",
+  "errors.githubUnavailable": "GitHub временно недоступен. Повторите попытку позже."
 }

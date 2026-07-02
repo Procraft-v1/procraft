@@ -366,5 +366,9 @@
   "errors.notFound": "Ma'lumot topilmadi.",
   "errors.conflict": "Bu ma'lumot allaqachon mavjud.",
   "errors.fileTooLarge": "Fayl hajmi juda katta. Sertifikat uchun maksimal hajm 10MB.",
-  "errors.server": "Serverda xatolik yuz berdi. Keyinroq qayta urinib ko'ring."
+  "errors.server": "Serverda xatolik yuz berdi. Keyinroq qayta urinib ko'ring.",
+  "errors.githubUserNotFound": "Bu GitHub username topilmadi.",
+  "errors.githubUsernameFormat": "GitHub username noto'g'ri formatda.",
+  "errors.githubRateLimit": "GitHub limiti tugadi. Birozdan so'ng qayta urinib ko'ring.",
+  "errors.githubUnavailable": "GitHub vaqtincha ishlamayapti. Birozdan so'ng qayta urinib ko'ring."
 }

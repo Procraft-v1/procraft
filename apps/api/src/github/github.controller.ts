@@ -4,6 +4,8 @@ import { GithubService } from './github.service';
 
 interface ImportBody {
   username?: string;
+  profile?: { fullName?: string; bio?: string; location?: string };
+  selectedRepoNames?: string[];
 }
 
 @Controller('api/github')
@@ -24,6 +26,6 @@ export class GithubController {
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   async import(@ReqUser() current: CurrentUser, @Body() body: ImportBody) {
-    return this.githubService.importForUser(current, body.username ?? '');
+    return this.githubService.importForUser(current, body.username ?? '', body.profile, body.selectedRepoNames ?? []);
   }
 }

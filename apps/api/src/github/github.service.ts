@@ -8,8 +8,7 @@ import { getConfig } from '../config/env';
 import { ProfileEntity, ProjectEntity, SkillEntity, SocialLinkEntity } from '../database/entities';
 import { SkillCatalogService } from '../sections/skill-catalog';
 
-/** Tunables — see the Phase 1 plan. Top repos become projects, top languages become skills. */
-const MAX_PROJECTS = 6;
+/** Tunables — see the Phase 1 plan. Top languages become skills. */
 const MAX_SKILLS = 8;
 const CACHE_TTL_MS = 10 * 60_000;
 
@@ -23,6 +22,7 @@ export interface GithubPreviewProject {
   liveUrl: string | null;
   stars: number;
   language: string | null;
+  fork: boolean;
 }
 
 export interface GithubPreviewSkill {
@@ -133,15 +133,34 @@ export class GithubService {
     return preview;
   }
 
-  /** Authenticated path: map GitHub data into the current user's profile (fill-empty + skip-existing). */
-  async importForUser(current: CurrentUser, rawUsername: string): Promise<GithubImportResult> {
+  /**
+   * Authenticated path: map GitHub data into the current user's profile.
+   * `profileOverrides` carries the user's edits from the review step (fill-empty only,
+   * same as GitHub-sourced fields); `selectedRepoNames` restricts which repos become
+   * projects — unknown names are ignored rather than rejected (stale client state).
+   */
+  async importForUser(
+    current: CurrentUser,
+    rawUsername: string,
+    profileOverrides: { fullName?: string; bio?: string; location?: string } | undefined,
+    selectedRepoNames: string[],
+  ): Promise<GithubImportResult> {
     const preview = await this.fetchPreview(rawUsername);
     const now = new Date();
+
+    if (profileOverrides) {
+      if (profileOverrides.fullName?.trim()) preview.profile.fullName = truncate(profileOverrides.fullName, 160);
+      if (profileOverrides.bio?.trim()) preview.profile.bio = truncate(profileOverrides.bio, 1000);
+      if (profileOverrides.location?.trim()) preview.profile.location = truncate(profileOverrides.location, 160);
+    }
+
+    const selected = new Set((selectedRepoNames ?? []).map((name) => name.toLowerCase()));
+    const selectedProjects = preview.projects.filter((project) => selected.has(project.name.toLowerCase()));
 
     const counts = await this.dataSource.transaction(async (manager) => {
       const profileId = await this.resolveOrCreateProfile(manager, current.userId, preview, now);
 
-      const projectsAdded = await this.insertProjects(manager, profileId, preview.projects, now);
+      const projectsAdded = await this.insertProjects(manager, profileId, selectedProjects, now);
       const skillsAdded = await this.insertSkills(manager, profileId, preview.skills, now);
       const socialLinksAdded = await this.insertSocialLinks(manager, profileId, preview.socialLinks, now);
 
@@ -298,22 +317,22 @@ export class GithubService {
   private mapPreview(user: GithubUser, repos: GithubRepo[]): GithubPreview {
     const owned = repos.filter((repo) => !repo.fork);
 
-    const ranked = [...owned]
-      .filter((repo) => repo.stargazers_count > 0 || (repo.description?.trim().length ?? 0) > 0)
-      .sort((a, b) => {
-        if (b.stargazers_count !== a.stargazers_count) {
-          return b.stargazers_count - a.stargazers_count;
-        }
-        return new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime();
-      });
+    // No prefilter, no cap: every repo (owned + forked) is shown so the user picks which become projects.
+    const ranked = [...repos].sort((a, b) => {
+      if (b.stargazers_count !== a.stargazers_count) {
+        return b.stargazers_count - a.stargazers_count;
+      }
+      return new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime();
+    });
 
-    const projects: GithubPreviewProject[] = ranked.slice(0, MAX_PROJECTS).map((repo) => ({
+    const projects: GithubPreviewProject[] = ranked.map((repo) => ({
       name: truncate(repo.name, 200),
       description: repo.description ? truncate(repo.description, 1000) : null,
       githubUrl: repo.html_url,
       liveUrl: normalizeUrl(repo.homepage, 255),
       stars: repo.stargazers_count,
       language: repo.language,
+      fork: repo.fork,
     }));
 
     return {

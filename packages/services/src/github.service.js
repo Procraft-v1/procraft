@@ -8,8 +8,8 @@ export function preview(username, config) {
 }
 
 /** Persists the mapped GitHub data into the current user's profile. */
-export function importProfile(username) {
-  return axiosClient.post(`${endpoint}/import`, { username });
+export function importProfile(username, { profile, selectedRepoNames } = {}) {
+  return axiosClient.post(`${endpoint}/import`, { username, profile, selectedRepoNames });
 }
 
 export const previewGithub = preview;

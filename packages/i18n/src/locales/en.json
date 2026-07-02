@@ -366,5 +366,9 @@
   "errors.notFound": "Data not found.",
   "errors.conflict": "This data already exists.",
   "errors.fileTooLarge": "File is too large. Maximum size for certificates is 10MB.",
-  "errors.server": "A server error occurred. Please try again later."
+  "errors.server": "A server error occurred. Please try again later.",
+  "errors.githubUserNotFound": "GitHub user not found.",
+  "errors.githubUsernameFormat": "Invalid GitHub username.",
+  "errors.githubRateLimit": "GitHub rate limit reached. Please try again shortly.",
+  "errors.githubUnavailable": "GitHub is temporarily unavailable. Please try again shortly."
 }

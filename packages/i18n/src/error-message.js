@@ -17,6 +17,10 @@ const backendMessageKeys = new Map([
   ['csrf validation failed', 'errors.csrf'],
   ['csrf token mismatch', 'errors.csrf'],
   ['an unexpected error occurred', 'errors.unexpected'],
+  ['github user not found', 'errors.githubUserNotFound'],
+  ['enter a valid github username', 'errors.githubUsernameFormat'],
+  ['github rate limit reached. please try again shortly', 'errors.githubRateLimit'],
+  ['github is temporarily unavailable. please try again', 'errors.githubUnavailable'],
 ]);
 
 const statusKeys = new Map([
